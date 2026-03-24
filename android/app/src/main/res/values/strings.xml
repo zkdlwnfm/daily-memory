@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DailyMemory</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_people">People</string>
+    <string name="nav_record">Record</string>
+
+    <!-- Home Screen -->
+    <string name="home_welcome">Welcome to DailyMemory</string>
+    <string name="home_subtitle">Your memories, organized by AI</string>
+    <string name="home_today_reminders">Today\'s Reminders</string>
+    <string name="home_recent_memories">Recent Memories</string>
+    <string name="home_empty_state">Start recording your first memory!</string>
+
+    <!-- Record Screen -->
+    <string name="record_title">New Memory</string>
+    <string name="record_voice_hint">Tap to start recording</string>
+    <string name="record_text_hint">Write your memory here...</string>
+    <string name="record_save">Save</string>
+    <string name="record_recording">Recording...</string>
+    <string name="record_processing">Processing with AI...</string>
+
+    <!-- Search Screen -->
+    <string name="search_title">Search</string>
+    <string name="search_hint">Ask about your memories...</string>
+    <string name="search_examples_title">Try asking:</string>
+    <string name="search_example_1">When is John\'s birthday?</string>
+    <string name="search_example_2">What did I do last weekend?</string>
+    <string name="search_example_3">Show meetings with Sarah</string>
+
+    <!-- People Screen -->
+    <string name="people_title">People</string>
+    <string name="people_empty_state">No people added yet</string>
+    <string name="people_add">Add Person</string>
+
+    <!-- Common -->
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="back">Back</string>
+    <string name="loading">Loading...</string>
+    <string name="error_occurred">An error occurred</string>
+    <string name="retry">Retry</string>
+
+    <!-- Categories -->
+    <string name="category_event">Event</string>
+    <string name="category_promise">Promise</string>
+    <string name="category_meeting">Meeting</string>
+    <string name="category_financial">Financial</string>
+    <string name="category_general">General</string>
+
+    <!-- Relationships -->
+    <string name="relationship_family">Family</string>
+    <string name="relationship_friend">Friend</string>
+    <string name="relationship_colleague">Colleague</string>
+    <string name="relationship_business">Business</string>
+    <string name="relationship_acquaintance">Acquaintance</string>
+    <string name="relationship_other">Other</string>
+
+    <!-- Widgets -->
+    <string name="widget_small_description">Quick record - One tap to start voice recording</string>
+    <string name="widget_medium_description">Quick access to voice and text recording with recent memory preview</string>
+    <string name="widget_large_description">Full widget with date, memory count, reminders and quick record buttons</string>
+    <string name="widget_record">Record</string>
+    <string name="widget_voice">Voice</string>
+    <string name="widget_text">Text</string>
+    <string name="widget_today_reminders">Today\'s Reminders</string>
+    <string name="widget_no_reminders">No reminders today</string>
+    <string name="widget_memories_count">%d memories</string>
+</resources>

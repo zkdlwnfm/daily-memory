@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5516be",
+              "on-secondary-container": "#fffbff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#8455ef",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-tertiary-container": "#fffbff",
+              "on-secondary": "#ffffff",
+              "on-surface": "#141b2b",
+              "tertiary-container": "#b55d00",
+              "on-error": "#ffffff",
+              "surface-dim": "#d3daef",
+              "tertiary-fixed-dim": "#ffb783",
+              "on-primary-container": "#fffbff",
+              "surface-container-highest": "#dce2f7",
+              "surface-bright": "#f9f9ff",
+              "background": "#f9f9ff",
+              "on-primary-fixed": "#07006c",
+              "surface-tint": "#494bd6",
+              "inverse-surface": "#293040",
+              "on-background": "#141b2b",
+              "tertiary-fixed": "#ffdcc5",
+              "primary": "#4648d4",
+              "inverse-on-surface": "#edf0ff",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f1f3ff",
+              "tertiary": "#904900",
+              "primary-fixed": "#e1e0ff",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed-dim": "#d0bcff",
+              "inverse-primary": "#c0c1ff",
+              "secondary": "#6b38d4",
+              "on-primary": "#ffffff",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "surface-container": "#e9edff",
+              "on-error-container": "#93000a",
+              "primary-container": "#6063ee",
+              "surface": "#f9f9ff",
+              "surface-container-high": "#e1e8fd",
+              "on-tertiary-fixed-variant": "#703700",
+              "surface-variant": "#dce2f7",
+              "on-surface-variant": "#464554",
+              "secondary-fixed": "#e9ddff",
+              "error": "#ba1a1a",
+              "outline": "#767586",
+              "outline-variant": "#c7c4d7",
+              "on-tertiary-fixed": "#301400",
+              "on-secondary-fixed": "#23005c"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #f9f9ff;
+      }
+      .glass-ai {
+        background: rgba(132, 85, 239, 0.05);
+        backdrop-filter: blur(12px);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface antialiased pb-32">
+<!-- Top Navigation Bar -->
+<header class="bg-[#f9f9ff]/80 dark:bg-[#141b2b]/80 backdrop-blur-xl flex justify-between items-center w-full px-6 h-16 sticky top-0 z-50">
+<button class="flex items-center gap-2 text-primary font-bold active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">arrow_back</span>
+<span class="font-headline tracking-tight">Back</span>
+</button>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2 rounded-xl font-bold flex items-center gap-2 shadow-[0_8px_32px_rgba(70,72,212,0.2)] active:scale-95 transition-transform">
+<span>Save</span>
+<span class="material-symbols-outlined text-sm">check</span>
+</button>
+</header>
+<main class="max-w-2xl mx-auto px-6 pt-8 space-y-10">
+<!-- SECTION: Your Memory -->
+<section class="space-y-4">
+<div class="flex justify-between items-end px-2">
+<h2 class="font-headline text-2xl font-extrabold tracking-tight">Your Memory</h2>
+<button class="text-primary text-sm font-semibold flex items-center gap-1 hover:underline">
+                    Edit <span class="material-symbols-outlined text-xs">edit</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-[2rem] shadow-[0_8px_32px_rgba(20,27,43,0.02)]">
+<p class="text-on-surface leading-relaxed text-lg font-medium">
+                    Had lunch with Mike downtown. He told me he's getting married next month. Need to prepare a wedding gift around 300 dollars.
+                </p>
+</div>
+</section>
+<!-- SECTION: AI Analysis -->
+<section class="space-y-4">
+<div class="flex items-center gap-2 px-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h2 class="font-headline text-2xl font-extrabold tracking-tight text-secondary">AI Analysis</h2>
+</div>
+<div class="glass-ai border border-secondary/10 rounded-[2.5rem] p-6 space-y-8">
+<!-- People -->
+<div class="space-y-3">
+<label class="flex items-center gap-2 text-on-surface-variant font-bold text-xs tracking-widest uppercase">
+<span class="material-symbols-outlined text-lg">person</span> People
+                    </label>
+<div class="flex flex-wrap gap-2 items-center">
+<div class="bg-secondary-fixed text-on-secondary-fixed-variant px-4 py-2 rounded-full font-bold flex items-center gap-2 text-sm">
+                            Mike
+                            <span class="material-symbols-outlined text-sm cursor-pointer">close</span>
+</div>
+<button class="border border-outline-variant text-on-surface-variant px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">add</span> Add person
+                        </button>
+</div>
+<div class="flex items-center gap-2 text-primary text-xs font-semibold bg-primary/5 p-3 rounded-2xl">
+<span class="material-symbols-outlined text-sm">info</span>
+                        New person detected. Set relationship?
+                    </div>
+</div>
+<!-- Bento Style Grid for Details -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Location -->
+<div class="bg-surface-container-low p-5 rounded-3xl flex flex-col justify-between group">
+<label class="text-on-surface-variant font-bold text-xs tracking-widest uppercase mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">location_on</span> Location
+                        </label>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg">Downtown</span>
+<button class="text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">Change &gt;</button>
+</div>
+</div>
+<!-- Event -->
+<div class="bg-surface-container-low p-5 rounded-3xl flex flex-col justify-between group">
+<label class="text-on-surface-variant font-bold text-xs tracking-widest uppercase mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">celebration</span> Event
+                        </label>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg">Wedding</span>
+<button class="text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">Change &gt;</button>
+</div>
+<p class="text-on-surface-variant text-xs mt-1">Next month</p>
+</div>
+<!-- Amount -->
+<div class="bg-surface-container-low p-5 rounded-3xl flex flex-col justify-between group">
+<label class="text-on-surface-variant font-bold text-xs tracking-widest uppercase mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">payments</span> Amount
+                        </label>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg">$300</span>
+<button class="text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">Change &gt;</button>
+</div>
+<p class="text-on-surface-variant text-xs mt-1">Gift budget</p>
+</div>
+<!-- Category -->
+<div class="bg-surface-container-low p-5 rounded-3xl flex flex-col group">
+<label class="text-on-surface-variant font-bold text-xs tracking-widest uppercase mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">sell</span> Category
+                        </label>
+<div class="flex flex-wrap gap-2">
+<div class="bg-white px-3 py-1.5 rounded-xl text-xs font-bold text-on-surface-variant border border-transparent">General</div>
+<div class="bg-white px-3 py-1.5 rounded-xl text-xs font-bold text-on-surface-variant border border-transparent">Meeting</div>
+<div class="bg-secondary text-on-secondary px-3 py-1.5 rounded-xl text-xs font-bold border border-transparent">Event</div>
+<div class="bg-white px-3 py-1.5 rounded-xl text-xs font-bold text-on-surface-variant border border-transparent">Financial</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: Add Photos -->
+<section class="space-y-4">
+<h2 class="font-headline text-xl font-bold px-2">Add Photos</h2>
+<div class="flex gap-4">
+<button class="w-32 h-32 rounded-[2rem] border-2 border-dashed border-outline-variant flex flex-col items-center justify-center text-on-surface-variant gap-2 hover:bg-surface-container-low transition-colors active:scale-95">
+<span class="material-symbols-outlined text-3xl">add_a_photo</span>
+<span class="text-xs font-bold">Add</span>
+</button>
+</div>
+</section>
+<!-- SECTION: Set Reminder -->
+<section class="space-y-4 pb-12">
+<div class="bg-surface-container-low rounded-[2rem] p-6 space-y-6">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl">notifications</span>
+<h2 class="font-headline text-xl font-bold">Set Reminder</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-primary font-bold text-sm hover:underline">Set up &gt;</button>
+<div class="w-12 h-6 bg-outline-variant rounded-full relative flex items-center p-1 cursor-pointer">
+<div class="w-4 h-4 bg-white rounded-full shadow-sm"></div>
+</div>
+</div>
+</div>
+<div class="bg-white/60 p-5 rounded-2xl border border-white/40 space-y-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<p class="font-semibold text-on-surface">Remind you before the wedding?</p>
+</div>
+<button class="w-full bg-secondary-container text-on-secondary-container py-3 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+                        Yes, remind me 1 day before
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation (Hidden for this sub-page intent per instructions) -->
+</body></html>

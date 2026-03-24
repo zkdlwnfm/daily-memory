@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DailyMemory - Search</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5516be",
+              "on-secondary-container": "#fffbff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#8455ef",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-tertiary-container": "#fffbff",
+              "on-secondary": "#ffffff",
+              "on-surface": "#141b2b",
+              "tertiary-container": "#b55d00",
+              "on-error": "#ffffff",
+              "surface-dim": "#d3daef",
+              "tertiary-fixed-dim": "#ffb783",
+              "on-primary-container": "#fffbff",
+              "surface-container-highest": "#dce2f7",
+              "surface-bright": "#f9f9ff",
+              "background": "#f9f9ff",
+              "on-primary-fixed": "#07006c",
+              "surface-tint": "#494bd6",
+              "inverse-surface": "#293040",
+              "on-background": "#141b2b",
+              "tertiary-fixed": "#ffdcc5",
+              "primary": "#4648d4",
+              "inverse-on-surface": "#edf0ff",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f1f3ff",
+              "tertiary": "#904900",
+              "primary-fixed": "#e1e0ff",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed-dim": "#d0bcff",
+              "inverse-primary": "#c0c1ff",
+              "secondary": "#6b38d4",
+              "on-primary": "#ffffff",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "surface-container": "#e9edff",
+              "on-error-container": "#93000a",
+              "primary-container": "#6063ee",
+              "surface": "#f9f9ff",
+              "surface-container-high": "#e1e8fd",
+              "on-tertiary-fixed-variant": "#703700",
+              "surface-variant": "#dce2f7",
+              "on-surface-variant": "#464554",
+              "secondary-fixed": "#e9ddff",
+              "error": "#ba1a1a",
+              "outline": "#767586",
+              "outline-variant": "#c7c4d7",
+              "on-tertiary-fixed": "#301400",
+              "on-secondary-fixed": "#23005c"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-ai {
+        background: rgba(132, 85, 239, 0.1);
+        backdrop-filter: blur(24px);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface min-h-screen pb-32">
+<!-- Top Navigation Anchor -->
+<header class="bg-[#f9f9ff]/80 dark:bg-[#141b2b]/80 backdrop-blur-xl flex justify-between items-center w-full px-6 h-16 fixed top-0 z-50 shadow-[0_8px_32px_rgba(20,27,43,0.04)]">
+<div class="text-2xl font-extrabold tracking-tighter text-[#141b2b] dark:text-white font-['Manrope']">DailyMemory</div>
+<div class="flex items-center gap-4">
+<button class="hover:bg-[#f1f3ff] dark:hover:bg-white/10 transition-colors p-2 rounded-full active:scale-95 duration-200 ease-out">
+<span class="material-symbols-outlined text-[#141b2b]/60 dark:text-white/60" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="User profile avatar of a smiling person" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Mh6UyGWt_AvcP3jcTmLge_8PPR7mjY7lsIhmA3cuoA3t2JpziMg8bw6aOG92To9iKLQFmlSjVQFRo106YyZQXHA_s_hPGI9B2cWdHR6Sb3YSNcKAzQBdM6BN_9dUQ8r0z0C8PSjNkH5vGPp3YomriPEMB7wkLulMqrpcu6zrR8bTyJD0R8p1yjsOGqBHwuTQ3XuvezGlrh8UnSVPwlYoBJbJ0JcaFTMQAHvvcd36Aqz_V3-rKB80KXwj9tfl17Nz6o7XpHGO16IA"/>
+</div>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-2xl mx-auto space-y-10">
+<!-- Search Section -->
+<section class="space-y-6">
+<div class="relative group">
+<div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-primary" data-icon="search">search</span>
+</div>
+<input class="w-full h-16 pl-14 pr-14 rounded-3xl bg-surface-container-low border-none focus:ring-2 focus:ring-primary/20 text-lg font-medium transition-all shadow-sm" placeholder="🔍 Ask AI anything..." type="text"/>
+<div class="absolute inset-y-0 right-5 flex items-center">
+<button class="p-2 bg-secondary-container/10 rounded-full hover:bg-secondary-container/20 transition-all active:scale-90">
+<span class="material-symbols-outlined text-secondary" data-icon="mic">mic</span>
+</button>
+</div>
+</div>
+<!-- Filter Section -->
+<button class="w-full flex justify-between items-center py-4 px-6 bg-surface-container-low rounded-2xl hover:bg-surface-container transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="tune">tune</span>
+<span class="font-semibold text-on-surface-variant">Filter search</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</button>
+</section>
+<!-- Suggestions Bento -->
+<section class="space-y-4">
+<div class="flex items-center gap-2 px-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="lightbulb">lightbulb</span>
+<h2 class="text-sm font-bold uppercase tracking-widest text-on-surface-variant">Try asking...</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<button class="glass-ai p-5 rounded-3xl text-left border-none hover:bg-secondary-container/20 transition-all group active:scale-[0.98]">
+<p class="text-on-surface font-medium leading-snug">When is Mike's wedding?</p>
+<div class="mt-3 flex justify-end">
+<span class="material-symbols-outlined text-secondary opacity-0 group-hover:opacity-100 transition-opacity" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</button>
+<button class="bg-surface-container-low p-5 rounded-3xl text-left hover:bg-surface-container transition-all group active:scale-[0.98]">
+<p class="text-on-surface font-medium leading-snug">What did I do with Mom last year?</p>
+<div class="mt-3 flex justify-end">
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</button>
+<button class="bg-surface-container-low p-5 rounded-3xl text-left hover:bg-surface-container transition-all group active:scale-[0.98]">
+<p class="text-on-surface font-medium leading-snug">Do I owe anyone money?</p>
+<div class="mt-3 flex justify-end">
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</button>
+<button class="bg-primary/5 p-5 rounded-3xl text-left border-none hover:bg-primary/10 transition-all group active:scale-[0.98]">
+<p class="text-on-surface font-medium leading-snug">Summarize my work meetings this month</p>
+<div class="mt-3 flex justify-end">
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</button>
+</div>
+</section>
+<!-- Recent Searches -->
+<section class="space-y-4">
+<div class="flex justify-between items-center px-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="schedule">schedule</span>
+<h2 class="text-sm font-bold uppercase tracking-widest text-on-surface-variant">Recent searches</h2>
+</div>
+<button class="text-xs font-bold text-primary hover:underline">Clear</button>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-2xl group hover:shadow-sm transition-all">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-400" data-icon="history">history</span>
+<span class="font-medium text-on-surface">Mike wedding</span>
+</div>
+<button class="p-2 opacity-0 group-hover:opacity-100 hover:bg-error/10 rounded-full transition-all">
+<span class="material-symbols-outlined text-error text-lg" data-icon="close">close</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-2xl group hover:shadow-sm transition-all">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-400" data-icon="history">history</span>
+<span class="font-medium text-on-surface">Mom birthday gift</span>
+</div>
+<button class="p-2 opacity-0 group-hover:opacity-100 hover:bg-error/10 rounded-full transition-all">
+<span class="material-symbols-outlined text-error text-lg" data-icon="close">close</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-2xl group hover:shadow-sm transition-all">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-400" data-icon="history">history</span>
+<span class="font-medium text-on-surface">Acme meeting</span>
+</div>
+<button class="p-2 opacity-0 group-hover:opacity-100 hover:bg-error/10 rounded-full transition-all">
+<span class="material-symbols-outlined text-error text-lg" data-icon="close">close</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-white/90 dark:bg-[#141b2b]/90 backdrop-blur-2xl rounded-t-[32px] shadow-[0_-8px_40px_rgba(20,27,43,0.08)]">
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-[#6366F1] transition-all active:scale-90 duration-300">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">Home</span>
+</button>
+<!-- ACTIVE TAB: Search -->
+<button class="flex flex-col items-center justify-center bg-[#6366F1]/10 dark:bg-[#8455ef]/20 text-[#6366F1] dark:text-[#a78bfa] rounded-2xl px-5 py-2 hover:text-[#6366F1] transition-all active:scale-90 duration-300">
+<span class="material-symbols-outlined" data-icon="search" style="font-variation-settings: 'FILL' 1;">search</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">Search</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-[#6366F1] transition-all active:scale-90 duration-300">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">People</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-[#6366F1] transition-all active:scale-90 duration-300">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">Settings</span>
+</button>
+</nav>
+</body></html>

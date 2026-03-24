@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5516be",
+              "on-secondary-container": "#fffbff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#8455ef",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-tertiary-container": "#fffbff",
+              "on-secondary": "#ffffff",
+              "on-surface": "#141b2b",
+              "tertiary-container": "#b55d00",
+              "on-error": "#ffffff",
+              "surface-dim": "#d3daef",
+              "tertiary-fixed-dim": "#ffb783",
+              "on-primary-container": "#fffbff",
+              "surface-container-highest": "#dce2f7",
+              "surface-bright": "#f9f9ff",
+              "background": "#f9f9ff",
+              "on-primary-fixed": "#07006c",
+              "surface-tint": "#494bd6",
+              "inverse-surface": "#293040",
+              "on-background": "#141b2b",
+              "tertiary-fixed": "#ffdcc5",
+              "primary": "#4648d4",
+              "inverse-on-surface": "#edf0ff",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f1f3ff",
+              "tertiary": "#904900",
+              "primary-fixed": "#e1e0ff",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed-dim": "#d0bcff",
+              "inverse-primary": "#c0c1ff",
+              "secondary": "#6b38d4",
+              "on-primary": "#ffffff",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "surface-container": "#e9edff",
+              "on-error-container": "#93000a",
+              "primary-container": "#6063ee",
+              "surface": "#f9f9ff",
+              "surface-container-high": "#e1e8fd",
+              "on-tertiary-fixed-variant": "#703700",
+              "surface-variant": "#dce2f7",
+              "on-surface-variant": "#464554",
+              "secondary-fixed": "#e9ddff",
+              "error": "#ba1a1a",
+              "outline": "#767586",
+              "outline-variant": "#c7c4d7",
+              "on-tertiary-fixed": "#301400",
+              "on-secondary-fixed": "#23005c"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/20">
+<!-- Top Navigation Shell (Responsive Top Bar) -->
+<header class="bg-[#f9f9ff]/80 backdrop-blur-xl flex justify-between items-center w-full px-6 h-16 fixed top-0 z-40 shadow-[0_8px_32px_rgba(20,27,43,0.04)]">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-white overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Portrait of a smiling professional man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJPxLgAzliztznma2Q1_rLeg_daLPpIsBPRSXLyzpnMcxA8o0mzYCA1yFbpfVs69IklVPxWkJhT0N8mT-T3lwEJYjxV-DXIoeceWk8t0cm-uoYelhR3jsxnUBhT3CwgSSMuFLPGgxK8boxPGHz8mWOvyPvu82wjy_p530BikpCOAQ66D9DMr_i7mjLgh1gOc8Jow0m4vleEZeBGEH_U6NhQRMuVrJxme2J4B5cMzQE8LFTYzf1EuIQPdqS00a-JBuf_5eYvHBjEKQ6"/>
+</div>
+<span class="text-2xl font-extrabold tracking-tighter text-[#141b2b] font-headline">DailyMemory</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#141b2b]/60 hover:bg-[#f1f3ff] transition-colors px-3 py-1 rounded-xl" href="#">Home</a>
+<a class="text-[#141b2b]/60 hover:bg-[#f1f3ff] transition-colors px-3 py-1 rounded-xl" href="#">Search</a>
+<a class="text-[#6366F1] font-bold" href="#">People</a>
+<a class="text-[#141b2b]/60 hover:bg-[#f1f3ff] transition-colors px-3 py-1 rounded-xl" href="#">Settings</a>
+</div>
+<button class="material-symbols-outlined text-[#141b2b]/60 hover:bg-[#f1f3ff] p-2 rounded-full transition-colors active:scale-95 duration-200 ease-out">notifications</button>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto min-h-screen">
+<!-- Header Section -->
+<section class="mb-8 flex justify-between items-end">
+<div>
+<h1 class="font-headline font-extrabold text-4xl tracking-tight text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">group</span>
+                    People
+                </h1>
+<p class="text-on-surface-variant text-sm mt-1">Keep track of your meaningful connections</p>
+</div>
+<button class="bg-primary hover:bg-primary-container text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-95">
+<span class="material-symbols-outlined text-lg">add</span>
+                Add
+            </button>
+</section>
+<!-- Search Bar -->
+<section class="mb-8">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-2xl focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all placeholder:text-outline/60 text-on-surface font-medium" placeholder="Search people..." type="text"/>
+</div>
+</section>
+<!-- Sort Tabs -->
+<section class="mb-8 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+<button class="whitespace-nowrap flex items-center gap-2 px-5 py-2 bg-primary-container text-white rounded-full text-sm font-semibold shadow-md shadow-primary/10 transition-all">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">circle</span>
+                Recent
+            </button>
+<button class="whitespace-nowrap flex items-center gap-2 px-5 py-2 bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high rounded-full text-sm font-semibold transition-all">
+<span class="material-symbols-outlined text-sm">circle</span>
+                A-Z
+            </button>
+<button class="whitespace-nowrap flex items-center gap-2 px-5 py-2 bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high rounded-full text-sm font-semibold transition-all">
+<span class="material-symbols-outlined text-sm">circle</span>
+                Frequent
+            </button>
+</section>
+<!-- People List -->
+<div class="space-y-4">
+<!-- Card 1: Mike -->
+<div class="group relative bg-surface-container-lowest p-5 rounded-[2rem] flex items-center gap-4 hover:shadow-[0_8px_32px_rgba(20,27,43,0.04)] transition-all active:scale-[0.98] duration-300">
+<div class="relative">
+<div class="w-14 h-14 rounded-2xl bg-primary-fixed overflow-hidden">
+<img alt="Mike" class="w-full h-full object-cover" data-alt="Close up of a man with short hair and a beard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCG1-K84yCE44I1bUucgNtzlSiA5lWOE02XqINUgZmKIJMHD1XIPHMwrbYeDiWwnfxd0H7jzFAvFdfaVpzSkSwKpTo3Z9088f7qwhuCMxLKfz84gEoxj_0H0KABwBN8QeWkDob5xExChgmWX0E9E9ORPaGZy4gnS9wH6hr7qb_TIl1pciuvcbuzh1PzBKIBpL2Z2Q0wVKbTg9vPVzgMD8RGd-FH30oygsNacgMCn4T53VvSjW97MLctC1jfnufWMeCEiPOew6wDToyk"/>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-on-surface text-lg">Mike</h3>
+<span class="material-symbols-outlined text-outline/40 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">Friend · Last seen Mar 23</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="flex items-center gap-1 text-[11px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-lg">
+<span class="material-symbols-outlined text-xs">edit_note</span>
+                            12 memories
+                        </span>
+</div>
+</div>
+</div>
+<!-- Card 2: Mom -->
+<div class="group relative bg-surface-container-lowest p-5 rounded-[2rem] flex items-center gap-4 hover:shadow-[0_8px_32px_rgba(20,27,43,0.04)] transition-all active:scale-[0.98] duration-300 border-l-4 border-tertiary-container">
+<div class="relative">
+<div class="w-14 h-14 rounded-2xl bg-secondary-fixed overflow-hidden">
+<img alt="Mom" class="w-full h-full object-cover" data-alt="Portrait of a kind smiling older woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCICLZvx95CtsFQRdqLJ2XQRuioZK8RoX6VMg8jJIZbjzOKaPo2lwaGEpcUdmR7liWbzDbiciBy4i_A0KM8C731eaUpno9NyQ1Vn3K9NJYW5bCrsI54ro-qFdNIjruvWuoZoC1zhOIOorgwsqvempnOxeBuTwIvVsdVKXK1ATssV-Q5mgDHd-T5hMHS1FSs_zUVnxu9mzRloKInSa-fOvaFtYYaQrbZyMf2XyIiWBipFLuhXvqiU4A8tGCWEgZengPa4S6GjKX6vFJw"/>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-on-surface text-lg">Mom</h3>
+<span class="material-symbols-outlined text-outline/40 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">Family · Last seen Mar 15</p>
+<div class="flex flex-wrap items-center gap-2 mt-2">
+<span class="flex items-center gap-1 text-[11px] font-bold text-secondary bg-secondary/5 px-2 py-0.5 rounded-lg">
+<span class="material-symbols-outlined text-xs">edit_note</span>
+                            28 memories
+                        </span>
+<span class="flex items-center gap-1 text-[11px] font-bold text-tertiary-container bg-tertiary-fixed/30 px-2 py-0.5 rounded-lg">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">cake</span>
+                            Birthday tomorrow!
+                        </span>
+</div>
+</div>
+</div>
+<!-- Card 3: John (Work) -->
+<div class="group relative bg-surface-container-lowest p-5 rounded-[2rem] flex items-center gap-4 hover:shadow-[0_8px_32px_rgba(20,27,43,0.04)] transition-all active:scale-[0.98] duration-300">
+<div class="relative">
+<div class="w-14 h-14 rounded-2xl bg-surface-container-high overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-2xl">person</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-on-surface text-lg">John (Work)</h3>
+<span class="material-symbols-outlined text-outline/40 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">Colleague · Last seen Mar 20</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="flex items-center gap-1 text-[11px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-lg">
+<span class="material-symbols-outlined text-xs">edit_note</span>
+                            8 memories
+                        </span>
+</div>
+</div>
+</div>
+<!-- Card 4: Sarah -->
+<div class="group relative bg-surface-container-lowest p-5 rounded-[2rem] flex items-center gap-4 hover:shadow-[0_8px_32px_rgba(20,27,43,0.04)] transition-all active:scale-[0.98] duration-300 border-l-4 border-error">
+<div class="relative">
+<div class="w-14 h-14 rounded-2xl bg-tertiary-fixed-dim overflow-hidden">
+<img alt="Sarah" class="w-full h-full object-cover" data-alt="Portrait of a woman with long hair smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoR1On5tjO3rNLKdujXwiH16-xHjvBGGbJaSjPWM4VgoSxjnxj860cDSWH3H07eHN1X4ZwGVJTz3hazM9Dx5SDlmOz2mGGrpWN3BghyWtHhYe2fcv-Pio5o7hZR55ElZz2-xZrsTL65WXoBoPqh8RndikO3q2vxUP34gs3NCSqyMdpbtc3qHAniYExr1zmaCDbbrBL4Q9qu62AYTqqtCaSKG8k8lD_HgtI8GH2BvxVO67kMY3ZMGsubKdD3QlVbZ3ll4PhnIMf5U5V"/>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-on-surface text-lg">Sarah</h3>
+<span class="material-symbols-outlined text-outline/40 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">Friend · Last seen Feb 10</p>
+<div class="flex flex-wrap items-center gap-2 mt-2">
+<span class="flex items-center gap-1 text-[11px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-lg">
+<span class="material-symbols-outlined text-xs">edit_note</span>
+                            5 memories
+                        </span>
+<span class="flex items-center gap-1 text-[11px] font-bold text-error bg-error-container/40 px-2 py-0.5 rounded-lg">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">warning</span>
+                            No contact for 41 days
+                        </span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-white/90 dark:bg-[#141b2b]/90 backdrop-blur-2xl shadow-[0_-8px_40px_rgba(20,27,43,0.08)] rounded-t-[32px] md:hidden">
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1">search</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#6366F1]/10 text-[#6366F1] rounded-2xl px-5 py-2 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">People</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">Settings</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,80 @@
+name: DailyMemory
+options:
+  bundleIdPrefix: com.dailymemory
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "14.0"
+  generateEmptyDirectories: true
+  minimumXcodeGenVersion: "2.35.0"
+fileGroups:
+  - DailyMemory
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  DailyMemory:
+    type: application
+    platform: iOS
+    sources:
+      - path: DailyMemory
+        excludes:
+          - "**/*.xcassets"
+      - path: DailyMemory/Resources/Assets.xcassets
+        buildPhase: resources
+        optional: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dailymemory.app
+        INFOPLIST_FILE: DailyMemory/Resources/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: true
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: true
+        INFOPLIST_KEY_UILaunchScreen_Generation: true
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: "DailyMemory needs microphone access for voice recording"
+        INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: "DailyMemory uses speech recognition to transcribe your voice memos"
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "DailyMemory needs access to your photos to attach them to memories"
+        INFOPLIST_KEY_NSCameraUsageDescription: "DailyMemory can capture photos to add to your memories"
+        INFOPLIST_KEY_NSUserNotificationsUsageDescription: "DailyMemory sends reminders for your important memories"
+    dependencies: []
+
+  DailyMemoryWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: DailyMemoryWidget
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dailymemory.app.widget
+        INFOPLIST_FILE: DailyMemoryWidget/Info.plist
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_KEY_CFBundleDisplayName: DailyMemoryWidget
+        INFOPLIST_KEY_NSHumanReadableCopyright: ""
+    dependencies:
+      - target: DailyMemory
+        embed: false
+
+schemes:
+  DailyMemory:
+    build:
+      targets:
+        DailyMemory: all
+        DailyMemoryWidget: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    archive:
+      config: Release

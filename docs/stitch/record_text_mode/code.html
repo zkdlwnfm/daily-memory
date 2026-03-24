@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DailyMemory - Create New Memory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5516be",
+              "on-secondary-container": "#fffbff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#8455ef",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-tertiary-container": "#fffbff",
+              "on-secondary": "#ffffff",
+              "on-surface": "#141b2b",
+              "tertiary-container": "#b55d00",
+              "on-error": "#ffffff",
+              "surface-dim": "#d3daef",
+              "tertiary-fixed-dim": "#ffb783",
+              "on-primary-container": "#fffbff",
+              "surface-container-highest": "#dce2f7",
+              "surface-bright": "#f9f9ff",
+              "background": "#f9f9ff",
+              "on-primary-fixed": "#07006c",
+              "surface-tint": "#494bd6",
+              "inverse-surface": "#293040",
+              "on-background": "#141b2b",
+              "tertiary-fixed": "#ffdcc5",
+              "primary": "#4648d4",
+              "inverse-on-surface": "#edf0ff",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f1f3ff",
+              "tertiary": "#904900",
+              "primary-fixed": "#e1e0ff",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed-dim": "#d0bcff",
+              "inverse-primary": "#c0c1ff",
+              "secondary": "#6b38d4",
+              "on-primary": "#ffffff",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "surface-container": "#e9edff",
+              "on-error-container": "#93000a",
+              "primary-container": "#6063ee",
+              "surface": "#f9f9ff",
+              "surface-container-high": "#e1e8fd",
+              "on-tertiary-fixed-variant": "#703700",
+              "surface-variant": "#dce2f7",
+              "on-surface-variant": "#464554",
+              "secondary-fixed": "#e9ddff",
+              "error": "#ba1a1a",
+              "outline": "#767586",
+              "outline-variant": "#c7c4d7",
+              "on-tertiary-fixed": "#301400",
+              "on-secondary-fixed": "#23005c"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/20">
+<!-- Header Suppression Rule Applied (Transactional Flow) -->
+<!-- Content Canvas Starts -->
+<main class="min-h-screen flex flex-col max-w-2xl mx-auto bg-surface relative">
+<!-- Header Navigation -->
+<header class="flex justify-between items-center px-6 h-16 sticky top-0 bg-surface/80 backdrop-blur-xl z-10">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+<span class="font-label font-medium text-sm">✕ Cancel</span>
+</button>
+<button class="flex items-center gap-2 text-primary hover:text-primary-container transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[20px]" data-icon="mic">mic</span>
+<span class="font-label font-semibold text-sm">🎤 Voice input</span>
+</button>
+</header>
+<!-- Main Editor Area -->
+<section class="flex-1 flex flex-col px-6 pt-8 gap-10">
+<!-- Dynamic Date Display (Editorial Touch) -->
+<div class="space-y-1">
+<p class="text-on-surface-variant/60 font-label text-xs uppercase tracking-widest">Today's Entry</p>
+<h1 class="font-headline font-extrabold text-3xl tracking-tight text-on-surface">New Memory</h1>
+</div>
+<!-- Text Input Container -->
+<div class="relative flex flex-col flex-1 min-h-[300px]">
+<textarea class="flex-1 w-full bg-transparent border-none focus:ring-0 text-xl font-body leading-relaxed placeholder:text-on-surface-variant/30 resize-none py-2" placeholder="What happened today?"></textarea>
+<!-- Character Count & Subtle Decoration -->
+<div class="flex justify-end items-center pt-4 border-t border-outline-variant/15">
+<span class="font-label text-xs font-medium text-on-surface-variant/40 tabular-nums">0/500</span>
+</div>
+</div>
+<!-- Media Section -->
+<div class="space-y-4 pb-32">
+<h3 class="font-headline font-bold text-sm tracking-wide text-on-surface-variant/80 uppercase">📸 Add Photos</h3>
+<div class="flex flex-wrap gap-4">
+<!-- Square Add Button -->
+<button class="w-24 h-24 rounded-2xl bg-surface-container-low border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center gap-1 group hover:bg-surface-container-high hover:border-primary/30 transition-all active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant/40 group-hover:text-primary transition-colors" data-icon="add">add</span>
+<span class="text-[10px] font-bold text-on-surface-variant/40 group-hover:text-primary uppercase tracking-tighter">Upload</span>
+</button>
+<!-- Example Placeholder Card (Subtle Tonal Depth) -->
+<div class="w-24 h-24 rounded-2xl bg-surface-container-low relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-tertiary-container/5 to-transparent"></div>
+<div class="w-full h-full flex items-center justify-center opacity-20">
+<span class="material-symbols-outlined text-3xl" data-icon="image">image</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Persistent Action Dock (Bento inspired bottom bar) -->
+<footer class="fixed bottom-0 left-0 right-0 max-w-2xl mx-auto p-6 bg-gradient-to-t from-surface via-surface/95 to-transparent">
+<div class="flex flex-col gap-3">
+<!-- Primary AI Action -->
+<button class="w-full h-14 rounded-xl bg-gradient-to-br from-primary to-primary-container text-on-primary font-label font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_8px_32px_rgba(70,72,212,0.15)] active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-lg" data-icon="auto_awesome">auto_awesome</span>
+                    ✨ Analyze with AI
+                </button>
+<!-- Secondary Save Action -->
+<button class="w-full h-12 rounded-xl text-on-surface-variant font-label font-semibold text-sm hover:bg-surface-container-high transition-colors active:scale-95">
+                    Save without analysis
+                </button>
+</div>
+<!-- Home Indicator (Safe Area Padding) -->
+<div class="h-4"></div>
+</footer>
+<!-- Decorative UI Element (Editorial Whisper) -->
+<div class="absolute -right-4 top-40 w-24 h-24 bg-secondary-container/5 blur-3xl rounded-full pointer-events-none"></div>
+<div class="absolute -left-4 top-80 w-32 h-32 bg-primary-container/5 blur-3xl rounded-full pointer-events-none"></div>
+</main>
+<!-- Glass Overlay for specific states (Mockup Only) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-surface/60 backdrop-blur-md" id="ai-processing-overlay">
+<div class="flex flex-col items-center gap-6">
+<div class="w-16 h-16 rounded-full bg-secondary-container/10 flex items-center justify-center relative">
+<div class="absolute inset-0 rounded-full border-2 border-secondary-container border-t-transparent animate-spin"></div>
+<span class="material-symbols-outlined text-secondary text-2xl" data-icon="neurology">neurology</span>
+</div>
+<p class="font-headline font-bold text-on-surface tracking-tight">Curating your memories...</p>
+</div>
+</div>
+</body></html>

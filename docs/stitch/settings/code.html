@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DailyMemory - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Plus_Jakarta_Sans:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#5516be",
+              "on-secondary-container": "#fffbff",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#8455ef",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-tertiary-container": "#fffbff",
+              "on-secondary": "#ffffff",
+              "on-surface": "#141b2b",
+              "tertiary-container": "#b55d00",
+              "on-error": "#ffffff",
+              "surface-dim": "#d3daef",
+              "tertiary-fixed-dim": "#ffb783",
+              "on-primary-container": "#fffbff",
+              "surface-container-highest": "#dce2f7",
+              "surface-bright": "#f9f9ff",
+              "background": "#f9f9ff",
+              "on-primary-fixed": "#07006c",
+              "surface-tint": "#494bd6",
+              "inverse-surface": "#293040",
+              "on-background": "#141b2b",
+              "tertiary-fixed": "#ffdcc5",
+              "primary": "#4648d4",
+              "inverse-on-surface": "#edf0ff",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f1f3ff",
+              "tertiary": "#904900",
+              "primary-fixed": "#e1e0ff",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed-dim": "#d0bcff",
+              "inverse-primary": "#c0c1ff",
+              "secondary": "#6b38d4",
+              "on-primary": "#ffffff",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "surface-container": "#e9edff",
+              "on-error-container": "#93000a",
+              "primary-container": "#6063ee",
+              "surface": "#f9f9ff",
+              "surface-container-high": "#e1e8fd",
+              "on-tertiary-fixed-variant": "#703700",
+              "surface-variant": "#dce2f7",
+              "on-surface-variant": "#464554",
+              "secondary-fixed": "#e9ddff",
+              "error": "#ba1a1a",
+              "outline": "#767586",
+              "outline-variant": "#c7c4d7",
+              "on-tertiary-fixed": "#301400",
+              "on-secondary-fixed": "#23005c"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f9f9ff;
+            color: #141b2b;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-[#f9f9ff]/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(20,27,43,0.04)] fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Portrait of a smiling young man profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClVk6dNS2KzRwTQeZnFYl9hjAVSopolY7p_IoFNp5sv8z3jz72XdXyXaqU5IQQ-Kb0DeEzkoIgka6ANqwBav4cuW83DaDBakqcxPT7pvnrztJINxPqRQL9xRuzz0-ioQdqQCosTxF8plA51cVYLaRQ0NMm1JVOzxCGqb_NZkNdJpItzq2Pg620RcvUGRc0SJj79XgHkGPcGAL2bc-C_A9lWUbjXLo3jQWCvw8V_6j-QtNB8Ot46WPItTeF7YdhZmuIIifmCqOBuMLA"/>
+</div>
+<span class="text-2xl font-extrabold tracking-tighter text-[#141b2b] font-['Manrope']">DailyMemory</span>
+</div>
+<button class="text-[#6366F1] active:scale-95 duration-200 ease-out p-2 rounded-full hover:bg-[#f1f3ff] transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="pt-24 px-4 max-w-2xl mx-auto space-y-10">
+<!-- Screen Title -->
+<div class="px-2">
+<h1 class="font-headline font-extrabold text-4xl tracking-tight text-on-surface">Settings</h1>
+</div>
+<!-- Section: Account -->
+<section class="space-y-4">
+<h2 class="px-2 text-on-surface-variant font-bold text-sm tracking-widest uppercase opacity-60">Account</h2>
+<div class="bg-surface-container-lowest rounded-[28px] p-2">
+<div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors rounded-2xl group active:scale-[0.98] duration-200">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="Close up of a man's face for account avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwsZZSoDRgMbbYNNIJka266MpB0y7neNkyXIvMa-3WqS4kK691eO_8MrmawmxH1DZCRS0ZCERuB6mDSDBRG5HMeBFU3VcwhXFpRDeiPTuUhsHKaaxMMdROT3upQEXWXg5NXRU1dvpa-_SK89owvrdG2hdU6QvMuDuE1qaMRixx_gmO_6VqOeGVxrmL1_KVnmcbHKN1JvPd59Sm2v3LP13NbNg7RMDufO0n0Hw2wddRMxg9X5FFD6kehTN_Ggn9vvSby8MP1y4QChO3"/>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface text-lg">alex@email.com</span>
+<span class="text-primary font-bold text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+                                Premium Plan
+                            </span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Section: Data -->
+<section class="space-y-4">
+<h2 class="px-2 text-on-surface-variant font-bold text-sm tracking-widest uppercase opacity-60">Data</h2>
+<div class="bg-surface-container-lowest rounded-[28px] overflow-hidden">
+<!-- Storage -->
+<div class="flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">cloud_done</span>
+</div>
+<span class="font-semibold text-on-surface">Storage &amp; Cloud sync</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<!-- Sync Status -->
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">sync</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Sync status</span>
+<span class="text-xs text-on-surface-variant">Last: Just now</span>
+</div>
+</div>
+<button class="bg-surface-container-low text-primary font-bold text-xs px-4 py-2 rounded-full active:scale-95 transition-all">Sync now</button>
+</div>
+<!-- Export -->
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-on-surface/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface">upload</span>
+</div>
+<span class="font-semibold text-on-surface">Export data</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<!-- Import -->
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-on-surface/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface">download</span>
+</div>
+<span class="font-semibold text-on-surface">Import data</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Section: Notifications -->
+<section class="space-y-4">
+<h2 class="px-2 text-on-surface-variant font-bold text-sm tracking-widest uppercase opacity-60">Notifications</h2>
+<div class="bg-surface-container-lowest rounded-[28px] overflow-hidden">
+<!-- Reminders -->
+<div class="flex items-center justify-between p-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-orange-600">notifications_active</span>
+</div>
+<span class="font-semibold text-on-surface">Reminders</span>
+</div>
+<div class="w-12 h-6 bg-primary rounded-full relative flex items-center px-1">
+<div class="w-4 h-4 bg-white rounded-full ml-auto shadow-sm"></div>
+</div>
+</div>
+<!-- Daily Prompt -->
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600">edit_note</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Daily prompt</span>
+<span class="text-xs text-on-surface-variant">Every day at 9 PM</span>
+</div>
+</div>
+<div class="w-12 h-6 bg-primary rounded-full relative flex items-center px-1">
+<div class="w-4 h-4 bg-white rounded-full ml-auto shadow-sm"></div>
+</div>
+</div>
+<!-- Quiet Hours -->
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-600">bedtime</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Quiet hours</span>
+<span class="text-xs text-on-surface-variant">9 AM - 10 PM</span>
+</div>
+</div>
+<span class="text-primary font-bold text-sm">Set &gt;</span>
+</div>
+<!-- On this day -->
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-pink-600">calendar_today</span>
+</div>
+<span class="font-semibold text-on-surface">On this day</span>
+</div>
+<div class="w-12 h-6 bg-primary rounded-full relative flex items-center px-1">
+<div class="w-4 h-4 bg-white rounded-full ml-auto shadow-sm"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Privacy & Security -->
+<section class="space-y-4">
+<h2 class="px-2 text-on-surface-variant font-bold text-sm tracking-widest uppercase opacity-60">Privacy &amp; Security</h2>
+<div class="bg-surface-container-lowest rounded-[28px] overflow-hidden">
+<div class="flex items-center justify-between p-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600">lock</span>
+</div>
+<span class="font-semibold text-on-surface">App lock (Face ID)</span>
+</div>
+<div class="w-12 h-6 bg-primary rounded-full relative flex items-center px-1">
+<div class="w-4 h-4 bg-white rounded-full ml-auto shadow-sm"></div>
+</div>
+</div>
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-yellow-600">visibility_off</span>
+</div>
+<span class="font-semibold text-on-surface">Show locked memories</span>
+</div>
+<div class="w-12 h-6 bg-surface-container-highest rounded-full relative flex items-center px-1">
+<div class="w-4 h-4 bg-white rounded-full mr-auto shadow-sm"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: AI -->
+<section class="space-y-4">
+<h2 class="px-2 text-on-surface-variant font-bold text-sm tracking-widest uppercase opacity-60">AI Features</h2>
+<div class="bg-secondary-container/10 p-1 rounded-[32px]">
+<div class="bg-surface-container-lowest rounded-[28px] overflow-hidden">
+<div class="flex items-center justify-between p-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<span class="font-semibold text-on-surface">Auto-analyze memories</span>
+</div>
+<div class="w-12 h-6 bg-primary rounded-full relative flex items-center px-1">
+<div class="w-4 h-4 bg-white rounded-full ml-auto shadow-sm"></div>
+</div>
+</div>
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">lightbulb</span>
+</div>
+<span class="font-semibold text-on-surface">Smart reminder suggestions</span>
+</div>
+<div class="w-12 h-6 bg-primary rounded-full relative flex items-center px-1">
+<div class="w-4 h-4 bg-white rounded-full ml-auto shadow-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: About -->
+<section class="space-y-4">
+<h2 class="px-2 text-on-surface-variant font-bold text-sm tracking-widest uppercase opacity-60">About</h2>
+<div class="bg-surface-container-lowest rounded-[28px] overflow-hidden">
+<div class="flex items-center justify-between p-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">info</span>
+</div>
+<span class="font-semibold text-on-surface">Version</span>
+</div>
+<span class="text-on-surface-variant font-medium">1.0.0</span>
+</div>
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">description</span>
+</div>
+<span class="font-semibold text-on-surface">Privacy Policy</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">policy</span>
+</div>
+<span class="font-semibold text-on-surface">Terms of Service</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">chat_bubble</span>
+</div>
+<span class="font-semibold text-on-surface">Contact Support</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-5 border-t border-surface-container-low hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant">star</span>
+</div>
+<span class="font-semibold text-on-surface">Rate the App</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Sign Out -->
+<div class="flex justify-center pb-12">
+<button class="text-on-surface-variant/60 font-bold tracking-wide hover:text-error transition-colors px-8 py-4 rounded-2xl active:scale-95 duration-200">
+                Sign Out
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-white/90 backdrop-blur-2xl flex justify-around items-center px-4 pb-8 pt-4 shadow-[0_-8px_40px_rgba(20,27,43,0.08)] rounded-t-[32px]">
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 transition-all hover:text-[#6366F1] active:scale-90 duration-300 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 transition-all hover:text-[#6366F1] active:scale-90 duration-300 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">Search</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 transition-all hover:text-[#6366F1] active:scale-90 duration-300 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">People</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#6366F1]/10 text-[#6366F1] rounded-2xl px-5 py-2 active:scale-90 duration-300 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px]">Settings</span>
+</div>
+</nav>
+</body></html>
