@@ -15,6 +15,14 @@ final class UserPreferences: ObservableObject {
         static let biometricEnabled = "biometric_enabled"
         static let autoSaveEnabled = "auto_save_enabled"
         static let lastSyncTime = "last_sync_time"
+        static let recentSearches = "recent_searches"
+        static let dailyPromptEnabled = "daily_prompt_enabled"
+        static let quietHoursStart = "quiet_hours_start"
+        static let quietHoursEnd = "quiet_hours_end"
+        static let onThisDayEnabled = "on_this_day_enabled"
+        static let showLockedMemories = "show_locked_memories"
+        static let autoAnalyzeEnabled = "auto_analyze_enabled"
+        static let smartRemindersEnabled = "smart_reminders_enabled"
     }
 
     // MARK: - Published Properties
@@ -47,6 +55,38 @@ final class UserPreferences: ObservableObject {
         didSet { defaults.set(lastSyncTime, forKey: Keys.lastSyncTime) }
     }
 
+    @Published var recentSearches: [String] {
+        didSet { defaults.set(recentSearches, forKey: Keys.recentSearches) }
+    }
+
+    @Published var dailyPromptEnabled: Bool {
+        didSet { defaults.set(dailyPromptEnabled, forKey: Keys.dailyPromptEnabled) }
+    }
+
+    @Published var quietHoursStart: String {
+        didSet { defaults.set(quietHoursStart, forKey: Keys.quietHoursStart) }
+    }
+
+    @Published var quietHoursEnd: String {
+        didSet { defaults.set(quietHoursEnd, forKey: Keys.quietHoursEnd) }
+    }
+
+    @Published var onThisDayEnabled: Bool {
+        didSet { defaults.set(onThisDayEnabled, forKey: Keys.onThisDayEnabled) }
+    }
+
+    @Published var showLockedMemories: Bool {
+        didSet { defaults.set(showLockedMemories, forKey: Keys.showLockedMemories) }
+    }
+
+    @Published var autoAnalyzeEnabled: Bool {
+        didSet { defaults.set(autoAnalyzeEnabled, forKey: Keys.autoAnalyzeEnabled) }
+    }
+
+    @Published var smartRemindersEnabled: Bool {
+        didSet { defaults.set(smartRemindersEnabled, forKey: Keys.smartRemindersEnabled) }
+    }
+
     // MARK: - Theme Mode Enum
 
     enum ThemeMode: String, CaseIterable {
@@ -74,6 +114,14 @@ final class UserPreferences: ObservableObject {
         self.biometricEnabled = defaults.bool(forKey: Keys.biometricEnabled)
         self.autoSaveEnabled = defaults.object(forKey: Keys.autoSaveEnabled) as? Bool ?? true
         self.lastSyncTime = defaults.object(forKey: Keys.lastSyncTime) as? Date
+        self.recentSearches = defaults.stringArray(forKey: Keys.recentSearches) ?? []
+        self.dailyPromptEnabled = defaults.object(forKey: Keys.dailyPromptEnabled) as? Bool ?? true
+        self.quietHoursStart = defaults.string(forKey: Keys.quietHoursStart) ?? "10 PM"
+        self.quietHoursEnd = defaults.string(forKey: Keys.quietHoursEnd) ?? "9 AM"
+        self.onThisDayEnabled = defaults.object(forKey: Keys.onThisDayEnabled) as? Bool ?? true
+        self.showLockedMemories = defaults.bool(forKey: Keys.showLockedMemories)
+        self.autoAnalyzeEnabled = defaults.object(forKey: Keys.autoAnalyzeEnabled) as? Bool ?? true
+        self.smartRemindersEnabled = defaults.object(forKey: Keys.smartRemindersEnabled) as? Bool ?? true
     }
 
     // MARK: - Methods
@@ -87,6 +135,14 @@ final class UserPreferences: ObservableObject {
         biometricEnabled = false
         autoSaveEnabled = true
         lastSyncTime = nil
+        recentSearches = []
+        dailyPromptEnabled = true
+        quietHoursStart = "10 PM"
+        quietHoursEnd = "9 AM"
+        onThisDayEnabled = true
+        showLockedMemories = false
+        autoAnalyzeEnabled = true
+        smartRemindersEnabled = true
 
         // Also clear from UserDefaults
         let domain = Bundle.main.bundleIdentifier!

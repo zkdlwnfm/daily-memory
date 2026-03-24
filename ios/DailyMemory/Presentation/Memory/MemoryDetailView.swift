@@ -116,6 +116,7 @@ struct MemoryDetailView: View {
     @StateObject private var viewModel = MemoryDetailViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var showMenu = false
+    @State private var showEditSheet = false
 
     var body: some View {
         ZStack {
@@ -164,7 +165,7 @@ struct MemoryDetailView: View {
                         }
 
                         Button {
-                            // Edit action
+                            showEditSheet = true
                         } label: {
                             Image(systemName: "pencil")
                         }
@@ -202,6 +203,12 @@ struct MemoryDetailView: View {
         }
         .task {
             await viewModel.loadMemory(id: memoryId)
+        }
+        .sheet(isPresented: $showEditSheet) {
+            MemoryEditView(memoryId: memoryId)
+                .onDisappear {
+                    Task { await viewModel.loadMemory(id: memoryId) }
+                }
         }
     }
 }

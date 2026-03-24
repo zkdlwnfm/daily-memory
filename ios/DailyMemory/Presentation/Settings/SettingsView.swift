@@ -4,35 +4,85 @@ import SwiftUI
 @MainActor
 class SettingsViewModel: ObservableObject {
     @Published var userEmail: String = "alex@email.com"
-    @Published var isPremium: Bool = true
-    @Published var lastSyncTime: String = "Just now"
+    @Published var isPremium: Bool = false
+    @Published var lastSyncTimeDisplay: String = "Never"
 
     // Notifications
-    @Published var remindersEnabled: Bool = true
-    @Published var dailyPromptEnabled: Bool = true
+    @Published var remindersEnabled: Bool = true {
+        didSet { userPreferences.notificationsEnabled = remindersEnabled }
+    }
+    @Published var dailyPromptEnabled: Bool = true {
+        didSet { userPreferences.dailyPromptEnabled = dailyPromptEnabled }
+    }
     @Published var dailyPromptTime: String = "9 PM"
-    @Published var quietHoursStart: String = "10 PM"
-    @Published var quietHoursEnd: String = "9 AM"
-    @Published var onThisDayEnabled: Bool = true
+    @Published var quietHoursStart: String = "10 PM" {
+        didSet { userPreferences.quietHoursStart = quietHoursStart }
+    }
+    @Published var quietHoursEnd: String = "9 AM" {
+        didSet { userPreferences.quietHoursEnd = quietHoursEnd }
+    }
+    @Published var onThisDayEnabled: Bool = true {
+        didSet { userPreferences.onThisDayEnabled = onThisDayEnabled }
+    }
 
     // Privacy
-    @Published var appLockEnabled: Bool = true
-    @Published var showLockedMemories: Bool = false
+    @Published var appLockEnabled: Bool = false {
+        didSet { userPreferences.biometricEnabled = appLockEnabled }
+    }
+    @Published var showLockedMemories: Bool = false {
+        didSet { userPreferences.showLockedMemories = showLockedMemories }
+    }
 
     // AI
-    @Published var autoAnalyzeEnabled: Bool = true
-    @Published var smartRemindersEnabled: Bool = true
+    @Published var autoAnalyzeEnabled: Bool = true {
+        didSet { userPreferences.autoAnalyzeEnabled = autoAnalyzeEnabled }
+    }
+    @Published var smartRemindersEnabled: Bool = true {
+        didSet { userPreferences.smartRemindersEnabled = smartRemindersEnabled }
+    }
 
     // App Info
-    let appVersion: String = "1.0.0"
+    let appVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+
+    private let userPreferences = UserPreferences.shared
+
+    init() {
+        loadFromPreferences()
+    }
+
+    private func loadFromPreferences() {
+        remindersEnabled = userPreferences.notificationsEnabled
+        dailyPromptEnabled = userPreferences.dailyPromptEnabled
+        quietHoursStart = userPreferences.quietHoursStart
+        quietHoursEnd = userPreferences.quietHoursEnd
+        onThisDayEnabled = userPreferences.onThisDayEnabled
+        appLockEnabled = userPreferences.biometricEnabled
+        showLockedMemories = userPreferences.showLockedMemories
+        autoAnalyzeEnabled = userPreferences.autoAnalyzeEnabled
+        smartRemindersEnabled = userPreferences.smartRemindersEnabled
+        updateSyncTimeDisplay()
+    }
+
+    private func updateSyncTimeDisplay() {
+        if let date = userPreferences.lastSyncTime {
+            let formatter = RelativeDateTimeFormatter()
+            lastSyncTimeDisplay = formatter.localizedString(for: date, relativeTo: Date())
+        } else {
+            lastSyncTimeDisplay = "Never"
+        }
+    }
 
     func syncNow() {
-        lastSyncTime = "Just now"
+        userPreferences.lastSyncTime = Date()
+        updateSyncTimeDisplay()
     }
 
     func signOut() {
-        // TODO: Implement sign out
+        userPreferences.clearAll()
+        loadFromPreferences()
     }
+
+    var lastSyncTime: String { lastSyncTimeDisplay }
 }
 
 // MARK: - Main View

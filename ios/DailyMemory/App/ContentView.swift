@@ -4,11 +4,12 @@ struct ContentView: View {
     @EnvironmentObject var deepLinkHandler: DeepLinkHandler
     @State private var selectedTab: Tab = .home
     @State private var showRecordSheet = false
+    @State private var homeRefreshTrigger = UUID()
 
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                HomeView()
+                HomeView(refreshTrigger: homeRefreshTrigger)
                     .tag(Tab.home)
 
                 SearchView()
@@ -26,6 +27,12 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showRecordSheet) {
             RecordView()
+        }
+        .onChange(of: showRecordSheet) { isShowing in
+            // Refresh home view when record sheet closes
+            if !isShowing {
+                homeRefreshTrigger = UUID()
+            }
         }
         // Handle deep links from widgets
         .onChange(of: deepLinkHandler.shouldShowRecordSheet) { newValue in

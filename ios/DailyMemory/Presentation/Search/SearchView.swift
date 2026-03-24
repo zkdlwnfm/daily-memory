@@ -6,8 +6,11 @@ class SearchViewModel: ObservableObject {
     @Published var query: String = ""
     @Published var searchState: SearchState = .initial
     @Published var aiResponse: AIResponse?
-    @Published var recentSearches: [String] = ["Mike wedding", "Mom birthday gift", "Acme meeting"]
+    @Published var recentSearches: [String] = []
     @Published var suggestions: [Suggestion] = Suggestion.defaults
+
+    private let searchMemoriesUseCase: SearchMemoriesUseCase
+    private let userPreferences = UserPreferences.shared
 
     enum SearchState {
         case initial
@@ -16,46 +19,93 @@ class SearchViewModel: ObservableObject {
         case empty
     }
 
+    init(searchMemoriesUseCase: SearchMemoriesUseCase = DIContainer.shared.searchMemoriesUseCase) {
+        self.searchMemoriesUseCase = searchMemoriesUseCase
+        self.recentSearches = userPreferences.recentSearches
+    }
+
     func search() {
         guard !query.isEmpty else { return }
 
         searchState = .searching
 
-        // Simulate AI processing
         Task {
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            do {
+                let memories = try await searchMemoriesUseCase.byContent(query: query)
 
-            let response = AIResponse(
-                mainAnswer: "Mike's wedding is in April (next month).",
-                details: "Based on your memory from March 23rd, you're planning a gift around $300.",
-                highlight: "23 days until the wedding.",
-                relatedMemories: [
-                    RelatedMemory(
-                        id: "1",
-                        date: Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date(),
-                        content: "Had lunch with Mike downtown. He mentioned the wedding plans are finalized for April. Discussed the registry and thinking of a gift around $300.",
-                        tags: [
-                            MemoryTag(type: "person", value: "Mike"),
-                            MemoryTag(type: "location", value: "Downtown")
-                        ]
+                if memories.isEmpty {
+                    searchState = .empty
+                    aiResponse = nil
+                } else {
+                    // Convert memories to RelatedMemory format
+                    let relatedMemories = memories.prefix(5).map { memory -> RelatedMemory in
+                        var tags: [MemoryTag] = []
+                        for person in memory.extractedPersons {
+                            tags.append(MemoryTag(type: "person", value: person))
+                        }
+                        if let location = memory.extractedLocation {
+                            tags.append(MemoryTag(type: "location", value: location))
+                        }
+
+                        return RelatedMemory(
+                            id: memory.id,
+                            date: memory.recordedAt,
+                            content: memory.content,
+                            tags: tags
+                        )
+                    }
+
+                    // Generate a simple AI-like response
+                    let mainAnswer = "Found \(memories.count) memories matching \"\(query)\"."
+                    let details = memories.first.map { "Most recent: \($0.content.prefix(100))..." }
+
+                    let response = AIResponse(
+                        mainAnswer: mainAnswer,
+                        details: details,
+                        highlight: nil,
+                        relatedMemories: Array(relatedMemories),
+                        followUpQuestions: generateFollowUpQuestions(from: memories)
                     )
-                ],
-                followUpQuestions: [
-                    "When is Mike's birthday?",
-                    "What gifts have I given Mike?"
-                ]
-            )
 
-            aiResponse = response
-            searchState = .result
-
-            // Add to recent searches
-            if !recentSearches.contains(query) {
-                recentSearches.insert(query, at: 0)
-                if recentSearches.count > 5 {
-                    recentSearches.removeLast()
+                    aiResponse = response
+                    searchState = .result
                 }
+
+                // Save to recent searches
+                saveRecentSearch(query)
+
+            } catch {
+                searchState = .empty
+                aiResponse = nil
             }
+        }
+    }
+
+    private func generateFollowUpQuestions(from memories: [Memory]) -> [String] {
+        var questions: [String] = []
+
+        // Extract unique persons
+        let persons = Set(memories.flatMap { $0.extractedPersons })
+        if let person = persons.first {
+            questions.append("More about \(person)?")
+        }
+
+        // Extract unique locations
+        let locations = Set(memories.compactMap { $0.extractedLocation })
+        if let location = locations.first {
+            questions.append("Other memories at \(location)?")
+        }
+
+        return questions
+    }
+
+    private func saveRecentSearch(_ search: String) {
+        if !recentSearches.contains(search) {
+            recentSearches.insert(search, at: 0)
+            if recentSearches.count > 5 {
+                recentSearches.removeLast()
+            }
+            userPreferences.recentSearches = recentSearches
         }
     }
 
@@ -71,10 +121,12 @@ class SearchViewModel: ObservableObject {
 
     func removeRecentSearch(_ search: String) {
         recentSearches.removeAll { $0 == search }
+        userPreferences.recentSearches = recentSearches
     }
 
     func clearRecentSearches() {
         recentSearches.removeAll()
+        userPreferences.recentSearches = []
     }
 
     func newSearch() {

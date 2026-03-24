@@ -5,6 +5,13 @@ struct PersonDetailView: View {
     @ObservedObject var viewModel: PeopleViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var showEditSheet = false
+    @State private var showAddMemorySheet = false
+    @State private var showAllMemories = false
+    @State private var personMemories: [Memory] = []
+    @State private var upcomingReminders: [Reminder] = []
+
+    private let searchMemoriesUseCase = DIContainer.shared.searchMemoriesUseCase
+    private let getUpcomingRemindersUseCase = DIContainer.shared.getUpcomingRemindersUseCase
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -55,6 +62,29 @@ struct PersonDetailView: View {
                     Task { await viewModel.loadPeople() }
                 }
         }
+        .sheet(isPresented: $showAddMemorySheet) {
+            RecordView()
+                .onDisappear {
+                    Task { await loadPersonData() }
+                }
+        }
+        .navigationDestination(isPresented: $showAllMemories) {
+            PersonMemoriesView(person: person, memories: personMemories)
+        }
+        .task {
+            await loadPersonData()
+        }
+    }
+
+    private func loadPersonData() async {
+        do {
+            personMemories = try await searchMemoriesUseCase.byPerson(personId: person.id)
+            upcomingReminders = try await getUpcomingRemindersUseCase.execute(limit: 5)
+                .filter { $0.personId == person.id }
+        } catch {
+            personMemories = []
+            upcomingReminders = []
+        }
     }
 
     // MARK: - Profile Section
@@ -101,7 +131,9 @@ struct PersonDetailView: View {
     private var bentoGrid: some View {
         HStack(spacing: 12) {
             statsCard
-            upcomingCard
+            if !upcomingReminders.isEmpty {
+                upcomingCard
+            }
         }
     }
 
@@ -187,7 +219,9 @@ struct PersonDetailView: View {
 
     // MARK: - Upcoming Card
     private var upcomingCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        let reminder = upcomingReminders.first
+
+        return VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "calendar")
                     .foregroundColor(Color(red: 0.42, green: 0.22, blue: 0.83))
@@ -196,29 +230,29 @@ struct PersonDetailView: View {
                     .fontWeight(.bold)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text("🎊 Wedding")
-                    .font(.headline)
-                    .fontWeight(.bold)
+            if let reminder = reminder {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(reminder.title)
+                        .font(.headline)
+                        .fontWeight(.bold)
 
-                Text("April 15 (in 23 days)")
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(Color(red: 0.42, green: 0.22, blue: 0.83))
-            }
+                    Text(formatReminderDate(reminder.scheduledAt))
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(Color(red: 0.42, green: 0.22, blue: 0.83))
+                }
 
-            HStack {
-                Text("Gift: ~$300 planned")
+                Text(reminder.body)
                     .font(.caption)
                     .foregroundColor(.secondary)
-                Spacer()
+                    .lineLimit(2)
             }
 
-            Button(action: { /* Set reminder */ }) {
+            NavigationLink(destination: ReminderEditView(personId: person.id)) {
                 HStack {
                     Image(systemName: "bell.fill")
                         .font(.system(size: 12))
-                    Text("Set reminder")
+                    Text(reminder == nil ? "Add reminder" : "Edit reminder")
                         .font(.caption)
                         .fontWeight(.bold)
                 }
@@ -229,10 +263,28 @@ struct PersonDetailView: View {
                 .cornerRadius(16)
                 .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
             }
+            .buttonStyle(.plain)
         }
         .padding(20)
         .background(Color(red: 0.95, green: 0.93, blue: 1.0))
         .cornerRadius(24)
+    }
+
+    private func formatReminderDate(_ date: Date) -> String {
+        let daysUntil = Calendar.current.dateComponents([.day], from: Date(), to: date).day ?? 0
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        let dateStr = formatter.string(from: date)
+
+        if daysUntil == 0 {
+            return "\(dateStr) (Today)"
+        } else if daysUntil == 1 {
+            return "\(dateStr) (Tomorrow)"
+        } else if daysUntil > 0 {
+            return "\(dateStr) (in \(daysUntil) days)"
+        } else {
+            return "\(dateStr) (Past)"
+        }
     }
 
     // MARK: - Timeline Section
@@ -246,37 +298,55 @@ struct PersonDetailView: View {
 
                 Spacer()
 
-                Button("See all >") {
-                    // Navigate to full timeline
+                if personMemories.count > 3 {
+                    Button("See all >") {
+                        showAllMemories = true
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.dmPrimary)
                 }
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(.dmPrimary)
             }
             .padding(.horizontal, 24)
 
             // Timeline Items
-            VStack(spacing: 0) {
-                ForEach(timelineItems.grouped(by: \.year).sorted(by: { $0.key > $1.key }), id: \.key) { year, items in
-                    // Year Header
-                    HStack(spacing: 16) {
-                        Circle()
-                            .fill(year == Calendar.current.component(.year, from: Date()) ? Color.dmPrimary : Color(.systemGray5))
-                            .frame(width: 16, height: 16)
+            if personMemories.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "clock")
+                        .font(.system(size: 32))
+                        .foregroundColor(.secondary.opacity(0.5))
+                    Text("No memories yet")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 32)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(timelineItems.grouped(by: \.year).sorted(by: { $0.key > $1.key }), id: \.key) { year, items in
+                        // Year Header
+                        HStack(spacing: 16) {
+                            Circle()
+                                .fill(year == Calendar.current.component(.year, from: Date()) ? Color.dmPrimary : Color(.systemGray5))
+                                .frame(width: 16, height: 16)
 
-                        Text(String(year))
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(year == Calendar.current.component(.year, from: Date()) ? .primary : .secondary.opacity(0.6))
+                            Text(String(year))
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundColor(year == Calendar.current.component(.year, from: Date()) ? .primary : .secondary.opacity(0.6))
 
-                        Spacer()
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 8)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 8)
 
-                    // Items for this year
-                    ForEach(items) { item in
-                        TimelineItemRow(item: item)
+                        // Items for this year
+                        ForEach(items) { item in
+                            NavigationLink(destination: MemoryDetailView(memoryId: item.id)) {
+                                TimelineItemRow(item: item)
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
                 }
             }
@@ -285,7 +355,7 @@ struct PersonDetailView: View {
 
     // MARK: - Add Memory Button
     private var addMemoryButton: some View {
-        Button(action: { /* Add memory */ }) {
+        Button(action: { showAddMemorySheet = true }) {
             HStack(spacing: 12) {
                 Image(systemName: "square.and.pencil")
                     .font(.system(size: 20))
@@ -302,14 +372,23 @@ struct PersonDetailView: View {
         }
     }
 
-    // MARK: - Sample Data
+    // MARK: - Timeline Items from Memories
     private var timelineItems: [TimelineItem] {
-        [
-            TimelineItem(id: "1", year: 2024, date: "Mar 23", content: "Downtown lunch, wedding news — $300 gift planned"),
-            TimelineItem(id: "2", year: 2024, date: "Feb 14", content: "Birthday — Gift: wine"),
-            TimelineItem(id: "3", year: 2024, date: "Jan 5", content: "New Year meetup"),
-            TimelineItem(id: "4", year: 2023, date: "Dec 25", content: "Christmas party")
-        ]
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+
+        return personMemories.prefix(10).map { memory in
+            let year = Calendar.current.component(.year, from: memory.recordedAt)
+            let dateStr = formatter.string(from: memory.recordedAt)
+            let contentPreview = String(memory.content.prefix(60)) + (memory.content.count > 60 ? "..." : "")
+
+            return TimelineItem(
+                id: memory.id,
+                year: year,
+                date: dateStr,
+                content: contentPreview
+            )
+        }
     }
 }
 

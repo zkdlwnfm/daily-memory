@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
+    var refreshTrigger: UUID = UUID()
 
     var body: some View {
         NavigationStack {
@@ -47,6 +48,11 @@ struct HomeView: View {
             .refreshable {
                 await viewModel.refresh()
             }
+            .onChange(of: refreshTrigger) { _ in
+                Task {
+                    await viewModel.refresh()
+                }
+            }
         }
     }
 
@@ -76,12 +82,12 @@ struct HomeView: View {
 
             Spacer()
 
-            Button("See all ›") {
-                // TODO: Navigate to all memories
+            NavigationLink(destination: AllMemoriesView()) {
+                Text("See all ›")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.dmPrimary)
             }
-            .font(.subheadline)
-            .fontWeight(.semibold)
-            .foregroundColor(.dmPrimary)
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 16)

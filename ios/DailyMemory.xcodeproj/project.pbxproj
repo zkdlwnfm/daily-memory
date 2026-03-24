@@ -15,6 +15,7 @@
 		0741BFF8CF093E4E593844DE /* UpdateReminderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF9FEDEC7B393F1F79C87374 /* UpdateReminderUseCase.swift */; };
 		0A02FB50711DCE8426CED0A0 /* GetMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062A8A1DCD7DF60922039985 /* GetMemoryUseCase.swift */; };
 		0D35F246D9521C5FF6091F57 /* LockScreenWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5833914133983C466C67BB1 /* LockScreenWidget.swift */; };
+		0EC688FFC96B53FF65E463BC /* AllMemoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BEAF3F50F78F2AF76C2F4A7 /* AllMemoriesView.swift */; };
 		15E440E75CB08A5175778614 /* PersonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56319C0CD5CB0B3D8CC50BDB /* PersonListView.swift */; };
 		16C459A0393ADBBF11F3526D /* GetAllPersonsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1126CF4F64B2E5AC107F2B1 /* GetAllPersonsUseCase.swift */; };
 		18BD0E6026503C2175AEDB26 /* ReminderRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0518F0C0C2671FDC76CE5123 /* ReminderRepositoryImpl.swift */; };
@@ -38,6 +39,7 @@
 		51B8D1AE4EBEEB2773AA2D0A /* SaveMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF2C0F31CCAC4E188A51AF3D /* SaveMemoryUseCase.swift */; };
 		52D4D8547DF0E53B520CE0A1 /* QuickRecordWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13B6348E75752FFAA7CA844 /* QuickRecordWidget.swift */; };
 		5724014BC51FBE86F9E99DC0 /* PersonRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CE23D5B1436D643C67524C /* PersonRepository.swift */; };
+		5BCEC865FBACD736B5EE37D8 /* MemoryEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D68D5B77C714DF59E765966 /* MemoryEditView.swift */; };
 		5D04AD070DFB51B9FBED172C /* SnoozeReminderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9066B198056AA9AAB0755EBF /* SnoozeReminderUseCase.swift */; };
 		5F723B600D8977993F38E6EF /* RecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAA0479B5F47C180805E839 /* RecordView.swift */; };
 		63590AA061D1EC1D9BDC37A2 /* PersonRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5C2A98AEF6F4A552D5017E /* PersonRepositoryImpl.swift */; };
@@ -53,6 +55,7 @@
 		9721F9FA9E0631A468BA7ADE /* PhotoGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B928AB14EC59A1320AA9A410 /* PhotoGalleryView.swift */; };
 		99A56BE54CA1610B817747EF /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35AE5F14D223A9F12DC9A20E /* SearchView.swift */; };
 		9A760EFF57ABF0D20894E440 /* MemoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00131521D2CDB36BDB34ADD6 /* MemoryRepository.swift */; };
+		9B58EBC8CF9E412B30F7A6FD /* PersonMemoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C90CBDB1AAD855ABBFFFF /* PersonMemoriesView.swift */; };
 		9F5701754B47F7BA0521018A /* StateViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D171FA370ED21975512233E6 /* StateViews.swift */; };
 		A0157D31D38F6B309B9D2CB7 /* GetTodayRemindersUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A280BFF97A4A0C272CA9BE8 /* GetTodayRemindersUseCase.swift */; };
 		A0D1F299DB75C377CAFDAD88 /* DailyMemoryWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F043423008C623B41FFF3 /* DailyMemoryWidgetBundle.swift */; };
@@ -128,9 +131,11 @@
 		736EB723E15B793EC03BD81A /* DailyMemory.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DailyMemory.xcdatamodel; sourceTree = "<group>"; };
 		777138EDB5DB30E93E3A5CB6 /* GetUpcomingRemindersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUpcomingRemindersUseCase.swift; sourceTree = "<group>"; };
 		7A280BFF97A4A0C272CA9BE8 /* GetTodayRemindersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTodayRemindersUseCase.swift; sourceTree = "<group>"; };
+		7D68D5B77C714DF59E765966 /* MemoryEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryEditView.swift; sourceTree = "<group>"; };
 		7F09BC6492BF3AE31E2CA6F0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7F6B8D6D0246CD67B9573427 /* DailyMemoryWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = DailyMemoryWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		81914AE1E172D0B04C92DDB5 /* UpdatePersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePersonUseCase.swift; sourceTree = "<group>"; };
+		8BEAF3F50F78F2AF76C2F4A7 /* AllMemoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllMemoriesView.swift; sourceTree = "<group>"; };
 		8C57B2763EC852036CED4A4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D353E9D3181CC440804673C /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
 		9066B198056AA9AAB0755EBF /* SnoozeReminderUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeReminderUseCase.swift; sourceTree = "<group>"; };
@@ -139,6 +144,7 @@
 		A61CF42C35727B011781DC2D /* PersonStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonStore.swift; sourceTree = "<group>"; };
 		A64BDFE38DFA875897C767E9 /* AdvancedFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedFilterView.swift; sourceTree = "<group>"; };
 		A763342EC0E6EC07C4D8189A /* GetPersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPersonUseCase.swift; sourceTree = "<group>"; };
+		AA0C90CBDB1AAD855ABBFFFF /* PersonMemoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonMemoriesView.swift; sourceTree = "<group>"; };
 		ABF6DE3489090735AEDD7C5D /* SavePersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePersonUseCase.swift; sourceTree = "<group>"; };
 		B33A784F31A7706957E9478C /* CoreDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataModels.swift; sourceTree = "<group>"; };
 		B5833914133983C466C67BB1 /* LockScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidget.swift; sourceTree = "<group>"; };
@@ -188,6 +194,7 @@
 				8D353E9D3181CC440804673C /* PersonDetailView.swift */,
 				01397027AEEFD64583E72B16 /* PersonEditView.swift */,
 				56319C0CD5CB0B3D8CC50BDB /* PersonListView.swift */,
+				AA0C90CBDB1AAD855ABBFFFF /* PersonMemoriesView.swift */,
 			);
 			path = Person;
 			sourceTree = "<group>";
@@ -360,7 +367,9 @@
 		96C6ED433C88C46A80136AE2 /* Memory */ = {
 			isa = PBXGroup;
 			children = (
+				8BEAF3F50F78F2AF76C2F4A7 /* AllMemoriesView.swift */,
 				9809F2A5690C46832768175A /* MemoryDetailView.swift */,
+				7D68D5B77C714DF59E765966 /* MemoryEditView.swift */,
 			);
 			path = Memory;
 			sourceTree = "<group>";
@@ -629,6 +638,7 @@
 			files = (
 				3FE6ECE08411B0DA8205F281 /* AIAnalysisService.swift in Sources */,
 				02B2F9FCB684080709C7861A /* AdvancedFilterView.swift in Sources */,
+				0EC688FFC96B53FF65E463BC /* AllMemoriesView.swift in Sources */,
 				7C8086587748FC57176AA151 /* AnalyzeMemoryUseCase.swift in Sources */,
 				0425806CCCDCB0B700F4E9C1 /* Colors.swift in Sources */,
 				CA1805EB4AD05CAC2CEE2C2E /* CompleteReminderUseCase.swift in Sources */,
@@ -655,6 +665,7 @@
 				01E49AB07F0C0EFF14F464FD /* ImageViews.swift in Sources */,
 				A33B08012A2E7537C858C574 /* Memory.swift in Sources */,
 				B908AB85D1216F053412F2F8 /* MemoryDetailView.swift in Sources */,
+				5BCEC865FBACD736B5EE37D8 /* MemoryEditView.swift in Sources */,
 				9A760EFF57ABF0D20894E440 /* MemoryRepository.swift in Sources */,
 				7206CF65EC565F00786BA994 /* MemoryRepositoryImpl.swift in Sources */,
 				B07F78F7FDF5A7FEB132B759 /* MemoryStore.swift in Sources */,
@@ -664,6 +675,7 @@
 				00D97FA00591A22DE9BC1CEB /* PersonDetailView.swift in Sources */,
 				3EBA02238A2C06D9D8CDA665 /* PersonEditView.swift in Sources */,
 				15E440E75CB08A5175778614 /* PersonListView.swift in Sources */,
+				9B58EBC8CF9E412B30F7A6FD /* PersonMemoriesView.swift in Sources */,
 				5724014BC51FBE86F9E99DC0 /* PersonRepository.swift in Sources */,
 				63590AA061D1EC1D9BDC37A2 /* PersonRepositoryImpl.swift in Sources */,
 				4CD1B42FF833090CC37AAD8E /* PersonStore.swift in Sources */,
