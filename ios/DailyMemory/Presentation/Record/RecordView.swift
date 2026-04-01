@@ -28,8 +28,10 @@ struct RecordView: View {
                         text: $viewModel.textContent,
                         onAnalyze: { viewModel.analyzeWithAI() },
                         onSaveWithoutAnalysis: {
-                            viewModel.saveWithoutAnalysis()
-                            dismiss()
+                            Task {
+                                await viewModel.saveWithoutAnalysisAsync()
+                                dismiss()
+                            }
                         }
                     )
 
@@ -74,8 +76,10 @@ struct RecordView: View {
 
                     case .aiResult:
                         Button("Save") {
-                            viewModel.saveMemory()
-                            dismiss()
+                            Task {
+                                await viewModel.saveMemoryAsync()
+                                dismiss()
+                            }
                         }
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -83,6 +87,7 @@ struct RecordView: View {
                         .padding(.vertical, 8)
                         .background(Color.dmPrimary)
                         .cornerRadius(20)
+                        .disabled(viewModel.isSaving)
 
                     case .aiProcessing:
                         EmptyView()
@@ -799,89 +804,99 @@ class RecordViewModel: ObservableObject {
     }
 
     func saveWithoutAnalysis() {
+        Task {
+            await saveWithoutAnalysisAsync()
+        }
+    }
+
+    func saveWithoutAnalysisAsync() async {
         guard !textContent.isEmpty else { return }
 
-        Task {
-            isSaving = true
-            defer { isSaving = false }
+        isSaving = true
+        defer { isSaving = false }
 
-            let memory = Memory(
-                content: textContent,
-                photos: [],
-                extractedPersons: [],
-                extractedLocation: nil,
-                extractedDate: nil,
-                extractedAmount: nil,
-                extractedTags: [],
-                personIds: [],
-                category: .general,
-                importance: 3,
-                recordedAt: Date()
-            )
+        let memory = Memory(
+            content: textContent,
+            photos: [],
+            extractedPersons: [],
+            extractedLocation: nil,
+            extractedDate: nil,
+            extractedAmount: nil,
+            extractedTags: [],
+            personIds: [],
+            category: .general,
+            importance: 3,
+            recordedAt: Date()
+        )
 
-            do {
-                try await saveMemoryUseCase.execute(memory)
-            } catch {
-                self.error = error.localizedDescription
-            }
+        do {
+            let savedMemory = try await saveMemoryUseCase.execute(memory)
+            print("Memory saved without analysis with ID: \(savedMemory.id)")
+        } catch {
+            self.error = error.localizedDescription
         }
     }
 
     func saveMemory() {
+        Task {
+            await saveMemoryAsync()
+        }
+    }
+
+    func saveMemoryAsync() async {
         guard let result = aiResult else { return }
 
-        Task {
-            isSaving = true
-            defer { isSaving = false }
+        isSaving = true
+        defer { isSaving = false }
 
-            // Save new persons if detected
-            for personName in result.people {
-                let isExisting = existingPersons.contains { $0.name.lowercased() == personName.lowercased() }
-                if !isExisting {
-                    let newPerson = Person(
-                        name: personName,
-                        relationship: .friend,
-                        meetingCount: 1,
-                        lastMeetingDate: Date()
-                    )
-                    do {
-                        try await savePersonUseCase.execute(newPerson)
-                    } catch {
-                        print("Failed to save person: \(error)")
-                    }
+        // Save new persons if detected
+        for personName in result.people {
+            let isExisting = existingPersons.contains { $0.name.lowercased() == personName.lowercased() }
+            if !isExisting {
+                let newPerson = Person(
+                    name: personName,
+                    relationship: .friend,
+                    meetingCount: 1,
+                    lastMeetingDate: Date()
+                )
+                do {
+                    _ = try await savePersonUseCase.execute(newPerson)
+                } catch {
+                    print("Failed to save person: \(error)")
                 }
             }
+        }
 
-            // Extract amount value
-            let amountValue: Double? = {
-                guard let amountStr = result.amount else { return nil }
-                let numericStr = amountStr.replacingOccurrences(of: "[^0-9.]", with: "", options: .regularExpression)
-                return Double(numericStr)
-            }()
+        // Extract amount value
+        let amountValue: Double? = {
+            guard let amountStr = result.amount else { return nil }
+            let numericStr = amountStr.replacingOccurrences(of: "[^0-9.]", with: "", options: .regularExpression)
+            return Double(numericStr)
+        }()
 
-            // Determine category from result
-            let category = Category(rawValue: result.category.uppercased()) ?? .general
+        // Determine category from result
+        let category = Category(rawValue: result.category.uppercased()) ?? .general
 
-            // Create and save memory
-            let memory = Memory(
-                content: result.content,
-                photos: [],
-                extractedPersons: result.people,
-                extractedLocation: result.location,
-                extractedDate: nil,
-                extractedAmount: amountValue,
-                extractedTags: [],
-                personIds: [],
-                category: category,
-                importance: 3,
-                recordedAt: Date()
-            )
+        // Create and save memory
+        let memory = Memory(
+            content: result.content,
+            photos: [],
+            extractedPersons: result.people,
+            extractedLocation: result.location,
+            extractedDate: nil,
+            extractedAmount: amountValue,
+            extractedTags: [],
+            personIds: [],
+            category: category,
+            importance: 3,
+            recordedAt: Date()
+        )
 
-            do {
-                try await saveMemoryUseCase.execute(memory)
-            } catch {
-                self.error = error.localizedDescription
-            }
+        do {
+            let savedMemory = try await saveMemoryUseCase.execute(memory)
+            print("Memory saved with ID: \(savedMemory.id)")
+        } catch {
+            self.error = error.localizedDescription
         }
     }
 
@@ -890,13 +905,12 @@ class RecordViewModel: ObservableObject {
     }
 
     func togglePerson(_ person: String) {
-        guard var result = aiResult else { return }
+        guard let result = aiResult else { return }
         if result.people.contains(person) {
             result.people.removeAll { $0 == person }
         } else {
             result.people.append(person)
         }
-        aiResult = result
     }
 
     func clearError() {

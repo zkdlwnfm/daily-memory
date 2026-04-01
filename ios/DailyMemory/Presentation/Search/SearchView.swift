@@ -32,6 +32,7 @@ class SearchViewModel: ObservableObject {
         Task {
             do {
                 let memories = try await searchMemoriesUseCase.byContent(query: query)
+                print("[SearchView] Found \(memories.count) memories for query: \(query)")
 
                 if memories.isEmpty {
                     searchState = .empty
@@ -39,6 +40,8 @@ class SearchViewModel: ObservableObject {
                 } else {
                     // Convert memories to RelatedMemory format
                     let relatedMemories = memories.prefix(5).map { memory -> RelatedMemory in
+                        print("[SearchView] Memory ID: \(memory.id), Content: \(memory.content.prefix(30))...")
+
                         var tags: [MemoryTag] = []
                         for person in memory.extractedPersons {
                             tags.append(MemoryTag(type: "person", value: person))
