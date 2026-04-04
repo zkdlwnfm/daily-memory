@@ -32,11 +32,8 @@ final class MemoryDetailViewModel: ObservableObject {
         isLoading = true
         error = nil
 
-        print("[MemoryDetailView] Loading memory with ID: \(id)")
-
         do {
             if let memory = try await getMemoryUseCase.execute(id: id) {
-                print("[MemoryDetailView] Memory found: \(memory.content.prefix(50))...")
                 self.memory = memory
 
                 // Load linked persons
@@ -48,11 +45,9 @@ final class MemoryDetailViewModel: ObservableObject {
                 }
                 linkedPersons = persons
             } else {
-                print("[MemoryDetailView] Memory not found for ID: \(id)")
                 error = "Memory not found"
             }
         } catch {
-            print("[MemoryDetailView] Error loading memory: \(error)")
             self.error = error.localizedDescription
         }
 

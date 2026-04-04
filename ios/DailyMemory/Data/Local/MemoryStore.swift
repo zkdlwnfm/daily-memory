@@ -13,22 +13,17 @@ class MemoryStore {
     // MARK: - CRUD Operations
 
     func create(_ memory: Memory) throws {
-        print("[MemoryStore] Creating memory with ID: \(memory.id)")
         let entity = MemoryMO(context: context)
         entity.update(from: memory)
         try context.save()
-        print("[MemoryStore] Memory saved successfully: \(memory.id)")
     }
 
     func read(id: String) throws -> Memory? {
-        print("[MemoryStore] Reading memory with ID: \(id)")
         let request = NSFetchRequest<MemoryMO>(entityName: "MemoryMO")
         request.predicate = NSPredicate(format: "id == %@", id)
         request.fetchLimit = 1
 
-        let result = try context.fetch(request).first?.toDomainModel()
-        print("[MemoryStore] Read result: \(result != nil ? "Found" : "Not found")")
-        return result
+        return try context.fetch(request).first?.toDomainModel()
     }
 
     func update(_ memory: Memory) throws {
@@ -83,16 +78,10 @@ class MemoryStore {
     }
 
     func search(query: String) throws -> [Memory] {
-        print("[MemoryStore] Searching for: \(query)")
         let request = NSFetchRequest<MemoryMO>(entityName: "MemoryMO")
         request.predicate = NSPredicate(format: "content CONTAINS[cd] %@", query)
         request.sortDescriptors = [NSSortDescriptor(key: "recordedAt", ascending: false)]
-        let results = try context.fetch(request).map { $0.toDomainModel() }
-        print("[MemoryStore] Search found \(results.count) memories")
-        for result in results {
-            print("[MemoryStore] - ID: \(result.id)")
-        }
-        return results
+        return try context.fetch(request).map { $0.toDomainModel() }
     }
 
     func fetchForAI() throws -> [Memory] {

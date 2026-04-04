@@ -830,8 +830,7 @@ class RecordViewModel: ObservableObject {
         )
 
         do {
-            let savedMemory = try await saveMemoryUseCase.execute(memory)
-            print("Memory saved without analysis with ID: \(savedMemory.id)")
+            _ = try await saveMemoryUseCase.execute(memory)
         } catch {
             self.error = error.localizedDescription
         }
@@ -862,7 +861,7 @@ class RecordViewModel: ObservableObject {
                 do {
                     _ = try await savePersonUseCase.execute(newPerson)
                 } catch {
-                    print("Failed to save person: \(error)")
+                    // Person save failed, continue with memory save
                 }
             }
         }
@@ -893,8 +892,7 @@ class RecordViewModel: ObservableObject {
         )
 
         do {
-            let savedMemory = try await saveMemoryUseCase.execute(memory)
-            print("Memory saved with ID: \(savedMemory.id)")
+            _ = try await saveMemoryUseCase.execute(memory)
         } catch {
             self.error = error.localizedDescription
         }
