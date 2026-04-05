@@ -1,8 +1,11 @@
 import SwiftUI
+import PhotosUI
 
 struct RecordView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = RecordViewModel()
+    @State private var showPhotoPicker = false
+    @State private var selectedPhotoItems: [PhotosPickerItem] = []
 
     var body: some View {
         NavigationStack {
@@ -26,13 +29,16 @@ struct RecordView: View {
                 case .textMode:
                     TextModeView(
                         text: $viewModel.textContent,
+                        photos: viewModel.selectedPhotos,
                         onAnalyze: { viewModel.analyzeWithAI() },
                         onSaveWithoutAnalysis: {
                             Task {
                                 await viewModel.saveWithoutAnalysisAsync()
                                 dismiss()
                             }
-                        }
+                        },
+                        onAddPhoto: { showPhotoPicker = true },
+                        onRemovePhoto: { viewModel.removePhoto(id: $0) }
                     )
 
                 case .aiProcessing:
@@ -43,7 +49,9 @@ struct RecordView: View {
                         AIResultView(
                             result: result,
                             onCategorySelect: { viewModel.selectCategory($0) },
-                            onPersonRemove: { viewModel.togglePerson($0) }
+                            onPersonRemove: { viewModel.togglePerson($0) },
+                            onAddPhoto: { showPhotoPicker = true },
+                            onRemovePhoto: { viewModel.removePhoto(id: $0) }
                         )
                     }
                 }
@@ -92,6 +100,18 @@ struct RecordView: View {
                     case .aiProcessing:
                         EmptyView()
                     }
+                }
+            }
+            .photosPicker(
+                isPresented: $showPhotoPicker,
+                selection: $selectedPhotoItems,
+                maxSelectionCount: 5,
+                matching: .images
+            )
+            .onChange(of: selectedPhotoItems) { newItems in
+                Task {
+                    await viewModel.addPhotos(from: newItems)
+                    selectedPhotoItems = []
                 }
             }
         }
@@ -307,8 +327,11 @@ struct TipCard: View {
 // MARK: - Text Mode View
 struct TextModeView: View {
     @Binding var text: String
+    let photos: [SelectedPhoto]
     let onAnalyze: () -> Void
     let onSaveWithoutAnalysis: () -> Void
+    let onAddPhoto: () -> Void
+    let onRemovePhoto: (String) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -362,9 +385,19 @@ struct TextModeView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 24)
 
-            PhotoAddButton()
+            if photos.isEmpty {
+                PhotoAddButton(action: onAddPhoto)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 12)
+            } else {
+                SelectedPhotosView(
+                    photos: photos,
+                    onRemove: onRemovePhoto,
+                    onAddMore: onAddPhoto
+                )
                 .padding(.horizontal, 24)
                 .padding(.top, 12)
+            }
 
             Spacer()
 
@@ -392,8 +425,10 @@ struct TextModeView: View {
 
 // MARK: - Photo Add Button
 struct PhotoAddButton: View {
+    let action: () -> Void
+
     var body: some View {
-        Button(action: {}) {
+        Button(action: action) {
             VStack(spacing: 4) {
                 Text("+")
                     .font(.title)
@@ -408,6 +443,84 @@ struct PhotoAddButton: View {
                     .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [5]))
                     .foregroundColor(.secondary.opacity(0.3))
             )
+        }
+    }
+}
+
+// MARK: - Selected Photos View
+struct SelectedPhotosView: View {
+    let photos: [SelectedPhoto]
+    let onRemove: (String) -> Void
+    let onAddMore: () -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(photos) { photo in
+                    ZStack(alignment: .topTrailing) {
+                        if let image = photo.image {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 80, height: 80)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        } else {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(width: 80, height: 80)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        }
+
+                        // Remove button
+                        Button {
+                            onRemove(photo.id)
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(.white)
+                                .background(Circle().fill(Color.black.opacity(0.5)))
+                        }
+                        .offset(x: 5, y: -5)
+
+                        // Analysis indicator
+                        if photo.isAnalyzing {
+                            VStack {
+                                Spacer()
+                                HStack {
+                                    ProgressView()
+                                        .scaleEffect(0.6)
+                                    Text("AI")
+                                        .font(.caption2)
+                                }
+                                .padding(4)
+                                .background(Color.black.opacity(0.6))
+                                .cornerRadius(4)
+                            }
+                            .frame(width: 80, height: 80)
+                        } else if photo.analysis != nil {
+                            VStack {
+                                Spacer()
+                                HStack(spacing: 2) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.caption2)
+                                    Text("AI")
+                                        .font(.caption2)
+                                }
+                                .foregroundColor(.green)
+                                .padding(4)
+                                .background(Color.black.opacity(0.6))
+                                .cornerRadius(4)
+                            }
+                            .frame(width: 80, height: 80)
+                        }
+                    }
+                }
+
+                // Add more button
+                PhotoAddButton(action: onAddMore)
+            }
         }
     }
 }
@@ -435,6 +548,8 @@ struct AIResultView: View {
     let result: AIAnalysisResultModel
     let onCategorySelect: (String) -> Void
     let onPersonRemove: (String) -> Void
+    let onAddPhoto: () -> Void
+    let onRemovePhoto: (String) -> Void
 
     var body: some View {
         ScrollView {
@@ -569,7 +684,15 @@ struct AIResultView: View {
                     Text("Add Photos")
                         .font(.headline)
 
-                    PhotoAddButton()
+                    if result.photos.isEmpty {
+                        PhotoAddButton(action: onAddPhoto)
+                    } else {
+                        SelectedPhotosView(
+                            photos: result.photos,
+                            onRemove: onRemovePhoto,
+                            onAddMore: onAddPhoto
+                        )
+                    }
                 }
 
                 // Reminder Section
@@ -673,6 +796,19 @@ struct CategoryChipView: View {
     }
 }
 
+// MARK: - Selected Photo Model
+struct SelectedPhoto: Identifiable, Equatable {
+    let id: String
+    var image: UIImage?
+    var savedPhoto: SavedPhoto?
+    var analysis: PhotoAnalysis?
+    var isAnalyzing: Bool = false
+
+    static func == (lhs: SelectedPhoto, rhs: SelectedPhoto) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 // MARK: - View Model
 @MainActor
 class RecordViewModel: ObservableObject {
@@ -683,23 +819,31 @@ class RecordViewModel: ObservableObject {
     @Published var aiResult: AIAnalysisResultModel?
     @Published var isSaving: Bool = false
     @Published var error: String?
+    @Published var audioLevel: Float = 0
+    @Published var selectedPhotos: [SelectedPhoto] = []
 
     private let saveMemoryUseCase: SaveMemoryUseCase
     private let savePersonUseCase: SavePersonUseCase
     private let getAllPersonsUseCase: GetAllPersonsUseCase
+    private let analyzeImageUseCase: AnalyzeImageUseCase
 
     private var timerTask: Task<Void, Never>?
+    private var speechTask: Task<Void, Never>?
     private var recordingSeconds = 0
     private var existingPersons: [Person] = []
+    private let speechService = SpeechRecognitionService.shared
+    private let aiAnalysisService = AIAnalysisService.shared
 
     init(
         saveMemoryUseCase: SaveMemoryUseCase = DIContainer.shared.saveMemoryUseCase,
         savePersonUseCase: SavePersonUseCase = DIContainer.shared.savePersonUseCase,
-        getAllPersonsUseCase: GetAllPersonsUseCase = DIContainer.shared.getAllPersonsUseCase
+        getAllPersonsUseCase: GetAllPersonsUseCase = DIContainer.shared.getAllPersonsUseCase,
+        analyzeImageUseCase: AnalyzeImageUseCase = DIContainer.shared.analyzeImageUseCase
     ) {
         self.saveMemoryUseCase = saveMemoryUseCase
         self.savePersonUseCase = savePersonUseCase
         self.getAllPersonsUseCase = getAllPersonsUseCase
+        self.analyzeImageUseCase = analyzeImageUseCase
 
         Task {
             await loadExistingPersons()
@@ -742,24 +886,33 @@ class RecordViewModel: ObservableObject {
             }
         }
 
-        // Simulate transcription (TODO: Replace with actual speech recognition)
-        Task {
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-            transcription = "Had lunch with "
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-            transcription = "Had lunch with Mike "
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-            transcription = "Had lunch with Mike downtown. He told me "
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
-            transcription = "Had lunch with Mike downtown. He told me he's getting married next month. "
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
-            transcription = "Had lunch with Mike downtown. He told me he's getting married next month. Need to prepare a wedding gift around 300 dollars..."
+        // Real speech recognition
+        speechTask = Task {
+            let stream = await speechService.startListening()
+            for await result in stream {
+                switch result {
+                case .partialResult(let text):
+                    transcription = text
+                case .finalResult(let text, _):
+                    transcription = text
+                case .audioLevel(let level):
+                    audioLevel = level
+                case .error(let msg):
+                    error = msg
+                case .ready:
+                    break
+                }
+            }
         }
     }
 
     func stopRecording() {
         timerTask?.cancel()
         timerTask = nil
+        speechTask?.cancel()
+        speechTask = nil
+
+        Task { await speechService.stopListening() }
 
         if !transcription.isEmpty {
             textContent = transcription
@@ -774,30 +927,62 @@ class RecordViewModel: ObservableObject {
         recordState = .aiProcessing
 
         Task {
-            // TODO: Replace with actual AI analysis service
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-
             let content = textContent.isEmpty ? transcription : textContent
 
-            // Check for new persons
-            let detectedPeople = ["Mike"] // TODO: Extract from AI
-            let newPersonDetected = detectedPeople.contains { detected in
-                !existingPersons.contains { $0.name.lowercased() == detected.lowercased() }
-            }
+            // Call actual AI analysis service (backend API)
+            let analysisResult = await aiAnalysisService.analyzeText(content)
 
-            aiResult = AIAnalysisResultModel(
-                content: content.isEmpty ?
-                    "Had lunch with Mike downtown. He told me he's getting married next month. Need to prepare a wedding gift around 300 dollars." : content,
-                people: detectedPeople,
-                newPersonDetected: newPersonDetected,
-                location: "Downtown",
-                event: "Wedding",
-                eventDate: "Next month",
-                amount: "$300",
-                amountLabel: "Gift budget",
-                category: "Event",
-                suggestedReminder: "Remind you before the wedding?"
-            )
+            // Collect tags from photo analyses
+            var photoTags: [String] = []
+            for photo in selectedPhotos {
+                if let analysis = photo.analysis {
+                    photoTags.append(contentsOf: analysis.suggestedTags)
+                }
+            }
+            photoTags = Array(Set(photoTags))
+
+            switch analysisResult {
+            case .success(let result):
+                let detectedPeople = result.persons
+                let newPersonDetected = detectedPeople.contains { detected in
+                    !existingPersons.contains { $0.name.lowercased() == detected.lowercased() }
+                }
+
+                let amountStr = result.amount.map { String(format: "$%.0f", $0) }
+
+                aiResult = AIAnalysisResultModel(
+                    content: content,
+                    people: detectedPeople,
+                    personsWithRelationship: result.personsWithRelationship,
+                    newPersonDetected: newPersonDetected,
+                    location: result.location,
+                    event: result.tags.first,
+                    eventDate: result.date,
+                    amount: amountStr,
+                    amountLabel: result.amount != nil ? "Amount" : nil,
+                    category: result.category,
+                    suggestedReminder: nil,
+                    photos: selectedPhotos,
+                    photoTags: photoTags + result.tags
+                )
+
+            case .failure:
+                // Fallback with minimal data
+                aiResult = AIAnalysisResultModel(
+                    content: content,
+                    people: [],
+                    newPersonDetected: false,
+                    location: nil,
+                    event: nil,
+                    eventDate: nil,
+                    amount: nil,
+                    amountLabel: nil,
+                    category: "GENERAL",
+                    suggestedReminder: nil,
+                    photos: selectedPhotos,
+                    photoTags: photoTags
+                )
+            }
 
             recordState = .aiResult
         }
@@ -815,14 +1000,27 @@ class RecordViewModel: ObservableObject {
         isSaving = true
         defer { isSaving = false }
 
+        // Collect photos and tags from analyzed photos
+        let photos: [Photo] = selectedPhotos.compactMap { selected in
+            guard let saved = selected.savedPhoto else { return nil }
+            return Photo(id: saved.id, url: saved.url.path, thumbnailUrl: saved.thumbnailUrl.path)
+        }
+        var photoTags: [String] = []
+        for photo in selectedPhotos {
+            if let analysis = photo.analysis {
+                photoTags.append(contentsOf: analysis.suggestedTags)
+            }
+        }
+        photoTags = Array(Set(photoTags))
+
         let memory = Memory(
             content: textContent,
-            photos: [],
+            photos: photos,
             extractedPersons: [],
             extractedLocation: nil,
             extractedDate: nil,
             extractedAmount: nil,
-            extractedTags: [],
+            extractedTags: photoTags,
             personIds: [],
             category: .general,
             importance: 3,
@@ -852,9 +1050,14 @@ class RecordViewModel: ObservableObject {
         for personName in result.people {
             let isExisting = existingPersons.contains { $0.name.lowercased() == personName.lowercased() }
             if !isExisting {
+                // Look up relationship from AI analysis
+                let relationship = result.personsWithRelationship
+                    .first { $0.name.lowercased() == personName.lowercased() }?
+                    .relationship ?? .other
+
                 let newPerson = Person(
                     name: personName,
-                    relationship: .friend,
+                    relationship: relationship,
                     meetingCount: 1,
                     lastMeetingDate: Date()
                 )
@@ -876,15 +1079,22 @@ class RecordViewModel: ObservableObject {
         // Determine category from result
         let category = Category(rawValue: result.category.uppercased()) ?? .general
 
+        // Collect photos and combine tags
+        let photos: [Photo] = result.photos.compactMap { selected in
+            guard let saved = selected.savedPhoto else { return nil }
+            return Photo(id: saved.id, url: saved.url.path, thumbnailUrl: saved.thumbnailUrl.path)
+        }
+        var allTags = result.photoTags
+
         // Create and save memory
         let memory = Memory(
             content: result.content,
-            photos: [],
+            photos: photos,
             extractedPersons: result.people,
             extractedLocation: result.location,
             extractedDate: nil,
             extractedAmount: amountValue,
-            extractedTags: [],
+            extractedTags: allTags,
             personIds: [],
             category: category,
             importance: 3,
@@ -914,6 +1124,60 @@ class RecordViewModel: ObservableObject {
     func clearError() {
         error = nil
     }
+
+    // MARK: - Photo Management
+
+    func addPhotos(from items: [PhotosPickerItem]) async {
+        for item in items {
+            let photoId = UUID().uuidString
+            var selectedPhoto = SelectedPhoto(id: photoId)
+
+            // Add placeholder immediately
+            selectedPhotos.append(selectedPhoto)
+
+            // Load image data
+            if let data = try? await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+
+                // Update with image
+                if let index = selectedPhotos.firstIndex(where: { $0.id == photoId }) {
+                    selectedPhotos[index].image = image
+                    selectedPhotos[index].isAnalyzing = true
+                }
+
+                // Save to PhotoService
+                let saveResult = await PhotoService.shared.savePhoto(image: image)
+                if case .success(let savedPhoto) = saveResult {
+                    if let index = selectedPhotos.firstIndex(where: { $0.id == photoId }) {
+                        selectedPhotos[index].savedPhoto = savedPhoto
+                    }
+                }
+
+                // Analyze image with AI
+                let analysisResult = await analyzeImageUseCase.execute(image: image)
+                if let index = selectedPhotos.firstIndex(where: { $0.id == photoId }) {
+                    selectedPhotos[index].isAnalyzing = false
+                    if case .success(let analysis) = analysisResult {
+                        selectedPhotos[index].analysis = analysis
+                    }
+                }
+
+                // Also update aiResult photos if in aiResult state
+                if recordState == .aiResult, let result = aiResult {
+                    result.photos = selectedPhotos
+                }
+            }
+        }
+    }
+
+    func removePhoto(id: String) {
+        selectedPhotos.removeAll { $0.id == id }
+
+        // Also update aiResult photos if in aiResult state
+        if let result = aiResult {
+            result.photos = selectedPhotos
+        }
+    }
 }
 
 enum RecordState {
@@ -927,6 +1191,7 @@ enum RecordState {
 class AIAnalysisResultModel: ObservableObject {
     var content: String
     var people: [String]
+    var personsWithRelationship: [PersonWithRelationship]
     var newPersonDetected: Bool
     var location: String?
     var event: String?
@@ -935,10 +1200,13 @@ class AIAnalysisResultModel: ObservableObject {
     var amountLabel: String?
     var category: String
     var suggestedReminder: String?
+    var photos: [SelectedPhoto]
+    var photoTags: [String]
 
     init(
         content: String,
         people: [String],
+        personsWithRelationship: [PersonWithRelationship] = [],
         newPersonDetected: Bool = false,
         location: String? = nil,
         event: String? = nil,
@@ -946,10 +1214,13 @@ class AIAnalysisResultModel: ObservableObject {
         amount: String? = nil,
         amountLabel: String? = nil,
         category: String = "General",
-        suggestedReminder: String? = nil
+        suggestedReminder: String? = nil,
+        photos: [SelectedPhoto] = [],
+        photoTags: [String] = []
     ) {
         self.content = content
         self.people = people
+        self.personsWithRelationship = personsWithRelationship
         self.newPersonDetected = newPersonDetected
         self.location = location
         self.event = event
@@ -958,6 +1229,8 @@ class AIAnalysisResultModel: ObservableObject {
         self.amountLabel = amountLabel
         self.category = category
         self.suggestedReminder = suggestedReminder
+        self.photos = photos
+        self.photoTags = photoTags
     }
 }
 

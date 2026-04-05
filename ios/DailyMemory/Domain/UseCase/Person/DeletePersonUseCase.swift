@@ -23,5 +23,6 @@ final class DeletePersonUseCase {
 
         // Delete the person
         try await personRepository.delete(id: personId)
+        await SyncManager.shared.enqueuePersonChange(id: personId, type: .delete)
     }
 }

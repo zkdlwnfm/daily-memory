@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import com.dailymemory.domain.model.LocationTriggerType
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +32,7 @@ fun ReminderEditScreen(
     memoryId: String? = null,
     personId: String? = null,
     onNavigateBack: () -> Unit,
+    onNavigateToLocationPicker: (SelectedLocation?) -> Unit,
     viewModel: ReminderEditViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -154,6 +156,128 @@ fun ReminderEditScreen(
                 value = uiState.repeatType.getDisplayName(),
                 onClick = { showRepeatPicker = true }
             )
+
+            HorizontalDivider()
+
+            // Location Section
+            Text(
+                text = "Location",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            // Location-based toggle
+            Surface(
+                onClick = { viewModel.updateIsLocationBased(!uiState.isLocationBased) },
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = "Location-based reminder",
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Switch(
+                        checked = uiState.isLocationBased,
+                        onCheckedChange = { viewModel.updateIsLocationBased(it) }
+                    )
+                }
+            }
+
+            // Location picker (shown when location-based is enabled)
+            if (uiState.isLocationBased) {
+                Surface(
+                    onClick = { onNavigateToLocationPicker(uiState.selectedLocation) },
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (uiState.selectedLocation != null)
+                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                    else
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (uiState.selectedLocation != null)
+                                Icons.Default.CheckCircle
+                            else
+                                Icons.Default.AddLocation,
+                            contentDescription = null,
+                            tint = if (uiState.selectedLocation != null)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        if (uiState.selectedLocation != null) {
+                            val location = uiState.selectedLocation!!
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = location.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                location.address?.let {
+                                    Text(
+                                        text = it,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    val triggerIcon = when (location.triggerType) {
+                                        LocationTriggerType.ENTER -> Icons.Default.ArrowDownward
+                                        LocationTriggerType.EXIT -> Icons.Default.ArrowUpward
+                                        LocationTriggerType.BOTH -> Icons.Default.SwapVert
+                                    }
+                                    Icon(
+                                        triggerIcon,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(14.dp),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                    Text(
+                                        text = "${location.triggerType.getDisplayName()} within ${location.radius.toInt()}m",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        } else {
+                            Text(
+                                text = "Select location",
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Icon(
+                            Icons.Default.ChevronRight,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
 
             HorizontalDivider()
 

@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreLocation
 
 struct ReminderEditView: View {
     @Environment(\.dismiss) private var dismiss
@@ -7,6 +8,8 @@ struct ReminderEditView: View {
     let reminderId: String?
     let memoryId: String?
     let personId: String?
+
+    @State private var showLocationPicker = false
 
     init(reminderId: String? = nil, memoryId: String? = nil, personId: String? = nil) {
         self.reminderId = reminderId
@@ -64,6 +67,59 @@ struct ReminderEditView: View {
                     }
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
+                }
+
+                // Location-based Reminder
+                Section("Location") {
+                    Toggle("Location-based", isOn: $viewModel.isLocationBased)
+
+                    if viewModel.isLocationBased {
+                        if let location = viewModel.selectedLocation {
+                            Button {
+                                showLocationPicker = true
+                            } label: {
+                                HStack {
+                                    Image(systemName: "mappin.circle.fill")
+                                        .foregroundColor(.red)
+                                    VStack(alignment: .leading) {
+                                        Text(location.name)
+                                            .font(.body)
+                                            .foregroundColor(.primary)
+                                        if let address = location.address {
+                                            Text(address)
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        HStack {
+                                            Image(systemName: location.triggerType.icon)
+                                                .font(.caption)
+                                            Text(location.triggerType.displayName)
+                                                .font(.caption)
+                                            Text("within \(Int(location.radius))m")
+                                                .font(.caption)
+                                        }
+                                        .foregroundColor(.accentColor)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        } else {
+                            Button {
+                                showLocationPicker = true
+                            } label: {
+                                HStack {
+                                    Image(systemName: "plus.circle.fill")
+                                        .foregroundColor(.accentColor)
+                                    Text("Select Location")
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // Link To
@@ -124,6 +180,15 @@ struct ReminderEditView: View {
                     personId: personId
                 )
             }
+            .sheet(isPresented: $showLocationPicker) {
+                if #available(iOS 17.0, *) {
+                    LocationPickerView(initialLocation: viewModel.selectedLocation) { location in
+                        viewModel.selectedLocation = location
+                    }
+                } else {
+                    Text("Location picker requires iOS 17+")
+                }
+            }
         }
     }
 }
@@ -162,6 +227,10 @@ class ReminderEditViewModel: ObservableObject {
     @Published var saveSuccess = false
     @Published var error: String?
 
+    // Location-based reminder
+    @Published var isLocationBased = false
+    @Published var selectedLocation: SelectedLocation?
+
     private var existingReminderId: String?
     private var linkedMemoryId: String?
 
@@ -171,9 +240,14 @@ class ReminderEditViewModel: ObservableObject {
     private let getPersonUseCase = DIContainer.shared.getPersonUseCase
     private let getAllPersonsUseCase = DIContainer.shared.getAllPersonsUseCase
     private let notificationService = NotificationService.shared
+    private let geofenceService = GeofenceService.shared
 
     var isValid: Bool {
-        !title.trimmingCharacters(in: .whitespaces).isEmpty
+        let hasTitle = !title.trimmingCharacters(in: .whitespaces).isEmpty
+        if isLocationBased {
+            return hasTitle && selectedLocation != nil
+        }
+        return hasTitle
     }
 
     func initialize(reminderId: String?, memoryId: String?, personId: String?) async {
@@ -187,7 +261,35 @@ class ReminderEditViewModel: ObservableObject {
         // Load existing reminder if editing
         if let reminderId = reminderId {
             existingReminderId = reminderId
-            // TODO: Load existing reminder
+            do {
+                let reminderRepo = DIContainer.shared.reminderRepository
+                if let reminder = try await reminderRepo.getById(reminderId) {
+                    title = reminder.title
+                    body = reminder.body
+                    scheduledDate = reminder.scheduledAt
+                    repeatType = reminder.repeatType
+
+                    // Load location data
+                    if reminder.isLocationBased {
+                        isLocationBased = true
+                        if let lat = reminder.latitude,
+                           let lng = reminder.longitude {
+                            selectedLocation = SelectedLocation(
+                                name: reminder.locationName ?? "Selected Location",
+                                address: nil,
+                                coordinate: .init(latitude: lat, longitude: lng),
+                                radius: reminder.radius ?? 100,
+                                triggerType: reminder.locationTriggerType ?? .enter
+                            )
+                        }
+                    }
+
+                    linkedMemoryId = reminder.memoryId
+                    selectedPersonId = reminder.personId
+                }
+            } catch {
+                // Ignore
+            }
         }
 
         // Load linked memory if provided
@@ -238,7 +340,7 @@ class ReminderEditViewModel: ObservableObject {
         isSaving = true
         error = nil
 
-        let reminder = Reminder(
+        var reminder = Reminder(
             id: existingReminderId ?? UUID().uuidString,
             memoryId: linkedMemoryId,
             personId: selectedPersonId,
@@ -250,6 +352,15 @@ class ReminderEditViewModel: ObservableObject {
             isAutoGenerated: false
         )
 
+        // Add location data if location-based
+        if isLocationBased, let location = selectedLocation {
+            reminder.latitude = location.coordinate.latitude
+            reminder.longitude = location.coordinate.longitude
+            reminder.radius = location.radius
+            reminder.locationTriggerType = location.triggerType
+            reminder.locationName = location.name
+        }
+
         do {
             if existingReminderId != nil {
                 _ = try await updateReminderUseCase.execute(reminder)
@@ -257,8 +368,18 @@ class ReminderEditViewModel: ObservableObject {
                 _ = try await saveReminderUseCase.execute(reminder)
             }
 
-            // Schedule notification
-            await notificationService.scheduleReminder(reminder)
+            // Schedule notification or geofence
+            if reminder.isLocationBased {
+                // Start geofence monitoring
+                if geofenceService.hasGeofenceAuthorization {
+                    _ = geofenceService.startMonitoring(reminder: reminder)
+                } else {
+                    geofenceService.requestAlwaysAuthorization()
+                }
+            } else {
+                // Schedule time-based notification
+                await notificationService.scheduleReminder(reminder)
+            }
 
             saveSuccess = true
         } catch {

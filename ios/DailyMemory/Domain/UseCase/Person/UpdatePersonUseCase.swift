@@ -10,6 +10,7 @@ final class UpdatePersonUseCase {
 
     func execute(_ person: Person) async throws -> Person {
         try await personRepository.update(person)
+        await SyncManager.shared.enqueuePersonChange(id: person.id, type: .update)
         return person
     }
 }

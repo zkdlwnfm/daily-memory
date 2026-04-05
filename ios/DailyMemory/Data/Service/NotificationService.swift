@@ -203,27 +203,23 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 
         switch response.actionIdentifier {
         case "COMPLETE":
-            // Mark reminder as completed
             if let reminderId = reminderId {
                 Task {
-                    // TODO: Complete reminder via use case
-                    print("Completing reminder: \(reminderId)")
+                    let completeUseCase = DIContainer.shared.completeReminderUseCase
+                    try? await completeUseCase.execute(reminderId: reminderId)
                 }
             }
 
         case "SNOOZE":
-            // Snooze reminder
             if let reminderId = reminderId {
                 Task {
-                    // TODO: Snooze reminder
-                    print("Snoozing reminder: \(reminderId)")
+                    let snoozeUseCase = DIContainer.shared.snoozeReminderUseCase
+                    try? await snoozeUseCase.execute(reminderId: reminderId, snoozeMinutes: 15)
                 }
             }
 
         case UNNotificationDefaultActionIdentifier:
-            // User tapped notification - navigate to reminder
             if let reminderId = reminderId {
-                // TODO: Post notification to navigate to reminder detail
                 NotificationCenter.default.post(
                     name: .openReminder,
                     object: nil,

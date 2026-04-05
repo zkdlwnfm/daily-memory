@@ -10,6 +10,7 @@ final class SavePersonUseCase {
 
     func execute(_ person: Person) async throws -> Person {
         try await personRepository.save(person)
+        await SyncManager.shared.enqueuePersonChange(id: person.id, type: .create)
         return person
     }
 }

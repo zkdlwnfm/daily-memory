@@ -22,11 +22,51 @@ data class Reminder(
 
     val triggeredAt: LocalDateTime? = null,
 
+    // Location-based trigger (optional)
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val radius: Double? = null,           // in meters (default 100m)
+    val locationTriggerType: LocationTriggerType? = null,
+    val locationName: String? = null,     // Display name for the location
+
     // Metadata
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now(),
     val syncStatus: SyncStatus = SyncStatus.PENDING
-)
+) {
+    /**
+     * Check if this is a location-based reminder
+     */
+    val isLocationBased: Boolean
+        get() = latitude != null && longitude != null && locationTriggerType != null
+}
+
+/**
+ * Location trigger type for geofencing
+ */
+enum class LocationTriggerType {
+    ENTER,   // Trigger when entering the area
+    EXIT,    // Trigger when exiting the area
+    BOTH;    // Trigger on both enter and exit
+
+    companion object {
+        fun fromString(value: String): LocationTriggerType {
+            return try {
+                valueOf(value.uppercase())
+            } catch (e: IllegalArgumentException) {
+                ENTER
+            }
+        }
+    }
+
+    fun getDisplayName(): String {
+        return when (this) {
+            ENTER -> "On arrival"
+            EXIT -> "On departure"
+            BOTH -> "Both"
+        }
+    }
+}
 
 /**
  * Repeat type for reminders

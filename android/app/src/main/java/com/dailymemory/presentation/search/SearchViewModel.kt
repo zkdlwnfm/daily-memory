@@ -6,6 +6,8 @@ import com.dailymemory.domain.model.Memory
 import com.dailymemory.domain.model.Person
 import com.dailymemory.domain.usecase.memory.SearchMemoriesUseCase
 import com.dailymemory.domain.usecase.person.GetAllPersonsUseCase
+import com.dailymemory.domain.usecase.search.SemanticSearchUseCase
+import com.dailymemory.domain.usecase.search.SemanticSearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchMemoriesUseCase: SearchMemoriesUseCase,
-    private val getAllPersonsUseCase: GetAllPersonsUseCase
+    private val getAllPersonsUseCase: GetAllPersonsUseCase,
+    private val semanticSearchUseCase: SemanticSearchUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -30,9 +33,21 @@ class SearchViewModel @Inject constructor(
     private val _availablePersons = MutableStateFlow<List<Person>>(emptyList())
     val availablePersons: StateFlow<List<Person>> = _availablePersons.asStateFlow()
 
+    private var isSemanticSearchEnabled = true
+
     init {
         loadRecentSearches()
         loadAvailablePersons()
+        indexMemoriesIfNeeded()
+    }
+
+    private fun indexMemoriesIfNeeded() {
+        viewModelScope.launch {
+            val indexedCount = semanticSearchUseCase.indexAllUnindexed()
+            if (indexedCount > 0) {
+                // Memories indexed for semantic search
+            }
+        }
     }
 
     private fun loadRecentSearches() {
@@ -161,44 +176,144 @@ class SearchViewModel @Inject constructor(
         _uiState.update { it.copy(searchState = SearchState.SEARCHING) }
 
         viewModelScope.launch {
-            try {
-                // Search memories using the use case
-                val memories = searchMemoriesUseCase(query).first()
+            if (isSemanticSearchEnabled) {
+                performSemanticSearch(query)
+            } else {
+                performKeywordSearch(query)
+            }
+        }
+    }
 
-                // Apply advanced filters
+    private suspend fun performSemanticSearch(query: String) {
+        semanticSearchUseCase.searchHybrid(query, 20)
+            .onSuccess { searchResults ->
                 val filter = _uiState.value.advancedFilter
-                val filteredMemories = memories.filter { memory ->
-                    applyFilter(memory, filter)
+                val filteredResults = searchResults.filter { result ->
+                    applyFilter(result.memory, filter)
                 }
 
-                // Generate AI response from results
-                val aiResponse = if (filteredMemories.isNotEmpty()) {
-                    generateAIResponse(query, filteredMemories)
-                } else null
-
-                if (filteredMemories.isEmpty() && aiResponse == null) {
+                if (filteredResults.isEmpty()) {
                     _uiState.update { it.copy(
                         searchState = SearchState.EMPTY,
                         filteredMemories = emptyList(),
                         aiResponse = null
                     )}
                 } else {
+                    val memories = filteredResults.map { it.memory }
+                    val aiResponse = generateSemanticAIResponse(query, filteredResults)
+
                     _uiState.update { it.copy(
                         searchState = SearchState.RESULT,
-                        filteredMemories = filteredMemories,
+                        filteredMemories = memories,
                         aiResponse = aiResponse,
                         recentSearches = if (query.isNotBlank()) {
                             listOf(query) + it.recentSearches.filter { s -> s != query }.take(4)
                         } else it.recentSearches
                     )}
                 }
-            } catch (e: Exception) {
+            }
+            .onFailure {
+                // Fallback to keyword search
+                performKeywordSearch(query)
+            }
+    }
+
+    private suspend fun performKeywordSearch(query: String) {
+        try {
+            val memories = searchMemoriesUseCase(query).first()
+            val filter = _uiState.value.advancedFilter
+            val filteredMemories = memories.filter { memory ->
+                applyFilter(memory, filter)
+            }
+
+            val aiResponse = if (filteredMemories.isNotEmpty()) {
+                generateAIResponse(query, filteredMemories)
+            } else null
+
+            if (filteredMemories.isEmpty() && aiResponse == null) {
                 _uiState.update { it.copy(
                     searchState = SearchState.EMPTY,
-                    error = e.message
+                    filteredMemories = emptyList(),
+                    aiResponse = null
+                )}
+            } else {
+                _uiState.update { it.copy(
+                    searchState = SearchState.RESULT,
+                    filteredMemories = filteredMemories,
+                    aiResponse = aiResponse,
+                    recentSearches = if (query.isNotBlank()) {
+                        listOf(query) + it.recentSearches.filter { s -> s != query }.take(4)
+                    } else it.recentSearches
                 )}
             }
+        } catch (e: Exception) {
+            _uiState.update { it.copy(
+                searchState = SearchState.EMPTY,
+                error = e.message
+            )}
         }
+    }
+
+    private fun generateSemanticAIResponse(query: String, results: List<SemanticSearchResult>): AIResponse {
+        val relatedMemories = results.take(5).map { result ->
+            RelatedMemory(
+                id = result.memory.id,
+                date = result.memory.recordedAt,
+                content = result.memory.content,
+                tags = buildList {
+                    result.memory.extractedPersons.forEach { add(MemoryTag("person", it)) }
+                    result.memory.extractedLocation?.let { add(MemoryTag("location", it)) }
+                    add(MemoryTag("similarity", "${result.similarityPercent}% match"))
+                }
+            )
+        }
+
+        val mainAnswer = generateSemanticAnswer(query, results)
+        val details = results.firstOrNull()?.let { first ->
+            "Most relevant (${first.similarityPercent}% match): ${first.memory.content.take(100)}..."
+        }
+
+        return AIResponse(
+            mainAnswer = mainAnswer,
+            details = details,
+            highlight = results.firstOrNull()?.let { "Best match: ${it.similarityPercent}% relevance" },
+            relatedMemories = relatedMemories,
+            followUpQuestions = generateFollowUpQuestions(query, results.map { it.memory })
+        )
+    }
+
+    private fun generateSemanticAnswer(query: String, results: List<SemanticSearchResult>): String {
+        val queryLower = query.lowercase()
+
+        if (queryLower.contains("when")) {
+            results.firstOrNull()?.let { first ->
+                return "Based on your memories, this happened on ${first.memory.recordedAt.format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))}."
+            }
+        }
+
+        if (queryLower.contains("who")) {
+            val allPersons = results.flatMap { it.memory.extractedPersons }.distinct()
+            if (allPersons.isNotEmpty()) {
+                return "People mentioned: ${allPersons.joinToString(", ")}."
+            }
+        }
+
+        if (queryLower.contains("where")) {
+            val allLocations = results.mapNotNull { it.memory.extractedLocation }.distinct()
+            if (allLocations.isNotEmpty()) {
+                return "Locations found: ${allLocations.joinToString(", ")}."
+            }
+        }
+
+        if (queryLower.contains("how much") || queryLower.contains("money")) {
+            val amounts = results.mapNotNull { it.memory.extractedAmount }
+            if (amounts.isNotEmpty()) {
+                val total = amounts.sum()
+                return "Total amount mentioned: $${String.format("%.2f", total)}."
+            }
+        }
+
+        return "Found ${results.size} relevant memories matching your question."
     }
 
     private fun generateAIResponse(query: String, memories: List<Memory>): AIResponse {

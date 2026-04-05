@@ -10,6 +10,7 @@ final class UpdateMemoryUseCase {
 
     func execute(_ memory: Memory) async throws -> Memory {
         try await memoryRepository.update(memory)
+        await SyncManager.shared.enqueueMemoryChange(id: memory.id, type: .update)
         return memory
     }
 }

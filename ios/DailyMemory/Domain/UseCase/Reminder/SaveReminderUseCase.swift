@@ -10,6 +10,7 @@ final class SaveReminderUseCase {
 
     func execute(_ reminder: Reminder) async throws -> Reminder {
         try await reminderRepository.save(reminder)
+        await SyncManager.shared.enqueueReminderChange(id: reminder.id, type: .create)
         return reminder
     }
 }

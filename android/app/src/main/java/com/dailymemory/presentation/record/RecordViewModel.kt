@@ -1,8 +1,12 @@
 package com.dailymemory.presentation.record
 
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dailymemory.data.remote.AIAnalysisService
+import com.dailymemory.data.service.PhotoService
+import com.dailymemory.data.service.SavedPhoto
 import com.dailymemory.data.service.SpeechRecognitionResult
 import com.dailymemory.data.service.SpeechRecognitionService
 import com.dailymemory.data.service.SpeechRecognitionState
@@ -14,6 +18,8 @@ import com.dailymemory.domain.usecase.ai.AnalyzeMemoryUseCase
 import com.dailymemory.domain.usecase.memory.SaveMemoryUseCase
 import com.dailymemory.domain.usecase.person.GetAllPersonsUseCase
 import com.dailymemory.domain.usecase.person.SavePersonUseCase
+import com.dailymemory.domain.usecase.photo.AnalyzeImageUseCase
+import com.dailymemory.domain.usecase.photo.PhotoAnalysis
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -24,6 +30,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +39,9 @@ class RecordViewModel @Inject constructor(
     private val savePersonUseCase: SavePersonUseCase,
     private val getAllPersonsUseCase: GetAllPersonsUseCase,
     private val speechRecognitionService: SpeechRecognitionService,
-    private val analyzeMemoryUseCase: AnalyzeMemoryUseCase
+    private val analyzeMemoryUseCase: AnalyzeMemoryUseCase,
+    private val analyzeImageUseCase: AnalyzeImageUseCase,
+    private val photoService: PhotoService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RecordUiState())
@@ -183,6 +192,12 @@ class RecordViewModel @Inject constructor(
                     val existingNames = existingPersons.map { it.name.lowercase() }
                     val newPersons = analysis.persons.filter { !existingNames.contains(it.lowercase()) }
 
+                    // Collect photo tags
+                    val photoTags = _uiState.value.selectedPhotos
+                        .mapNotNull { it.analysis?.suggestedTags }
+                        .flatten()
+                        .distinct()
+
                     _uiState.update { it.copy(
                         recordState = RecordState.AI_RESULT,
                         aiResult = AIAnalysisResult(
@@ -196,7 +211,9 @@ class RecordViewModel @Inject constructor(
                             amountLabel = if (analysis.amount != null) "Amount mentioned" else null,
                             category = analysis.category.name.lowercase()
                                 .replaceFirstChar { it.uppercase() },
-                            suggestedReminder = generateReminderSuggestion(content)
+                            suggestedReminder = generateReminderSuggestion(content),
+                            photos = _uiState.value.selectedPhotos,
+                            photoTags = photoTags
                         )
                     )}
                 }
@@ -209,6 +226,12 @@ class RecordViewModel @Inject constructor(
 
                     val existingNames = existingPersons.map { it.name.lowercase() }
                     val newPersons = extractedPeople.filter { !existingNames.contains(it.lowercase()) }
+
+                    // Collect photo tags
+                    val photoTags = _uiState.value.selectedPhotos
+                        .mapNotNull { it.analysis?.suggestedTags }
+                        .flatten()
+                        .distinct()
 
                     _uiState.update { it.copy(
                         recordState = RecordState.AI_RESULT,
@@ -223,7 +246,9 @@ class RecordViewModel @Inject constructor(
                             amount = extractedAmount?.let { "$$it" },
                             amountLabel = if (extractedAmount != null) "Amount mentioned" else null,
                             category = category,
-                            suggestedReminder = generateReminderSuggestion(content)
+                            suggestedReminder = generateReminderSuggestion(content),
+                            photos = _uiState.value.selectedPhotos,
+                            photoTags = photoTags
                         )
                     )}
                 }
@@ -251,8 +276,17 @@ class RecordViewModel @Inject constructor(
                 return@launch
             }
 
+            // Collect photo IDs and tags
+            val photoIds = _uiState.value.selectedPhotos.mapNotNull { it.savedPhoto?.id }
+            val photoTags = _uiState.value.selectedPhotos
+                .mapNotNull { it.analysis?.suggestedTags }
+                .flatten()
+                .distinct()
+
             val memory = Memory(
                 content = content,
+                photos = photoIds,
+                extractedTags = photoTags,
                 category = Category.GENERAL,
                 recordedAt = LocalDateTime.now()
             )
@@ -294,12 +328,17 @@ class RecordViewModel @Inject constructor(
                 }
             }
 
+            // Collect photo IDs
+            val photoIds = aiResult.photos.mapNotNull { it.savedPhoto?.id }
+
             // Create memory
             val memory = Memory(
                 content = aiResult.content,
+                photos = photoIds,
                 extractedPersons = aiResult.people,
                 extractedLocation = aiResult.location,
                 extractedAmount = aiResult.amount?.replace("$", "")?.toDoubleOrNull(),
+                extractedTags = aiResult.photoTags,
                 personIds = newPersonIds,
                 category = Category.fromString(aiResult.category),
                 recordedAt = LocalDateTime.now()
@@ -347,6 +386,116 @@ class RecordViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    // MARK: - Photo Management
+
+    fun addPhoto(uri: Uri) {
+        viewModelScope.launch {
+            val photoId = UUID.randomUUID().toString()
+
+            // Add placeholder
+            _uiState.update { state ->
+                state.copy(
+                    selectedPhotos = state.selectedPhotos + SelectedPhoto(
+                        id = photoId,
+                        uri = uri,
+                        isAnalyzing = true
+                    )
+                )
+            }
+
+            // Save photo
+            photoService.savePhoto(uri)
+                .onSuccess { savedPhoto ->
+                    _uiState.update { state ->
+                        state.copy(
+                            selectedPhotos = state.selectedPhotos.map { photo ->
+                                if (photo.id == photoId) {
+                                    photo.copy(savedPhoto = savedPhoto)
+                                } else photo
+                            }
+                        )
+                    }
+
+                    // Analyze with AI
+                    analyzeImageUseCase.analyze(uri)
+                        .onSuccess { analysis ->
+                            _uiState.update { state ->
+                                state.copy(
+                                    selectedPhotos = state.selectedPhotos.map { photo ->
+                                        if (photo.id == photoId) {
+                                            photo.copy(
+                                                analysis = analysis,
+                                                isAnalyzing = false
+                                            )
+                                        } else photo
+                                    }
+                                )
+                            }
+
+                            // Update aiResult if in AI_RESULT state
+                            if (_uiState.value.recordState == RecordState.AI_RESULT) {
+                                updateAiResultPhotos()
+                            }
+                        }
+                        .onFailure {
+                            _uiState.update { state ->
+                                state.copy(
+                                    selectedPhotos = state.selectedPhotos.map { photo ->
+                                        if (photo.id == photoId) {
+                                            photo.copy(isAnalyzing = false)
+                                        } else photo
+                                    }
+                                )
+                            }
+                        }
+                }
+                .onFailure { e ->
+                    _uiState.update { state ->
+                        state.copy(
+                            selectedPhotos = state.selectedPhotos.filter { it.id != photoId },
+                            error = "Failed to save photo: ${e.message}"
+                        )
+                    }
+                }
+        }
+    }
+
+    fun removePhoto(photoId: String) {
+        viewModelScope.launch {
+            val photo = _uiState.value.selectedPhotos.find { it.id == photoId }
+            photo?.savedPhoto?.id?.let { savedPhotoId ->
+                photoService.deletePhoto(savedPhotoId)
+            }
+
+            _uiState.update { state ->
+                state.copy(
+                    selectedPhotos = state.selectedPhotos.filter { it.id != photoId }
+                )
+            }
+
+            // Update aiResult if in AI_RESULT state
+            if (_uiState.value.recordState == RecordState.AI_RESULT) {
+                updateAiResultPhotos()
+            }
+        }
+    }
+
+    private fun updateAiResultPhotos() {
+        _uiState.update { state ->
+            val photoTags = state.selectedPhotos
+                .mapNotNull { it.analysis?.suggestedTags }
+                .flatten()
+                .distinct()
+
+            state.copy(
+                aiResult = state.aiResult?.copy(
+                    photos = state.selectedPhotos,
+                    photoTags = photoTags
+                )
+            )
+        }
     }
 
     override fun onCleared() {
@@ -429,7 +578,17 @@ data class RecordUiState(
     val textContent: String = "",
     val audioLevel: Float = 0f,
     val aiResult: AIAnalysisResult? = null,
-    val error: String? = null
+    val error: String? = null,
+    val selectedPhotos: List<SelectedPhoto> = emptyList()
+)
+
+data class SelectedPhoto(
+    val id: String = UUID.randomUUID().toString(),
+    val uri: Uri? = null,
+    val bitmap: Bitmap? = null,
+    val savedPhoto: SavedPhoto? = null,
+    val analysis: PhotoAnalysis? = null,
+    val isAnalyzing: Boolean = false
 )
 
 enum class RecordState {
@@ -450,5 +609,7 @@ data class AIAnalysisResult(
     val amount: String? = null,
     val amountLabel: String? = null,
     val category: String = "General",
-    val suggestedReminder: String? = null
+    val suggestedReminder: String? = null,
+    val photos: List<SelectedPhoto> = emptyList(),
+    val photoTags: List<String> = emptyList()
 )

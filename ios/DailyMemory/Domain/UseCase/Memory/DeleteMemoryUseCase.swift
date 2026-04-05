@@ -23,5 +23,6 @@ final class DeleteMemoryUseCase {
 
         // Delete the memory
         try await memoryRepository.delete(id: memoryId)
+        await SyncManager.shared.enqueueMemoryChange(id: memoryId, type: .delete)
     }
 }

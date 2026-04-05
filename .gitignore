@@ -55,3 +55,8 @@ build/
 *.jks
 google-services.json
 GoogleService-Info.plist
+key/
+api/.env
+api/secrets/
+api/node_modules/
+api/dist/

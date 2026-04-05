@@ -109,4 +109,19 @@ final class DIContainer {
     lazy var analyzeMemoryUseCase: AnalyzeMemoryUseCase = {
         AnalyzeMemoryUseCase()
     }()
+
+    lazy var analyzeImageUseCase: AnalyzeImageUseCase = {
+        AnalyzeImageUseCase()
+    }()
+
+    lazy var semanticSearchUseCase: SemanticSearchUseCase = {
+        SemanticSearchUseCase()
+    }()
+
+    // MARK: - Cloud Services
+
+    var authService: AuthService { AuthService.shared }
+    var firestoreService: FirestoreService { FirestoreService.shared }
+    var cloudStorageService: CloudStorageService { CloudStorageService.shared }
+    var syncManager: SyncManager { SyncManager.shared }
 }

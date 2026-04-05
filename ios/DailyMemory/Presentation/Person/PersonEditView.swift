@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 // MARK: - ViewModel
 @MainActor
@@ -11,6 +12,8 @@ final class PersonEditViewModel: ObservableObject {
     @Published var phone = ""
     @Published var email = ""
     @Published var memo = ""
+    @Published var profileImage: UIImage?
+    @Published var profileImageUrl: String?
     @Published var isLoading = false
     @Published var isSaving = false
     @Published var saveSuccess = false
@@ -50,6 +53,10 @@ final class PersonEditViewModel: ObservableObject {
                 phone = person.phone ?? ""
                 email = person.email ?? ""
                 memo = person.memo ?? ""
+                profileImageUrl = person.profileImageUrl
+                if let imageUrl = person.profileImageUrl {
+                    profileImage = UIImage(contentsOfFile: imageUrl)
+                }
             } else {
                 error = "Person not found"
             }
@@ -74,6 +81,20 @@ final class PersonEditViewModel: ObservableObject {
 
         isSaving = true
 
+        // Save profile image if selected
+        var savedImageUrl = profileImageUrl
+        if let image = profileImage, profileImageUrl == nil {
+            if let data = image.jpegData(compressionQuality: 0.8) {
+                let fileName = "\(personId ?? UUID().uuidString)_profile.jpg"
+                let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                let profileDir = docsDir.appendingPathComponent("profiles", isDirectory: true)
+                try? FileManager.default.createDirectory(at: profileDir, withIntermediateDirectories: true)
+                let fileURL = profileDir.appendingPathComponent(fileName)
+                try? data.write(to: fileURL)
+                savedImageUrl = fileURL.path
+            }
+        }
+
         let person = Person(
             id: personId ?? UUID().uuidString,
             name: trimmedName,
@@ -81,6 +102,7 @@ final class PersonEditViewModel: ObservableObject {
             relationship: relationship,
             phone: phone.isEmpty ? nil : phone,
             email: email.isEmpty ? nil : email,
+            profileImageUrl: savedImageUrl,
             memo: memo.isEmpty ? nil : memo,
             createdAt: Date(),
             updatedAt: Date()
@@ -106,6 +128,7 @@ struct PersonEditView: View {
     let personId: String?
     @StateObject private var viewModel = PersonEditViewModel()
     @Environment(\.dismiss) private var dismiss
+    @State private var selectedPhotoItem: PhotosPickerItem?
 
     var body: some View {
         NavigationStack {
@@ -243,19 +266,25 @@ struct PersonEditView: View {
     // MARK: - Profile Photo Section
     private var profilePhotoSection: some View {
         ZStack(alignment: .bottomTrailing) {
-            ZStack {
-                Circle()
-                    .fill(Color(.systemGray5))
+            if let image = viewModel.profileImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
                     .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+            } else {
+                ZStack {
+                    Circle()
+                        .fill(Color(.systemGray5))
+                        .frame(width: 100, height: 100)
 
-                Image(systemName: "person.fill")
-                    .font(.system(size: 40))
-                    .foregroundColor(.secondary)
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary)
+                }
             }
 
-            Button {
-                // TODO: Pick image
-            } label: {
+            PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
                 ZStack {
                     Circle()
                         .fill(Color.dmPrimary)
@@ -264,6 +293,15 @@ struct PersonEditView: View {
                     Image(systemName: "camera.fill")
                         .font(.system(size: 14))
                         .foregroundColor(.white)
+                }
+            }
+            .onChange(of: selectedPhotoItem) { newItem in
+                guard let item = newItem else { return }
+                Task {
+                    if let data = try? await item.loadTransferable(type: Data.self),
+                       let image = UIImage(data: data) {
+                        viewModel.profileImage = image
+                    }
                 }
             }
         }

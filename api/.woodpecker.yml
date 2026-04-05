@@ -1,0 +1,16 @@
+steps:
+  deploy:
+    image: appleboy/drone-ssh
+    settings:
+      host: 192.168.50.214
+      username: root
+      key:
+        from_secret: ssh_key
+      script:
+        - cd /opt/dailymemory
+        - git pull origin main
+        - docker compose build --no-cache
+        - docker compose up -d --force-recreate
+        - docker image prune -f
+    when:
+      branch: main

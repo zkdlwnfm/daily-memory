@@ -4,13 +4,13 @@ enum Constants {
     // MARK: - App Info
     enum App {
         static let name = "DailyMemory"
-        static let bundleId = "com.dailymemory"
-        static let appStoreId = "" // TODO: Add when published
+        static let bundleId = "com.effortmoney.dailymemory"
+        static let appStoreId = ""
     }
 
     // MARK: - API
     enum API {
-        static let baseURL = "https://api.dailymemory.com" // TODO: Update with actual URL
+        static let baseURL = "https://dailymemory.pjhdev.co.kr/api/v1"
         static let timeout: TimeInterval = 30
     }
 

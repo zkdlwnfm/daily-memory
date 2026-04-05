@@ -3,9 +3,13 @@ import SwiftUI
 // MARK: - ViewModel
 @MainActor
 class SettingsViewModel: ObservableObject {
-    @Published var userEmail: String = "alex@email.com"
+    @Published var userEmail: String = ""
+    @Published var displayName: String = ""
     @Published var isPremium: Bool = false
+    @Published var isSignedIn: Bool = false
     @Published var lastSyncTimeDisplay: String = "Never"
+    @Published var syncStateText: String = ""
+    @Published var pendingChangesCount: Int = 0
 
     // Notifications
     @Published var remindersEnabled: Bool = true {
@@ -45,9 +49,12 @@ class SettingsViewModel: ObservableObject {
     let appVersion: String = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
 
     private let userPreferences = UserPreferences.shared
+    private let authService = AuthService.shared
+    private let syncManager = SyncManager.shared
 
     init() {
         loadFromPreferences()
+        loadAuthState()
     }
 
     private func loadFromPreferences() {
@@ -63,8 +70,22 @@ class SettingsViewModel: ObservableObject {
         updateSyncTimeDisplay()
     }
 
+    private func loadAuthState() {
+        if let profile = authService.currentUser {
+            isSignedIn = true
+            userEmail = profile.email ?? ""
+            displayName = profile.displayName ?? ""
+            isPremium = profile.isPremium
+        } else {
+            isSignedIn = false
+            userEmail = "Not signed in"
+            displayName = ""
+        }
+        pendingChangesCount = syncManager.pendingChanges
+    }
+
     private func updateSyncTimeDisplay() {
-        if let date = userPreferences.lastSyncTime {
+        if let date = syncManager.lastSyncDate ?? userPreferences.lastSyncTime {
             let formatter = RelativeDateTimeFormatter()
             lastSyncTimeDisplay = formatter.localizedString(for: date, relativeTo: Date())
         } else {
@@ -73,13 +94,19 @@ class SettingsViewModel: ObservableObject {
     }
 
     func syncNow() {
-        userPreferences.lastSyncTime = Date()
-        updateSyncTimeDisplay()
+        Task {
+            await syncManager.syncAll()
+            updateSyncTimeDisplay()
+            pendingChangesCount = syncManager.pendingChanges
+        }
     }
 
     func signOut() {
+        _ = authService.signOut()
+        UserDefaults.standard.removeObject(forKey: "skippedSignIn")
         userPreferences.clearAll()
         loadFromPreferences()
+        loadAuthState()
     }
 
     var lastSyncTime: String { lastSyncTimeDisplay }
@@ -95,10 +122,44 @@ struct SettingsView: View {
                 VStack(spacing: 24) {
                     // Account Section
                     SettingsSection(title: "Account") {
-                        AccountCard(
-                            email: viewModel.userEmail,
-                            isPremium: viewModel.isPremium
-                        )
+                        if viewModel.isSignedIn {
+                            AccountCard(
+                                email: viewModel.userEmail,
+                                displayName: viewModel.displayName,
+                                isPremium: viewModel.isPremium
+                            )
+                        } else {
+                            Button {
+                                UserDefaults.standard.removeObject(forKey: "skippedSignIn")
+                                NotificationCenter.default.post(name: .skipSignIn, object: false)
+                            } label: {
+                                HStack(spacing: 16) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .fill(Color.accentColor.opacity(0.1))
+                                            .frame(width: 56, height: 56)
+                                        Image(systemName: "person.badge.plus")
+                                            .font(.system(size: 24))
+                                            .foregroundColor(.accentColor)
+                                    }
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Sign In")
+                                            .font(.headline)
+                                            .fontWeight(.bold)
+                                            .foregroundColor(.primary)
+                                        Text("Sync your data across devices")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(16)
+                                .background(Color(.systemBackground))
+                                .cornerRadius(28)
+                            }
+                        }
                     }
 
                     // Data Section
@@ -116,7 +177,9 @@ struct SettingsView: View {
                                 icon: "arrow.triangle.2.circlepath",
                                 iconColor: .dmPrimary,
                                 title: "Sync status",
-                                subtitle: "Last: \(viewModel.lastSyncTime)"
+                                subtitle: viewModel.pendingChangesCount > 0
+                                    ? "\(viewModel.pendingChangesCount) pending - Last: \(viewModel.lastSyncTime)"
+                                    : "Last: \(viewModel.lastSyncTime)"
                             ) {
                                 Button("Sync now") {
                                     viewModel.syncNow()
@@ -128,6 +191,7 @@ struct SettingsView: View {
                                 .padding(.vertical, 8)
                                 .background(Color(.systemGray6))
                                 .cornerRadius(20)
+                                .disabled(!viewModel.isSignedIn)
                             }
 
                             Divider().padding(.leading, 76)
@@ -293,14 +357,16 @@ struct SettingsView: View {
                     }
 
                     // Sign Out
-                    Button(action: viewModel.signOut) {
-                        Text("Sign Out")
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.secondary.opacity(0.6))
-                            .tracking(1)
+                    if viewModel.isSignedIn {
+                        Button(action: viewModel.signOut) {
+                            Text("Sign Out")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.red.opacity(0.7))
+                                .tracking(1)
+                        }
+                        .padding(.vertical, 16)
                     }
-                    .padding(.vertical, 16)
 
                     Spacer(minLength: 100)
                 }
@@ -348,6 +414,7 @@ struct SettingsCard<Content: View>: View {
 // MARK: - Account Card
 struct AccountCard: View {
     let email: String
+    var displayName: String = ""
     let isPremium: Bool
 
     var body: some View {
@@ -365,10 +432,20 @@ struct AccountCard: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(email)
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
+                    if !displayName.isEmpty {
+                        Text(displayName)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                        Text(email)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text(email)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                    }
 
                     if isPremium {
                         HStack(spacing: 4) {

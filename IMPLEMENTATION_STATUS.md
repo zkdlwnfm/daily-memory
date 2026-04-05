@@ -1,6 +1,6 @@
 # DailyMemory 앱 구현 현황
 
-> 마지막 업데이트: 2026-03-24
+> 마지막 업데이트: 2026-04-05
 
 ## 전체 진행 상황
 
@@ -8,10 +8,10 @@
 Phase 0-0.6: ████████████████████ 100% (완료)
 Phase 1:     ████████████████████ 100% (완료)
 Phase 2:     ████████████████████ 100% (완료)
-Phase 3:     ███████████████░░░░░  75% (AI 이미지 분석 제외 완료)
-Phase 4:     ███████████████░░░░░  75% (AI 시맨틱 검색 제외 완료)
-Phase 5:     ████████████████░░░░  80% (위치 기반 리마인더 제외 완료)
-Phase 6:     ░░░░░░░░░░░░░░░░░░░░   0% (미시작)
+Phase 3:     ████████████████████ 100% (완료)
+Phase 4:     ████████████████████ 100% (완료)
+Phase 5:     ████████████████████ 100% (완료)
+Phase 6:     ████████████████████ 100% (iOS 완료)
 Phase 7:     ░░░░░░░░░░░░░░░░░░░░   0% (미시작)
 ```
 
@@ -150,9 +150,15 @@ Phase 7:     ░░░░░░░░░░░░░░░░░░░░   0% (
     - Android: `presentation/photo/PhotoGalleryScreen.kt`
     - iOS: `Presentation/Photo/PhotoGalleryView.swift`
 
-- [ ] **AI 이미지 분석 (선택)**
-  - Google Cloud Vision / OpenAI Vision
-  - 객체 인식, 장면 설명
+- [x] **AI 이미지 분석** ✅ 완료
+  - OpenAI Vision API (GPT-4o)
+  - 객체 인식, 장면 설명, OCR, 얼굴 감지
+  - 자동 태그 생성
+  - 시뮬레이션 모드 (API 미설정 시)
+  - 파일:
+    - Android: `data/remote/ImageAnalysisService.kt`, `domain/usecase/photo/AnalyzeImageUseCase.kt`
+    - iOS: `Data/Remote/ImageAnalysisService.swift`, `Domain/UseCase/Photo/AnalyzeImageUseCase.swift`
+  - RecordViewModel에 연동 완료
 
 ---
 
@@ -166,10 +172,15 @@ Phase 7:     ░░░░░░░░░░░░░░░░░░░░   0% (
   - 편집/삭제 기능
   - 카테고리/중요도 수정
 
-- [ ] **AI 시맨틱 검색** (선택 - 외부 API 필요)
-  - 벡터 임베딩 생성
-  - 유사도 검색
-  - 자연어 질의 처리
+- [x] **AI 시맨틱 검색** ✅ 완료
+  - OpenAI text-embedding-3-small 벡터 임베딩
+  - 코사인 유사도 검색 (VectorSearchEngine)
+  - 자연어 질의 처리 (하이브리드 검색: 시맨틱 + 키워드)
+  - 시뮬레이션 모드 (API 미설정 시)
+  - 파일:
+    - Android: `data/remote/EmbeddingService.kt`, `data/local/VectorSearchEngine.kt`, `domain/usecase/search/SemanticSearchUseCase.kt`
+    - iOS: `Data/Remote/EmbeddingService.swift`, `Data/Local/VectorSearchEngine.swift`, `Domain/UseCase/Search/SemanticSearchUseCase.swift`
+  - SearchViewModel에 연동 완료
 
 - [x] **고급 필터링** ✅ 완료
   - 날짜 범위 (DatePicker)
@@ -226,46 +237,73 @@ Phase 7:     ░░░░░░░░░░░░░░░░░░░░   0% (
   - 키워드 감지: 결혼식, 생일, 미팅, 약속, 금전 거래
   - ReminderSuggestion 모델
 
-- [ ] **위치 기반 리마인더 (선택)**
-  - 지오펜싱
-  - 특정 장소 도착 시 알림
+- [x] **위치 기반 리마인더** ✅ 완료
+  - 지오펜싱 (CoreLocation/Google Geofencing API)
+  - 위치 선택 UI (LocationPickerView/Screen)
+  - 도착/출발/양쪽 트리거 옵션
+  - 반경 설정 (50-500m)
+  - 파일:
+    - Android: `data/service/GeofenceService.kt`, `presentation/reminder/LocationPickerScreen.kt`
+    - iOS: `Data/Service/GeofenceService.swift`, `Presentation/Reminder/LocationPickerView.swift`
+  - ReminderEditView/Screen에 통합 완료
 
 ---
 
-### Phase 6: 클라우드 동기화 & 인증
+### Phase 6: 클라우드 동기화 & 인증 (iOS)
 
 #### Firebase 인증
-- [ ] **로그인/회원가입 화면**
-  - 이메일/비밀번호
-  - Google 소셜 로그인
-  - Apple 소셜 로그인 (iOS)
+- [x] **로그인/회원가입 화면** ✅ 완료
+  - 이메일/비밀번호 로그인 및 회원가입
+  - Apple Sign-In (ASAuthorization)
+  - Google Sign-In (GoogleSignIn SDK)
+  - 비밀번호 재설정
+  - "계정 없이 사용" 옵션
+  - 파일: `Presentation/Auth/LoginView.swift`
 
-- [ ] **인증 서비스**
-  - 파일: `data/remote/AuthService.kt`
+- [x] **인증 서비스** ✅ 완료
   - Firebase Authentication 연동
-  - 토큰 관리
+  - AuthState 관리 (unknown/signedOut/signedIn)
+  - 프로필 업데이트 (displayName)
+  - 계정 삭제
+  - 파일: `Data/Remote/AuthService.swift`
 
-- [ ] **사용자 프로필 관리**
-  - 이름, 프로필 사진
-  - 프리미엄 상태
+- [x] **사용자 프로필 관리** ✅ 완료
+  - UserProfile 모델 (uid, email, displayName, photoURL, isPremium)
+  - Firestore에 프로필 저장/조회
 
 #### 클라우드 동기화
-- [ ] **Firebase Firestore 연동**
-  - Memory, Person, Reminder 컬렉션
-  - 사용자별 데이터 분리
+- [x] **Firebase Firestore 연동** ✅ 완료
+  - Memory, Person, Reminder 컬렉션 (사용자별 분리)
+  - 실시간 리스너 (listenToMemories, listenToPersons)
+  - 배치 저장 (batchSaveMemories, batchSavePersons)
+  - 오프라인 캐시 (persistentCacheSettings)
+  - 파일: `Data/Remote/FirestoreService.swift`
 
-- [ ] **오프라인 우선 동기화**
-  - 로컬 변경사항 큐잉
-  - 충돌 해결 전략
-  - 동기화 상태 표시
+- [x] **오프라인 우선 동기화** ✅ 완료
+  - SyncManager: 변경사항 큐잉 (JSON 파일 저장)
+  - 네트워크 모니터링 (NWPathMonitor) - 온라인 복귀 시 자동 동기화
+  - 충돌 해결: 최신 updatedAt 기준 클라우드 우선
+  - 동기화 상태 표시 (idle/syncing/synced/error/offline)
+  - 초기 전체 동기화 (performInitialSync)
+  - 파일: `Data/Remote/SyncManager.swift`
 
-- [ ] **Firebase Storage**
-  - 사진 업로드
-  - 음성 파일 업로드
+- [x] **Firebase Storage** ✅ 완료
+  - 사진/썸네일 업로드/다운로드
+  - 프로필 사진 업로드
+  - 로컬→클라우드 URL 자동 변환 (syncPhotos)
+  - 파일: `Data/Remote/CloudStorageService.swift`
 
-- [ ] **데이터 암호화**
+- [ ] **데이터 암호화** (미구현 - 선택사항)
   - E2E 암호화 옵션
   - 잠금 메모리 암호화
+
+#### 앱 통합
+- [x] **인증 플로우 통합** ✅ 완료
+  - RootView: 인증 상태에 따라 Login/Content 전환
+  - Firebase 초기화 (FirebaseApp.configure)
+  - SettingsView: 실제 인증/동기화 정보 표시
+  - DIContainer: 클라우드 서비스 등록
+  - SPM 의존성: FirebaseAuth, Firestore, Storage, GoogleSignIn
 
 ---
 

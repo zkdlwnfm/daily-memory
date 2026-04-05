@@ -8,8 +8,10 @@ class SearchViewModel: ObservableObject {
     @Published var aiResponse: AIResponse?
     @Published var recentSearches: [String] = []
     @Published var suggestions: [Suggestion] = Suggestion.defaults
+    @Published var isSemanticSearchEnabled: Bool = true
 
     private let searchMemoriesUseCase: SearchMemoriesUseCase
+    private let semanticSearchUseCase: SemanticSearchUseCase
     private let userPreferences = UserPreferences.shared
 
     enum SearchState {
@@ -19,9 +21,25 @@ class SearchViewModel: ObservableObject {
         case empty
     }
 
-    init(searchMemoriesUseCase: SearchMemoriesUseCase = DIContainer.shared.searchMemoriesUseCase) {
+    init(
+        searchMemoriesUseCase: SearchMemoriesUseCase = DIContainer.shared.searchMemoriesUseCase,
+        semanticSearchUseCase: SemanticSearchUseCase = DIContainer.shared.semanticSearchUseCase
+    ) {
         self.searchMemoriesUseCase = searchMemoriesUseCase
+        self.semanticSearchUseCase = semanticSearchUseCase
         self.recentSearches = userPreferences.recentSearches
+
+        // Index unindexed memories in background
+        Task {
+            await indexMemoriesIfNeeded()
+        }
+    }
+
+    private func indexMemoriesIfNeeded() async {
+        let indexedCount = await semanticSearchUseCase.indexAllUnindexed()
+        if indexedCount > 0 {
+            print("Indexed \(indexedCount) memories for semantic search")
+        }
     }
 
     func search() {
@@ -30,56 +48,158 @@ class SearchViewModel: ObservableObject {
         searchState = .searching
 
         Task {
-            do {
-                let memories = try await searchMemoriesUseCase.byContent(query: query)
-
-                if memories.isEmpty {
-                    searchState = .empty
-                    aiResponse = nil
-                } else {
-                    // Convert memories to RelatedMemory format
-                    let relatedMemories = memories.prefix(5).map { memory -> RelatedMemory in
-
-                        var tags: [MemoryTag] = []
-                        for person in memory.extractedPersons {
-                            tags.append(MemoryTag(type: "person", value: person))
-                        }
-                        if let location = memory.extractedLocation {
-                            tags.append(MemoryTag(type: "location", value: location))
-                        }
-
-                        return RelatedMemory(
-                            id: memory.id,
-                            date: memory.recordedAt,
-                            content: memory.content,
-                            tags: tags
-                        )
-                    }
-
-                    // Generate a simple AI-like response
-                    let mainAnswer = "Found \(memories.count) memories matching \"\(query)\"."
-                    let details = memories.first.map { "Most recent: \($0.content.prefix(100))..." }
-
-                    let response = AIResponse(
-                        mainAnswer: mainAnswer,
-                        details: details,
-                        highlight: nil,
-                        relatedMemories: Array(relatedMemories),
-                        followUpQuestions: generateFollowUpQuestions(from: memories)
-                    )
-
-                    aiResponse = response
-                    searchState = .result
-                }
-
-                // Save to recent searches
-                saveRecentSearch(query)
-
-            } catch {
-                searchState = .empty
-                aiResponse = nil
+            if isSemanticSearchEnabled {
+                await performSemanticSearch()
+            } else {
+                await performKeywordSearch()
             }
         }
+    }
+
+    private func performSemanticSearch() async {
+        let result = await semanticSearchUseCase.executeHybrid(query: query, limit: 20)
+
+        switch result {
+        case .success(let searchResults):
+            if searchResults.isEmpty {
+                searchState = .empty
+                aiResponse = nil
+            } else {
+                let memories = searchResults.map { $0.memory }
+                let relatedMemories = searchResults.prefix(5).map { result -> RelatedMemory in
+                    var tags: [MemoryTag] = []
+                    for person in result.memory.extractedPersons {
+                        tags.append(MemoryTag(type: "person", value: person))
+                    }
+                    if let location = result.memory.extractedLocation {
+                        tags.append(MemoryTag(type: "location", value: location))
+                    }
+                    // Add similarity tag
+                    tags.append(MemoryTag(type: "similarity", value: "\(result.similarityPercent)% match"))
+
+                    return RelatedMemory(
+                        id: result.memory.id,
+                        date: result.memory.recordedAt,
+                        content: result.memory.content,
+                        tags: tags
+                    )
+                }
+
+                // Generate AI-like response based on semantic understanding
+                let mainAnswer = generateSemanticAnswer(query: query, results: searchResults)
+                let details = generateSemanticDetails(results: searchResults)
+
+                let response = AIResponse(
+                    mainAnswer: mainAnswer,
+                    details: details,
+                    highlight: searchResults.first.map { "Best match: \($0.similarityPercent)% relevance" },
+                    relatedMemories: Array(relatedMemories),
+                    followUpQuestions: generateFollowUpQuestions(from: memories)
+                )
+
+                aiResponse = response
+                searchState = .result
+            }
+
+        case .failure:
+            // Fallback to keyword search
+            await performKeywordSearch()
+        }
+
+        saveRecentSearch(query)
+    }
+
+    private func performKeywordSearch() async {
+        do {
+            let memories = try await searchMemoriesUseCase.byContent(query: query)
+
+            if memories.isEmpty {
+                searchState = .empty
+                aiResponse = nil
+            } else {
+                let relatedMemories = memories.prefix(5).map { memory -> RelatedMemory in
+                    var tags: [MemoryTag] = []
+                    for person in memory.extractedPersons {
+                        tags.append(MemoryTag(type: "person", value: person))
+                    }
+                    if let location = memory.extractedLocation {
+                        tags.append(MemoryTag(type: "location", value: location))
+                    }
+
+                    return RelatedMemory(
+                        id: memory.id,
+                        date: memory.recordedAt,
+                        content: memory.content,
+                        tags: tags
+                    )
+                }
+
+                let mainAnswer = "Found \(memories.count) memories matching \"\(query)\"."
+                let details = memories.first.map { "Most recent: \($0.content.prefix(100))..." }
+
+                let response = AIResponse(
+                    mainAnswer: mainAnswer,
+                    details: details,
+                    highlight: nil,
+                    relatedMemories: Array(relatedMemories),
+                    followUpQuestions: generateFollowUpQuestions(from: memories)
+                )
+
+                aiResponse = response
+                searchState = .result
+            }
+
+            saveRecentSearch(query)
+        } catch {
+            searchState = .empty
+            aiResponse = nil
+        }
+    }
+
+    private func generateSemanticAnswer(query: String, results: [SemanticSearchResult]) -> String {
+        let queryLower = query.lowercased()
+
+        // Check for question patterns
+        if queryLower.contains("when") {
+            if let firstResult = results.first {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "MMMM d, yyyy"
+                return "Based on your memories, this happened on \(formatter.string(from: firstResult.memory.recordedAt))."
+            }
+        }
+
+        if queryLower.contains("who") {
+            let allPersons = Set(results.flatMap { $0.memory.extractedPersons })
+            if !allPersons.isEmpty {
+                return "People mentioned: \(allPersons.joined(separator: ", "))."
+            }
+        }
+
+        if queryLower.contains("where") {
+            let allLocations = Set(results.compactMap { $0.memory.extractedLocation })
+            if !allLocations.isEmpty {
+                return "Locations found: \(allLocations.joined(separator: ", "))."
+            }
+        }
+
+        if queryLower.contains("how much") || queryLower.contains("money") {
+            let amounts = results.compactMap { $0.memory.extractedAmount }
+            if !amounts.isEmpty {
+                let total = amounts.reduce(0, +)
+                return "Total amount mentioned: $\(String(format: "%.2f", total))."
+            }
+        }
+
+        // Default response
+        return "Found \(results.count) relevant memories matching your question."
+    }
+
+    private func generateSemanticDetails(results: [SemanticSearchResult]) -> String? {
+        guard let first = results.first else { return nil }
+
+        let content = first.memory.content
+        let preview = content.prefix(150)
+        return "Most relevant (\(first.similarityPercent)% match): \(preview)..."
     }
 
     private func generateFollowUpQuestions(from memories: [Memory]) -> [String] {
@@ -172,6 +292,7 @@ struct MemoryTag {
         switch type {
         case "person": return "person.fill"
         case "location": return "location.fill"
+        case "similarity": return "sparkles"
         default: return "calendar"
         }
     }

@@ -5,130 +5,36 @@ import Foundation
 actor AIAnalysisService {
     static let shared = AIAnalysisService()
 
-    // MARK: - Configuration
-    enum AIProvider {
-        case openAI
-        case claude
-    }
+    private let apiClient = APIClient.shared
 
-    private var apiKey: String = ""
-    private var apiProvider: AIProvider = .claude
-
-    private let session: URLSession
-
-    // MARK: - Initialization
-    private init() {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
-        config.timeoutIntervalForResource = 60
-        self.session = URLSession(configuration: config)
-    }
-
-    // MARK: - Configuration
-
-    /// Configure the AI service with API credentials
-    func configure(apiKey: String, provider: AIProvider = .claude) {
-        self.apiKey = apiKey
-        self.apiProvider = provider
-    }
+    private init() {}
 
     // MARK: - Analysis
 
-    /// Analyze text and extract entities
+    /// Analyze text via backend API (falls back to simulation if offline)
     func analyzeText(_ text: String) async -> Result<AnalysisResult, Error> {
-        if apiKey.isEmpty {
-            // Return simulated result when no API key is configured
-            return .success(simulateAnalysis(text))
-        }
-
+        // Try backend API first
         do {
-            let result: AnalysisResult
-            switch apiProvider {
-            case .openAI:
-                result = try await analyzeWithOpenAI(text)
-            case .claude:
-                result = try await analyzeWithClaude(text)
-            }
+            let response: AnalysisResponse = try await apiClient.post("ai/analyze", body: ["text": text])
+            let personsWithRel = response.persons.map { PersonWithRelationship(from: $0) }
+            let result = AnalysisResult(
+                persons: response.persons.map { $0.name },
+                location: response.location,
+                date: response.date,
+                amount: response.amount,
+                tags: response.tags,
+                category: response.category,
+                summary: response.summary,
+                personsWithRelationship: personsWithRel
+            )
             return .success(result)
         } catch {
-            // Fallback to simulation on error
+            // Fallback to simulation on error (offline, rate limited, etc.)
             return .success(simulateAnalysis(text))
         }
     }
 
-    // MARK: - Claude API
-
-    private func analyzeWithClaude(_ text: String) async throws -> AnalysisResult {
-        let url = URL(string: "https://api.anthropic.com/v1/messages")!
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
-        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
-
-        let prompt = buildAnalysisPrompt(text)
-        let body: [String: Any] = [
-            "model": "claude-3-haiku-20240307",
-            "max_tokens": 1024,
-            "messages": [
-                ["role": "user", "content": prompt]
-            ]
-        ]
-
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
-
-        let (data, _) = try await session.data(for: request)
-        return try parseAnalysisResponse(data)
-    }
-
-    // MARK: - OpenAI API
-
-    private func analyzeWithOpenAI(_ text: String) async throws -> AnalysisResult {
-        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-
-        let prompt = buildAnalysisPrompt(text)
-        let body: [String: Any] = [
-            "model": "gpt-3.5-turbo",
-            "messages": [
-                ["role": "system", "content": "You are a helpful assistant that extracts structured information from text."],
-                ["role": "user", "content": prompt]
-            ],
-            "temperature": 0.3
-        ]
-
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
-
-        let (data, _) = try await session.data(for: request)
-        return try parseAnalysisResponse(data)
-    }
-
-    // MARK: - Prompt Building
-
-    private func buildAnalysisPrompt(_ text: String) -> String {
-        """
-        Analyze the following text and extract structured information.
-        Return a JSON object with these fields:
-        - persons: array of person names mentioned
-        - location: the main location mentioned (or null)
-        - date: any specific date mentioned in ISO format (or null)
-        - amount: any monetary amount mentioned as a number (or null)
-        - tags: array of relevant keywords/topics
-        - category: one of EVENT, PROMISE, MEETING, FINANCIAL, GENERAL
-        - summary: a brief one-sentence summary
-
-        Text: "\(text)"
-
-        Respond ONLY with valid JSON, no additional text.
-        """
-    }
-
-    // MARK: - Response Parsing
+    // MARK: - Legacy Response Parsing (kept for reference)
 
     private func parseAnalysisResponse(_ data: Data) throws -> AnalysisResult {
         // Parse the API response to extract the content
@@ -273,6 +179,22 @@ actor AIAnalysisService {
 }
 
 // MARK: - Analysis Result
+
+struct PersonWithRelationship {
+    let name: String
+    let relationship: Relationship
+
+    init(name: String, relationship: Relationship = .other) {
+        self.name = name
+        self.relationship = relationship
+    }
+
+    init(from extracted: PersonExtracted) {
+        self.name = extracted.name
+        self.relationship = Relationship(rawValue: extracted.relationship) ?? .other
+    }
+}
+
 struct AnalysisResult: Codable {
     let persons: [String]
     let location: String?
@@ -282,6 +204,13 @@ struct AnalysisResult: Codable {
     let category: String
     let summary: String
 
+    // Non-codable: relationship info from AI
+    var personsWithRelationship: [PersonWithRelationship] = []
+
+    enum CodingKeys: String, CodingKey {
+        case persons, location, date, amount, tags, category, summary
+    }
+
     init(
         persons: [String] = [],
         location: String? = nil,
@@ -289,7 +218,8 @@ struct AnalysisResult: Codable {
         amount: Double? = nil,
         tags: [String] = [],
         category: String = "GENERAL",
-        summary: String = ""
+        summary: String = "",
+        personsWithRelationship: [PersonWithRelationship] = []
     ) {
         self.persons = persons
         self.location = location
@@ -298,6 +228,7 @@ struct AnalysisResult: Codable {
         self.tags = tags
         self.category = category
         self.summary = summary
+        self.personsWithRelationship = personsWithRelationship
     }
 }
 

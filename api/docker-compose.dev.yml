@@ -1,0 +1,51 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: dailymemory-db
+    restart: unless-stopped
+    ports:
+      - '15432:5432'
+    environment:
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: localdev123
+      POSTGRES_DB: dailymemory
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U app_user -d dailymemory']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: dailymemory-redis
+    restart: unless-stopped
+    ports:
+      - '16379:6379'
+    command: redis-server --requirepass localdev123
+
+  api:
+    build: .
+    container_name: dailymemory-api
+    restart: unless-stopped
+    ports:
+      - '13000:3000'
+    env_file:
+      - .env
+    volumes:
+      - ./secrets:/app/secrets:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/api/v1/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  pgdata:
