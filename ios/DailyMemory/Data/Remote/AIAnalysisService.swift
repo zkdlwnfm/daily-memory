@@ -29,6 +29,7 @@ actor AIAnalysisService {
             )
             return .success(result)
         } catch {
+            print("[AIAnalysis] Backend API error: \(error)")
             // Fallback to simulation on error (offline, rate limited, etc.)
             return .success(simulateAnalysis(text))
         }
