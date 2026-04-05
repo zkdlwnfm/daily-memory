@@ -57,6 +57,7 @@ targets:
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "DailyMemory needs access to your photos to attach them to memories"
         INFOPLIST_KEY_NSCameraUsageDescription: "DailyMemory can capture photos to add to your memories"
         INFOPLIST_KEY_NSUserNotificationsUsageDescription: "DailyMemory sends reminders for your important memories"
+        INFOPLIST_KEY_UIBackgroundModes: "remote-notification"
     dependencies:
       - package: FirebaseAuth
         product: FirebaseAuth
@@ -66,6 +67,8 @@ targets:
         product: FirebaseStorage
       - package: FirebaseAuth
         product: FirebaseAnalytics
+      - package: FirebaseAuth
+        product: FirebaseMessaging
       - package: GoogleSignIn
         product: GoogleSignIn
       - package: GoogleSignIn

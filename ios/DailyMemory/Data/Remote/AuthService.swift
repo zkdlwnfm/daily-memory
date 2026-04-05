@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseAuth
+import FirebaseMessaging
 import AuthenticationServices
 import CryptoKit
 
@@ -119,9 +120,22 @@ final class AuthService: ObservableObject {
             Task { @MainActor in
                 if let user = user {
                     self?.authState = .signedIn(.from(firebaseUser: user))
+                    // Subscribe to FCM user topic for push notifications
+                    self?.subscribeToFCMTopic(uid: user.uid)
                 } else {
                     self?.authState = .signedOut
                 }
+            }
+        }
+    }
+
+    private func subscribeToFCMTopic(uid: String) {
+        let topic = "user_\(uid)"
+        Messaging.messaging().subscribe(toTopic: topic) { error in
+            if let error = error {
+                print("[FCM] Subscribe error: \(error)")
+            } else {
+                print("[FCM] Subscribed to \(topic)")
             }
         }
     }

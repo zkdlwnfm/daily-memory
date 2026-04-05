@@ -43,7 +43,7 @@
 		4F33EDB57830FF76A152DD0E /* AnalyzeImageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460AC509EA2720B44FDCE423 /* AnalyzeImageUseCase.swift */; };
 		51B8D1AE4EBEEB2773AA2D0A /* SaveMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF2C0F31CCAC4E188A51AF3D /* SaveMemoryUseCase.swift */; };
 		52D4D8547DF0E53B520CE0A1 /* QuickRecordWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13B6348E75752FFAA7CA844 /* QuickRecordWidget.swift */; };
-		546451A65D2D39D5FA21981C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 92B494BA76066A2C4A57736D /* GoogleSignInSwift */; };
+		546451A65D2D39D5FA21981C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = FBFFB665121250630C8DE726 /* GoogleSignIn */; };
 		560257ECA9D12C0CD3AA7EF1 /* EmbeddingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B904302C737870B6241D4757 /* EmbeddingService.swift */; };
 		5724014BC51FBE86F9E99DC0 /* PersonRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CE23D5B1436D643C67524C /* PersonRepository.swift */; };
 		5A73F8BCEAF1E2AA4AEC3AB0 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFADC64CC75785EBF3BAFE4 /* LoginView.swift */; };
@@ -57,6 +57,7 @@
 		6ED79402CD85F928A7C56CE0 /* WidgetColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E7796438FEE8ED6B9D6870 /* WidgetColors.swift */; };
 		7206CF65EC565F00786BA994 /* MemoryRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F4823BB5FFEB831790C4DC /* MemoryRepositoryImpl.swift */; };
 		75C484D5AAD48F56ECECB0E0 /* HomeEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DCA79E2D6E1121CB93314B6 /* HomeEmptyStateView.swift */; };
+		763461E12C1DC6E8DAA8D72B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 92B494BA76066A2C4A57736D /* GoogleSignInSwift */; };
 		7C8086587748FC57176AA151 /* AnalyzeMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7EA283CAC2283584E209EF6 /* AnalyzeMemoryUseCase.swift */; };
 		858764E78799986602DF1C57 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA7E7FEBE700E9874DB599B0 /* APIClient.swift */; };
 		90132A51A4A27AD8F483B136 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D315825FCE454AAD88D7BA89 /* Reminder.swift */; };
@@ -97,7 +98,7 @@
 		E34BF089DB64318A156D04FC /* GeofenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C381B77439665CC8AE1FAD09 /* GeofenceService.swift */; };
 		E52BA513BE4AE501CF46045C /* GetRecentMemoriesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 684346C0E62E587DD828D4E3 /* GetRecentMemoriesUseCase.swift */; };
 		E5E610B79CB1B5F9AABD3C09 /* ReminderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F8322DBC319060EA9AE58C /* ReminderRepository.swift */; };
-		E72EBA7ED2EA6307A67FDD45 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = FBFFB665121250630C8DE726 /* GoogleSignIn */; };
+		E72EBA7ED2EA6307A67FDD45 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = E2B742583F36D94126C5C62D /* FirebaseMessaging */; };
 		EB77DFF53A914DE0604CF062 /* ReminderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0EC6011CDAB0903E2C8CF1 /* ReminderStore.swift */; };
 		F289B7E4D93A1195B6C079CF /* GetUpcomingRemindersUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777138EDB5DB30E93E3A5CB6 /* GetUpcomingRemindersUseCase.swift */; };
 		FEF80496F4176AEC06034A9D /* VectorSearchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEFD0C5D1E2DA22982AB681 /* VectorSearchEngine.swift */; };
@@ -217,8 +218,9 @@
 				9677943A02DB9D2DE41419E5 /* FirebaseFirestore in Frameworks */,
 				DBEA743A7F4A0BF751FA2968 /* FirebaseStorage in Frameworks */,
 				E0A4679757FEF70B24636FBB /* FirebaseAnalytics in Frameworks */,
-				E72EBA7ED2EA6307A67FDD45 /* GoogleSignIn in Frameworks */,
-				546451A65D2D39D5FA21981C /* GoogleSignInSwift in Frameworks */,
+				E72EBA7ED2EA6307A67FDD45 /* FirebaseMessaging in Frameworks */,
+				546451A65D2D39D5FA21981C /* GoogleSignIn in Frameworks */,
+				763461E12C1DC6E8DAA8D72B /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -648,6 +650,7 @@
 				11E667083F641FF65E88F973 /* FirebaseFirestore */,
 				833428D35531325DEAF04541 /* FirebaseStorage */,
 				F1271B17D2440AE2819663E4 /* FirebaseAnalytics */,
+				E2B742583F36D94126C5C62D /* FirebaseMessaging */,
 				FBFFB665121250630C8DE726 /* GoogleSignIn */,
 				92B494BA76066A2C4A57736D /* GoogleSignInSwift */,
 			);
@@ -956,6 +959,7 @@
 				INFOPLIST_KEY_NSUserNotificationsUsageDescription = "DailyMemory sends reminders for your important memories";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIBackgroundModes = "remote-notification";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -1051,6 +1055,7 @@
 				INFOPLIST_KEY_NSUserNotificationsUsageDescription = "DailyMemory sends reminders for your important memories";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIBackgroundModes = "remote-notification";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -1136,6 +1141,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 07FAAECCC4BBEA155C3898DD /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		E2B742583F36D94126C5C62D /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2AF095E884E8A601D25CA479 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		F1271B17D2440AE2819663E4 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
