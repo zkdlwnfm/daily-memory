@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>DailyMemory</string>
+    <string>Engram</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -52,16 +52,16 @@
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
     <key>NSMicrophoneUsageDescription</key>
-    <string>DailyMemory needs access to your microphone to record voice memories.</string>
+    <string>Engram needs access to your microphone to record voice memories.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>DailyMemory uses speech recognition to convert your voice recordings to text.</string>
+    <string>Engram uses speech recognition to convert your voice recordings to text.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>DailyMemory needs access to your photo library to attach photos to memories.</string>
+    <string>Engram needs access to your photo library to attach photos to memories.</string>
     <key>NSCameraUsageDescription</key>
-    <string>DailyMemory needs access to your camera to take photos for memories.</string>
+    <string>Engram needs access to your camera to take photos for memories.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>DailyMemory can use your location to tag where memories were recorded.</string>
+    <string>Engram can use your location to tag where memories were recorded.</string>
     <key>NSUserTrackingUsageDescription</key>
-    <string>This allows DailyMemory to provide personalized experiences.</string>
+    <string>This allows Engram to provide personalized experiences.</string>
 </dict>
 </plist>

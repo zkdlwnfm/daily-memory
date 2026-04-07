@@ -3,14 +3,14 @@ import Foundation
 enum Constants {
     // MARK: - App Info
     enum App {
-        static let name = "DailyMemory"
+        static let name = "Engram"
         static let bundleId = "com.effortmoney.dailymemory"
         static let appStoreId = ""
     }
 
     // MARK: - API
     enum API {
-        static let baseURL = "https://dailymemory.pjhdev.co.kr/api/v1"
+        static let baseURL = "https://engram.pjhdev.co.kr/api/v1"
         static let timeout: TimeInterval = 30
     }
 

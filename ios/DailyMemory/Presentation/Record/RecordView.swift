@@ -204,7 +204,7 @@ struct VoiceRecordingView: View {
                 .font(.headline)
                 .foregroundColor(.red)
 
-            Text("DailyMemory is listening")
+            Text("Engram is listening")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
@@ -239,7 +239,7 @@ struct VoiceRecordingView: View {
             Spacer().frame(height: 24)
 
             TipCard(
-                text: "Speak naturally. DailyMemory automatically organizes names, dates, and amounts mentioned.",
+                text: "Speak naturally. Engram automatically organizes names, dates, and amounts mentioned.",
                 prefix: "Tip:"
             )
             .padding(.horizontal, 24)
