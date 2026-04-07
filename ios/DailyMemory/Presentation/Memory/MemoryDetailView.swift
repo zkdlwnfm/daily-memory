@@ -63,6 +63,8 @@ final class MemoryDetailViewModel: ObservableObject {
         do {
             try await deleteMemoryUseCase.execute(memoryId: memory.id)
             deleteSuccess = true
+            // Notify Home to refresh
+            NotificationCenter.default.post(name: .memoryChanged, object: nil)
         } catch {
             self.error = error.localizedDescription
         }

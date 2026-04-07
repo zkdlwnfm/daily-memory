@@ -239,4 +239,5 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 
 extension Notification.Name {
     static let openReminder = Notification.Name("openReminder")
+    static let memoryChanged = Notification.Name("memoryChanged")
 }

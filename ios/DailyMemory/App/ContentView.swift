@@ -34,6 +34,12 @@ struct ContentView: View {
                 homeRefreshTrigger = UUID()
             }
         }
+        // Refresh home when switching back to home tab
+        .onChange(of: selectedTab) { tab in
+            if tab == .home {
+                homeRefreshTrigger = UUID()
+            }
+        }
         // Handle deep links from widgets
         .onChange(of: deepLinkHandler.shouldShowRecordSheet) { newValue in
             if newValue {

@@ -77,6 +77,9 @@ struct HomeView: View {
             .sheet(isPresented: $showRecordSheet) {
                 RecordView()
             }
+            .onReceive(NotificationCenter.default.publisher(for: .memoryChanged)) { _ in
+                Task { await viewModel.refresh() }
+            }
         }
     }
 
