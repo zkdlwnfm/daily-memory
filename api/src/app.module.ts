@@ -7,6 +7,7 @@ import { EmbeddingModule } from './embedding/embedding.module';
 import { SearchModule } from './search/search.module';
 import { RateLimitModule } from './rate-limit/rate-limit.module';
 import { HealthModule } from './health/health.module';
+import { AdminModule } from './admin/admin.module';
 import { MemoryEmbedding } from './search/entities/memory-embedding.entity';
 import { UserProfile } from './auth/entities/user-profile.entity';
 import { ApiUsageLog } from './common/entities/api-usage-log.entity';
@@ -34,6 +35,7 @@ import { ApiUsageLog } from './common/entities/api-usage-log.entity';
     SearchModule,
     RateLimitModule,
     HealthModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
