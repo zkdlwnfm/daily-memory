@@ -2,46 +2,67 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
+    @State private var showRecordSheet = false
     var refreshTrigger: UUID = UUID()
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    // Greeting Section
-                    greetingSection
+            Group {
+                if viewModel.recentMemories.isEmpty && !viewModel.isLoading {
+                    HomeEmptyStateView(onStartRecording: { showRecordSheet = true })
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            // Greeting Section
+                            greetingSection
 
-                    // Reminder Card
-                    if let reminder = viewModel.reminder {
-                        ReminderCard(
-                            reminder: reminder,
-                            onDone: { viewModel.onReminderDone(reminder.id) },
-                            onSnooze: { viewModel.onReminderSnooze(reminder.id) }
-                        )
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 8)
-                    }
+                            // Streak card
+                            if viewModel.streakDays > 0 {
+                                StreakCard(days: viewModel.streakDays)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 8)
+                            }
 
-                    // Recent Memories Section
-                    recentMemoriesSection
+                            // Daily prompt (if no memory today)
+                            if viewModel.todayMemoryCount == 0 {
+                                DailyPromptCard(onRecord: { showRecordSheet = true })
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 8)
+                            }
 
-                    // Memory Cards
-                    ForEach(viewModel.recentMemories) { memory in
-                        NavigationLink(destination: MemoryDetailView(memoryId: memory.id)) {
-                            MemoryCard(memory: memory)
+                            // Reminder Card
+                            if let reminder = viewModel.reminder {
+                                ReminderCard(
+                                    reminder: reminder,
+                                    onDone: { viewModel.onReminderDone(reminder.id) },
+                                    onSnooze: { viewModel.onReminderSnooze(reminder.id) }
+                                )
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 8)
+                            }
+
+                            // Recent Memories Section
+                            recentMemoriesSection
+
+                            // Memory Cards
+                            ForEach(viewModel.recentMemories) { memory in
+                                NavigationLink(destination: MemoryDetailView(memoryId: memory.id)) {
+                                    MemoryCard(memory: memory)
+                                }
+                                .buttonStyle(.plain)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 6)
+                            }
+
+                            // On This Day Section
+                            if let flashback = viewModel.flashback {
+                                onThisDaySection(flashback: flashback)
+                                    .padding(.top, 24)
+                            }
+
+                            Spacer(minLength: 100)
                         }
-                        .buttonStyle(.plain)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 6)
                     }
-
-                    // On This Day Section
-                    if let flashback = viewModel.flashback {
-                        onThisDaySection(flashback: flashback)
-                            .padding(.top, 24)
-                    }
-
-                    Spacer(minLength: 100)
                 }
             }
             .background(Color(.systemGroupedBackground))
@@ -52,6 +73,9 @@ struct HomeView: View {
                 Task {
                     await viewModel.refresh()
                 }
+            }
+            .sheet(isPresented: $showRecordSheet) {
+                RecordView()
             }
         }
     }
@@ -270,6 +294,7 @@ class HomeViewModel: ObservableObject {
     private let userPreferences = UserPreferences.shared
     @Published var todayMemoryCount = 0
     @Published var reminderCount = 0
+    @Published var streakDays = 0
     @Published var reminder: ReminderUi?
     @Published var recentMemories: [MemoryUi] = []
     @Published var flashback: FlashbackUi?
@@ -342,6 +367,9 @@ class HomeViewModel: ObservableObject {
                 reminder = nil
             }
 
+            // Calculate streak
+            streakDays = calculateStreak(memories: memories)
+
             // Load flashback (1 year ago)
             flashback = await loadFlashback()
 
@@ -350,6 +378,31 @@ class HomeViewModel: ObservableObject {
             self.error = error.localizedDescription
             isLoading = false
         }
+    }
+
+    private func calculateStreak(memories: [Memory]) -> Int {
+        let calendar = Calendar.current
+        var streak = 0
+        var checkDate = calendar.startOfDay(for: Date())
+
+        // Check if today has a memory
+        let hasTodayMemory = memories.contains { calendar.isDate($0.recordedAt, inSameDayAs: checkDate) }
+        if hasTodayMemory {
+            streak = 1
+            checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
+        }
+
+        // Check consecutive past days
+        for _ in 0..<30 { // Max 30 days check
+            let hasMemory = memories.contains { calendar.isDate($0.recordedAt, inSameDayAs: checkDate) }
+            if hasMemory {
+                streak += 1
+                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
+            } else {
+                break
+            }
+        }
+        return streak
     }
 
     private func loadFlashback() async -> FlashbackUi? {

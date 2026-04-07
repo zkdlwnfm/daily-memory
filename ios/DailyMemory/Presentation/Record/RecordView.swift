@@ -6,6 +6,7 @@ struct RecordView: View {
     @StateObject private var viewModel = RecordViewModel()
     @State private var showPhotoPicker = false
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
+    @State private var showSaveSuccess = false
 
     var body: some View {
         NavigationStack {
@@ -34,7 +35,7 @@ struct RecordView: View {
                         onSaveWithoutAnalysis: {
                             Task {
                                 await viewModel.saveWithoutAnalysisAsync()
-                                dismiss()
+                                showSaveSuccess = true
                             }
                         },
                         onAddPhoto: { showPhotoPicker = true },
@@ -86,7 +87,7 @@ struct RecordView: View {
                         Button("Save") {
                             Task {
                                 await viewModel.saveMemoryAsync()
-                                dismiss()
+                                showSaveSuccess = true
                             }
                         }
                         .fontWeight(.bold)
@@ -112,6 +113,14 @@ struct RecordView: View {
                 Task {
                     await viewModel.addPhotos(from: newItems)
                     selectedPhotoItems = []
+                }
+            }
+            .overlay {
+                SaveSuccessView(isPresented: $showSaveSuccess)
+            }
+            .onChange(of: showSaveSuccess) { showing in
+                if !showing {
+                    dismiss()
                 }
             }
         }
@@ -1000,6 +1009,8 @@ class RecordViewModel: ObservableObject {
         isSaving = true
         defer { isSaving = false }
 
+        let content = textContent
+
         // Collect photos and tags from analyzed photos
         let photos: [Photo] = selectedPhotos.compactMap { selected in
             guard let saved = selected.savedPhoto else { return nil }
@@ -1014,7 +1025,7 @@ class RecordViewModel: ObservableObject {
         photoTags = Array(Set(photoTags))
 
         let memory = Memory(
-            content: textContent,
+            content: content,
             photos: photos,
             extractedPersons: [],
             extractedLocation: nil,
@@ -1029,8 +1040,51 @@ class RecordViewModel: ObservableObject {
 
         do {
             _ = try await saveMemoryUseCase.execute(memory)
+
+            // Background AI analysis - update memory after analysis completes
+            let memoryId = memory.id
+            let savedPhotos = selectedPhotos
+            Task.detached { [weak self] in
+                guard let self else { return }
+                await self.backgroundAnalyze(memoryId: memoryId, content: content, photos: savedPhotos)
+            }
         } catch {
             self.error = error.localizedDescription
+        }
+    }
+
+    /// Run AI analysis in background and update the saved memory
+    private func backgroundAnalyze(memoryId: String, content: String, photos: [SelectedPhoto]) async {
+        let analysisResult = await aiAnalysisService.analyzeText(content)
+
+        guard case .success(let result) = analysisResult else { return }
+
+        // Build updated memory
+        let container = DIContainer.shared
+        do {
+            guard var memory = try await container.getMemoryUseCase.execute(id: memoryId) else { return }
+
+            memory.extractedPersons = result.persons
+            memory.extractedLocation = result.location
+            memory.extractedAmount = result.amount
+            memory.extractedTags = result.tags
+            memory.category = Category(rawValue: result.category) ?? .general
+
+            _ = try await container.updateMemoryUseCase.execute(memory)
+
+            // Save new persons
+            let existingPersons = try await container.getAllPersonsUseCase.execute()
+            for person in result.personsWithRelationship {
+                let isExisting = existingPersons.contains { $0.name.lowercased() == person.name.lowercased() }
+                if !isExisting {
+                    let newPerson = Person(name: person.name, relationship: person.relationship, meetingCount: 1, lastMeetingDate: Date())
+                    _ = try await container.savePersonUseCase.execute(newPerson)
+                }
+            }
+
+            print("[Background] AI analysis completed for memory \(memoryId)")
+        } catch {
+            print("[Background] AI analysis failed: \(error)")
         }
     }
 

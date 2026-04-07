@@ -14,6 +14,7 @@
 		0472017F9825AB8030B93101 /* UserPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524B33215506D4ED088A252 /* UserPreferences.swift */; };
 		0605A2C999CF7DBE42955502 /* SemanticSearchUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE3A74A0918F91453A644C5 /* SemanticSearchUseCase.swift */; };
 		0741BFF8CF093E4E593844DE /* UpdateReminderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF9FEDEC7B393F1F79C87374 /* UpdateReminderUseCase.swift */; };
+		07DCD998BE4EABCBA7A26266 /* HomeCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9D6F939C9B555D8DB5AC4D /* HomeCards.swift */; };
 		0A02FB50711DCE8426CED0A0 /* GetMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062A8A1DCD7DF60922039985 /* GetMemoryUseCase.swift */; };
 		0D35F246D9521C5FF6091F57 /* LockScreenWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5833914133983C466C67BB1 /* LockScreenWidget.swift */; };
 		0EC688FFC96B53FF65E463BC /* AllMemoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BEAF3F50F78F2AF76C2F4A7 /* AllMemoriesView.swift */; };
@@ -77,6 +78,7 @@
 		AE912CBFB5CDABC8C09FE97F /* DailyMemoryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066EC1573FE38ADA53920ED7 /* DailyMemoryWidget.swift */; };
 		AF9F4314638D831337B4DA1C /* UpdatePersonUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81914AE1E172D0B04C92DDB5 /* UpdatePersonUseCase.swift */; };
 		B07F78F7FDF5A7FEB132B759 /* MemoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F7782DC40C24E4D8B84B43 /* MemoryStore.swift */; };
+		B2DAB5E56EDE883BA0DC7CFE /* SaveSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC62DF24A809159B187F288 /* SaveSuccessView.swift */; };
 		B75E1229DD3458E133366DBA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2EEB84491D3F683BD9728748 /* GoogleService-Info.plist */; };
 		B908AB85D1216F053412F2F8 /* MemoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9809F2A5690C46832768175A /* MemoryDetailView.swift */; };
 		B92BD1481CED6F1678235D60 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04F44FEFD3753DFCDF20A00 /* ContentView.swift */; };
@@ -175,6 +177,7 @@
 		A763342EC0E6EC07C4D8189A /* GetPersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPersonUseCase.swift; sourceTree = "<group>"; };
 		AA0C90CBDB1AAD855ABBFFFF /* PersonMemoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonMemoriesView.swift; sourceTree = "<group>"; };
 		ABF6DE3489090735AEDD7C5D /* SavePersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePersonUseCase.swift; sourceTree = "<group>"; };
+		AF9D6F939C9B555D8DB5AC4D /* HomeCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCards.swift; sourceTree = "<group>"; };
 		B33A784F31A7706957E9478C /* CoreDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataModels.swift; sourceTree = "<group>"; };
 		B5833914133983C466C67BB1 /* LockScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidget.swift; sourceTree = "<group>"; };
 		B904302C737870B6241D4757 /* EmbeddingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddingService.swift; sourceTree = "<group>"; };
@@ -204,6 +207,7 @@
 		F3ABB2BD8D87F86AEEC30574 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		FAA20F0258D924C585B00E1D /* DeletePersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePersonUseCase.swift; sourceTree = "<group>"; };
 		FD1359BBDF9C4702889FE619 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
+		FDC62DF24A809159B187F288 /* SaveSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveSuccessView.swift; sourceTree = "<group>"; };
 		FF2C0F31CCAC4E188A51AF3D /* SaveMemoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveMemoryUseCase.swift; sourceTree = "<group>"; };
 		FF47ADAA7121D0AA0D132E83 /* ExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportService.swift; sourceTree = "<group>"; };
 		FF9FEDEC7B393F1F79C87374 /* UpdateReminderUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateReminderUseCase.swift; sourceTree = "<group>"; };
@@ -504,6 +508,7 @@
 			isa = PBXGroup;
 			children = (
 				072B74B28A469A2FB7F1AB50 /* ImageViews.swift */,
+				FDC62DF24A809159B187F288 /* SaveSuccessView.swift */,
 				D171FA370ED21975512233E6 /* StateViews.swift */,
 			);
 			path = Components;
@@ -568,6 +573,7 @@
 		E9D622B1AB199EE5BDBFABC0 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				AF9D6F939C9B555D8DB5AC4D /* HomeCards.swift */,
 				5DCA79E2D6E1121CB93314B6 /* HomeEmptyStateView.swift */,
 				4618375DDF43CC2E5ADC8ACD /* HomeView.swift */,
 			);
@@ -781,6 +787,7 @@
 				E52BA513BE4AE501CF46045C /* GetRecentMemoriesUseCase.swift in Sources */,
 				A0157D31D38F6B309B9D2CB7 /* GetTodayRemindersUseCase.swift in Sources */,
 				F289B7E4D93A1195B6C079CF /* GetUpcomingRemindersUseCase.swift in Sources */,
+				07DCD998BE4EABCBA7A26266 /* HomeCards.swift in Sources */,
 				75C484D5AAD48F56ECECB0E0 /* HomeEmptyStateView.swift in Sources */,
 				40DBBCDF9F3F1BA9997243E3 /* HomeView.swift in Sources */,
 				D49FCA6A4F47EEC42321DDFC /* ImageAnalysisService.swift in Sources */,
@@ -816,6 +823,7 @@
 				51B8D1AE4EBEEB2773AA2D0A /* SaveMemoryUseCase.swift in Sources */,
 				6B125A840F0840263E2B2066 /* SavePersonUseCase.swift in Sources */,
 				22C98E45CBE5FE8D90F1DE52 /* SaveReminderUseCase.swift in Sources */,
+				B2DAB5E56EDE883BA0DC7CFE /* SaveSuccessView.swift in Sources */,
 				A6A6CC42D6A80B4D2AAC906B /* SearchMemoriesUseCase.swift in Sources */,
 				99A56BE54CA1610B817747EF /* SearchView.swift in Sources */,
 				0605A2C999CF7DBE42955502 /* SemanticSearchUseCase.swift in Sources */,
