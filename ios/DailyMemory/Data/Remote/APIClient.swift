@@ -112,6 +112,8 @@ struct AnalysisResponse: Decodable {
     let amount: Double?
     let tags: [String]
     let category: String
+    let mood: String?
+    let moodScore: Int?
     let summary: String
 }
 

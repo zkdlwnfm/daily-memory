@@ -24,6 +24,8 @@ actor AIAnalysisService {
                 amount: response.amount,
                 tags: response.tags,
                 category: response.category,
+                mood: response.mood,
+                moodScore: response.moodScore,
                 summary: response.summary,
                 personsWithRelationship: personsWithRel
             )
@@ -203,13 +205,15 @@ struct AnalysisResult: Codable {
     let amount: Double?
     let tags: [String]
     let category: String
+    let mood: String?
+    let moodScore: Int?
     let summary: String
 
     // Non-codable: relationship info from AI
     var personsWithRelationship: [PersonWithRelationship] = []
 
     enum CodingKeys: String, CodingKey {
-        case persons, location, date, amount, tags, category, summary
+        case persons, location, date, amount, tags, category, mood, moodScore, summary
     }
 
     init(
@@ -219,6 +223,8 @@ struct AnalysisResult: Codable {
         amount: Double? = nil,
         tags: [String] = [],
         category: String = "GENERAL",
+        mood: String? = nil,
+        moodScore: Int? = nil,
         summary: String = "",
         personsWithRelationship: [PersonWithRelationship] = []
     ) {
@@ -228,6 +234,8 @@ struct AnalysisResult: Codable {
         self.amount = amount
         self.tags = tags
         self.category = category
+        self.mood = mood
+        self.moodScore = moodScore
         self.summary = summary
         self.personsWithRelationship = personsWithRelationship
     }

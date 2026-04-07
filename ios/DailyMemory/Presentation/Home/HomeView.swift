@@ -41,6 +41,13 @@ struct HomeView: View {
                                 .padding(.vertical, 8)
                             }
 
+                            // Mood Trend
+                            if !viewModel.moodData.isEmpty {
+                                MoodTrendView(moodData: viewModel.moodData)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 8)
+                            }
+
                             // Recent Memories Section
                             recentMemoriesSection
 
@@ -300,6 +307,7 @@ class HomeViewModel: ObservableObject {
     @Published var streakDays = 0
     @Published var reminder: ReminderUi?
     @Published var recentMemories: [MemoryUi] = []
+    @Published var moodData: [MoodDataPoint] = []
     @Published var flashback: FlashbackUi?
     @Published var error: String?
 
@@ -372,6 +380,13 @@ class HomeViewModel: ObservableObject {
 
             // Calculate streak
             streakDays = calculateStreak(memories: memories)
+
+            // Build mood trend (last 7 with mood data)
+            moodData = memories
+                .filter { $0.moodScore != nil }
+                .prefix(7)
+                .reversed()
+                .map { MoodDataPoint(date: $0.recordedAt, score: $0.moodScore ?? 5, mood: $0.mood ?? "neutral") }
 
             // Load flashback (1 year ago)
             flashback = await loadFlashback()

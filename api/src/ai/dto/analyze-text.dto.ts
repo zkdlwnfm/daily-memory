@@ -28,6 +28,8 @@ export class AnalysisResultDto {
   amount?: number;
   tags: string[];
   category: string;
+  mood: string;
+  moodScore: number;
   summary: string;
 }
 

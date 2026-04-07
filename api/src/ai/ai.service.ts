@@ -30,6 +30,8 @@ Return a JSON object with these fields:
 - amount: any monetary amount mentioned (or null)
 - tags: array of relevant tags/keywords
 - category: one of "EVENT", "PROMISE", "MEETING", "FINANCIAL", "GENERAL"
+- mood: one of "happy", "sad", "excited", "anxious", "grateful", "angry", "calm", "nostalgic", "neutral". Infer from tone and content.
+- moodScore: integer 1-10 (1=very negative, 5=neutral, 10=very positive)
 - summary: one-line summary
 
 Text: "${text}"
@@ -92,6 +94,67 @@ Respond ONLY with valid JSON, no markdown.`;
       return result;
     } catch (error) {
       await this.logUsage(userId, 'ai/analyze-image', undefined,'gpt-4o', Date.now() - start, 'error');
+      throw error;
+    }
+  }
+
+  async chat(message: string, history: Array<{ role: string; content: string }>, userId: string): Promise<{ reply: string }> {
+    const start = Date.now();
+
+    // Find relevant memories via pgvector
+    let contextMemories = '';
+    try {
+      const embeddingResponse = await this.openai.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: message,
+      });
+      const queryEmbedding = embeddingResponse.data[0].embedding;
+      const vectorStr = `[${queryEmbedding.join(',')}]`;
+
+      const results = await this.usageLogRepo.manager.query(
+        `SELECT memory_id, 1 - (embedding <=> $1::vector) AS similarity
+         FROM memory_embeddings
+         WHERE user_id = $2 AND 1 - (embedding <=> $1::vector) >= 0.3
+         ORDER BY embedding <=> $1::vector LIMIT 5`,
+        [vectorStr, userId],
+      );
+
+      if (results.length > 0) {
+        // Fetch memory contents from Firestore would be ideal,
+        // but we'll use the memory IDs as context hints
+        contextMemories = `\n\nRelevant memory IDs found: ${results.map((r: any) => `${r.memory_id} (${(r.similarity * 100).toFixed(0)}% match)`).join(', ')}`;
+      }
+    } catch {
+      // pgvector search failed, proceed without context
+    }
+
+    const systemPrompt = `You are a personal memory assistant. The user has been recording their daily memories, and you help them recall and reflect on their experiences.
+Be warm, conversational, and helpful. If you find relevant memories, reference them naturally.
+Keep responses concise (under 150 words) unless the user asks for details.${contextMemories}`;
+
+    const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+      { role: 'system', content: systemPrompt },
+      ...history.slice(-10).map((h) => ({
+        role: h.role as 'user' | 'assistant',
+        content: h.content,
+      })),
+      { role: 'user', content: message },
+    ];
+
+    try {
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages,
+        temperature: 0.7,
+        max_tokens: 300,
+      });
+
+      const reply = response.choices[0]?.message?.content || "I couldn't process that. Try again?";
+      await this.logUsage(userId, 'ai/chat', response.usage?.total_tokens, 'gpt-4o-mini', Date.now() - start, 'success');
+
+      return { reply };
+    } catch (error) {
+      await this.logUsage(userId, 'ai/chat', undefined, 'gpt-4o-mini', Date.now() - start, 'error');
       throw error;
     }
   }

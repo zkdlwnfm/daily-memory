@@ -314,6 +314,7 @@ struct Suggestion: Identifiable {
 // MARK: - Main View
 struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
+    @State private var showChat = false
 
     var body: some View {
         NavigationStack {
@@ -340,6 +341,16 @@ struct SearchView: View {
                 }
             }
             .background(Color(.systemGroupedBackground))
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button { showChat = true } label: {
+                        Image(systemName: "bubble.left.and.bubble.right")
+                    }
+                }
+            }
+            .sheet(isPresented: $showChat) {
+                ChatView()
+            }
         }
     }
 }

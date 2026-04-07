@@ -24,6 +24,10 @@ struct Memory: Identifiable, Codable, Equatable {
     var isLocked: Bool
     var excludeFromAI: Bool
 
+    // Mood (AI extracted)
+    var mood: String?        // happy, sad, excited, anxious, grateful, angry, calm, nostalgic, neutral
+    var moodScore: Int?      // 1-10
+
     // Embedding (for vector search)
     var embedding: [Float]?
 
@@ -49,6 +53,8 @@ struct Memory: Identifiable, Codable, Equatable {
         importance: Int = 3,
         isLocked: Bool = false,
         excludeFromAI: Bool = false,
+        mood: String? = nil,
+        moodScore: Int? = nil,
         embedding: [Float]? = nil,
         recordedAt: Date = Date(),
         recordedLatitude: Double? = nil,
@@ -70,6 +76,8 @@ struct Memory: Identifiable, Codable, Equatable {
         self.importance = importance
         self.isLocked = isLocked
         self.excludeFromAI = excludeFromAI
+        self.mood = mood
+        self.moodScore = moodScore
         self.embedding = embedding
         self.recordedAt = recordedAt
         self.recordedLatitude = recordedLatitude

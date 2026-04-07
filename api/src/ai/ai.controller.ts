@@ -2,6 +2,7 @@ import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AiService } from './ai.service';
 import { AnalyzeTextDto, AnalyzeImageDto } from './dto/analyze-text.dto';
+import { ChatDto } from './dto/chat.dto';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { CurrentUser, AuthUser } from '../auth/decorators/current-user.decorator';
 
@@ -20,5 +21,10 @@ export class AiController {
   @Post('analyze-image')
   async analyzeImage(@Body() dto: AnalyzeImageDto, @CurrentUser() user: AuthUser) {
     return this.aiService.analyzeImage(dto.imageBase64, user.uid);
+  }
+
+  @Post('chat')
+  async chat(@Body() dto: ChatDto, @CurrentUser() user: AuthUser) {
+    return this.aiService.chat(dto.message, dto.history || [], user.uid);
   }
 }

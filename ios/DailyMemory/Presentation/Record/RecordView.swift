@@ -1069,6 +1069,8 @@ class RecordViewModel: ObservableObject {
             memory.extractedAmount = result.amount
             memory.extractedTags = result.tags
             memory.category = Category(rawValue: result.category) ?? .general
+            memory.mood = result.mood
+            memory.moodScore = result.moodScore
 
             _ = try await container.updateMemoryUseCase.execute(memory)
 

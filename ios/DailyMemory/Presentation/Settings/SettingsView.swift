@@ -115,6 +115,7 @@ class SettingsViewModel: ObservableObject {
 // MARK: - Main View
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
+    @State private var showPremium = false
 
     var body: some View {
         NavigationStack {
@@ -159,6 +160,41 @@ struct SettingsView: View {
                                 .background(Color(.systemBackground))
                                 .cornerRadius(28)
                             }
+                        }
+                    }
+
+                    // Premium Section
+                    if !viewModel.isPremium {
+                        Button { showPremium = true } label: {
+                            HStack(spacing: 14) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .fill(LinearGradient(
+                                            colors: [.dmPrimary, .dmPrimaryLight],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ))
+                                        .frame(width: 48, height: 48)
+                                    Image(systemName: "sparkles")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.white)
+                                }
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("Upgrade to Premium")
+                                        .font(.headline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.primary)
+                                    Text("More AI, faster sync, advanced insights")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(16)
+                            .background(Color(.systemBackground))
+                            .cornerRadius(28)
                         }
                     }
 
@@ -375,6 +411,9 @@ struct SettingsView: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
+            .sheet(isPresented: $showPremium) {
+                PremiumView()
+            }
         }
     }
 }
