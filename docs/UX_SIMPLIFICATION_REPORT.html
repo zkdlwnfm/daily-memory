@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engram UI/UX 복잡도 분석 & 간소화 계획</title>
+<style>
+:root{--accent:#0D9488;--accent-t:rgba(13,148,136,.08);--bg:#F8F9FA;--surface:#fff;--text:#1a1a1a;--text2:#6b7280;--red:#EF4444;--green:#22C55E;--orange:#F59E0B;--border:#E5E7EB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+.wrap{max-width:960px;margin:0 auto;padding:32px 24px;}
+h1{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px;}
+h1 em{font-style:normal;color:var(--accent);}
+.sub{color:var(--text2);font-size:15px;margin-bottom:32px;}
+h2{font-size:20px;font-weight:700;margin:32px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--accent);}
+h3{font-size:16px;font-weight:600;margin:20px 0 8px;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.card-title{font-size:16px;font-weight:600;}
+
+.badge{display:inline-flex;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;}
+.badge-red{background:rgba(239,68,68,.1);color:var(--red);}
+.badge-green{background:rgba(34,197,94,.1);color:#16A34A;}
+.badge-orange{background:rgba(245,158,11,.1);color:#D97706;}
+.badge-teal{background:var(--accent-t);color:var(--accent);}
+
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;}
+th{text-align:left;padding:8px 12px;background:var(--bg);border-bottom:2px solid var(--border);font-weight:600;font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;}
+td{padding:8px 12px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0;}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.metric .num{font-size:28px;font-weight:700;color:var(--accent);}
+.metric .label{font-size:12px;color:var(--text2);margin-top:2px;}
+
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0;}
+.flow .step{background:var(--accent-t);color:var(--accent);padding:4px 12px;border-radius:8px;font-size:13px;font-weight:500;}
+.flow .arrow{color:var(--text2);font-size:16px;}
+
+.section-icon{font-size:20px;margin-right:6px;}
+
+.remove{text-decoration:line-through;color:var(--red);opacity:.7;}
+.keep{color:var(--green);font-weight:500;}
+.defer{color:var(--orange);font-style:italic;}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0;}
+.compare-col{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.compare-col h4{font-size:14px;font-weight:600;margin-bottom:10px;text-align:center;}
+.compare-col.before{border-top:3px solid var(--red);}
+.compare-col.after{border-top:3px solid var(--green);}
+.compare-col ul{padding-left:18px;font-size:13px;line-height:1.8;}
+
+.phase{border-left:3px solid var(--accent);padding-left:16px;margin:16px 0;}
+.phase-num{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;}
+.phase-title{font-size:16px;font-weight:600;margin:2px 0 6px;}
+
+.verdict{background:linear-gradient(135deg,var(--accent-t),rgba(13,148,136,.02));border:1px solid rgba(13,148,136,.2);border-radius:12px;padding:20px;margin:16px 0;}
+.verdict h3{color:var(--accent);margin-top:0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1><em>Engram</em> UI/UX 분석 리포트</h1>
+<p class="sub">앱 복잡도 진단 & 런칭 전 간소화 계획 · 2026.04.08</p>
+
+<!-- ===== METRICS ===== -->
+<h2><span class="section-icon">📊</span>현재 앱 복잡도</h2>
+
+<div class="metric-grid">
+  <div class="metric"><div class="num">28</div><div class="label">화면/뷰 수</div></div>
+  <div class="metric"><div class="num">9,949</div><div class="label">UI 코드 줄 수</div></div>
+  <div class="metric"><div class="num">35+</div><div class="label">RecordView 기능 수</div></div>
+  <div class="metric"><div class="num">28</div><div class="label">Settings 옵션 수</div></div>
+  <div class="metric"><div class="num">7</div><div class="label">HomeView 섹션 수</div></div>
+  <div class="metric"><div class="num">8+</div><div class="label">미구현 placeholder 버튼</div></div>
+</div>
+
+<!-- ===== SCREEN ANALYSIS ===== -->
+<h2><span class="section-icon">📱</span>화면별 복잡도 진단</h2>
+
+<table>
+  <tr><th>화면</th><th>줄 수</th><th>기능 수</th><th>판정</th><th>핵심 문제</th></tr>
+  <tr><td><strong>HomeView</strong></td><td>610</td><td>15</td><td><span class="badge badge-orange">과밀</span></td><td>7개 섹션. 스크롤 끝까지 안 보면 무드/플래시백 발견 불가</td></tr>
+  <tr><td><strong>RecordView</strong></td><td>1,295</td><td>35+</td><td><span class="badge badge-orange">복잡</span></td><td>5-상태 머신. 합리적이나 placeholder 버튼 다수</td></tr>
+  <tr><td><strong>SearchView</strong></td><td>958</td><td>25+</td><td><span class="badge badge-orange">약간 과밀</span></td><td>미구현 마이크/필터 버튼. AI 답변은 우수</td></tr>
+  <tr><td><strong>SettingsView</strong></td><td>675</td><td>28</td><td><span class="badge badge-red">과다</span></td><td>28개 옵션. 미구현 항목 다수. 런칭에 불필요한 것 많음</td></tr>
+  <tr><td><strong>ChatView</strong></td><td>236</td><td>8</td><td><span class="badge badge-green">깔끔</span></td><td>문제 없음. 다만 발견성이 낮음 (Search 툴바에 숨김)</td></tr>
+  <tr><td><strong>PeopleView</strong></td><td>473</td><td>15</td><td><span class="badge badge-green">적절</span></td><td>핵심 루프와 직접 관련 없는 부가 기능</td></tr>
+  <tr><td><strong>OnboardingView</strong></td><td>164</td><td>9</td><td><span class="badge badge-green">우수</span></td><td>문제 없음. 4페이지, 집중적</td></tr>
+  <tr><td><strong>LocationPicker</strong></td><td>522</td><td>—</td><td><span class="badge badge-red">불필요</span></td><td>위치 리마인더는 런칭에 불필요. 522줄의 니치 기능</td></tr>
+  <tr><td><strong>PremiumView</strong></td><td>229</td><td>12</td><td><span class="badge badge-orange">시기상조</span></td><td>PMF 확인 전 과금은 의미 없음</td></tr>
+</table>
+
+<!-- ===== USER JOURNEY ===== -->
+<h2><span class="section-icon">🚶</span>사용자 여정 마찰도</h2>
+
+<div class="card">
+  <div class="card-header"><div class="card-title">기록하기 (핵심 플로우)</div><span class="badge badge-green">낮음</span></div>
+  <div class="flow">
+    <span class="step">FAB 탭</span><span class="arrow">→</span>
+    <span class="step">음성/텍스트 입력</span><span class="arrow">→</span>
+    <span class="step">AI 분석</span><span class="arrow">→</span>
+    <span class="step">저장</span>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:6px">3-4탭. "AI 없이 저장" 옵션도 있어서 최소 2탭 가능. ✅ 잘 설계됨.</p>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-title">검색하기</div><span class="badge badge-green">낮음</span></div>
+  <div class="flow">
+    <span class="step">검색 탭</span><span class="arrow">→</span>
+    <span class="step">질문 입력</span><span class="arrow">→</span>
+    <span class="step">AI 답변 확인</span>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:6px">2-3탭. 제안 질문 제공으로 발견성 높음. ✅</p>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-title">AI 채팅 접근</div><span class="badge badge-red">높음</span></div>
+  <div class="flow">
+    <span class="step">검색 탭</span><span class="arrow">→</span>
+    <span class="step">툴바 아이콘 발견?</span><span class="arrow">→</span>
+    <span class="step">탭</span><span class="arrow">→</span>
+    <span class="step">채팅 시트</span>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:6px">핵심 차별점인 AI 대화가 Search 툴바 뒤에 숨겨져 있음. ❌ 발견 불가.</p>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-title">리마인더 생성</div><span class="badge badge-orange">중간</span></div>
+  <div class="flow">
+    <span class="step">메모리 상세</span><span class="arrow">→</span>
+    <span class="step">리마인더 추가</span><span class="arrow">→</span>
+    <span class="step">제목/시간 입력</span><span class="arrow">→</span>
+    <span class="step">(위치 선택?)</span><span class="arrow">→</span>
+    <span class="step">저장</span>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:6px">8-12탭. 위치 기반은 522줄 추가 복잡성. 시간 기반만으로 충분.</p>
+</div>
+
+<!-- ===== SIMPLIFICATION PLAN ===== -->
+<h2><span class="section-icon">✂️</span>간소화 계획</h2>
+
+<div class="verdict">
+  <h3>핵심 원칙</h3>
+  <p>앱의 가치 루프는 <strong>기록 → AI 분석 → 검색/대화</strong>. 이 루프에 직접 기여하지 않는 모든 기능은 제거하거나 v2로 연기한다. 앱은 "강력한 도구"가 아니라 "편안한 일기장"이어야 한다.</p>
+</div>
+
+<div class="phase">
+  <div class="phase-num">Phase 1</div>
+  <div class="phase-title">HomeView 간소화 (7섹션 → 4섹션)</div>
+  <div class="compare">
+    <div class="compare-col before">
+      <h4>Before</h4>
+      <ul>
+        <li>인사말</li>
+        <li class="remove">Streak 카드 (신규 유저에게 0일은 무의미)</li>
+        <li>오늘의 질문</li>
+        <li>리마인더 카드</li>
+        <li class="remove">무드 트렌드 (데이터 7개 필요. 빈 차트)</li>
+        <li>최근 기록</li>
+        <li class="remove">1년 전 오늘 (1년 데이터 필요. 절대 표시 안됨)</li>
+      </ul>
+    </div>
+    <div class="compare-col after">
+      <h4>After</h4>
+      <ul>
+        <li class="keep">✅ 인사말</li>
+        <li class="keep">✅ 오늘의 질문 (기록 유도)</li>
+        <li class="keep">✅ 리마인더 (최대 2개)</li>
+        <li class="keep">✅ 최근 기록 (홈의 본체)</li>
+        <li><br></li>
+        <li style="color:var(--text2);font-style:italic">깔끔. 스크롤 없이 핵심 정보 확인.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-num">Phase 2</div>
+  <div class="phase-title">Settings 간소화 (28옵션 → ~12옵션)</div>
+  <div class="compare">
+    <div class="compare-col before">
+      <h4>Before (28개)</h4>
+      <ul>
+        <li>계정 / 프로필</li>
+        <li class="remove">Premium 카드 (PMF 전)</li>
+        <li class="remove">저장소 사용량 (placeholder)</li>
+        <li class="remove">동기화 상세</li>
+        <li class="remove">데이터 내보내기 (미구현)</li>
+        <li class="remove">데이터 가져오기 (미구현)</li>
+        <li>리마인더 알림 토글</li>
+        <li>오늘의 질문 토글</li>
+        <li class="remove">Quiet hours 시작/끝</li>
+        <li class="remove">이 날의 기록 토글</li>
+        <li>Face ID 잠금</li>
+        <li class="remove">잠긴 기록 표시 (v2)</li>
+        <li>자동 AI 분석 토글</li>
+        <li class="remove">스마트 리마인더 토글</li>
+        <li>버전/정보/약관</li>
+        <li class="remove">앱 평가하기</li>
+        <li class="remove">연락처 지원</li>
+        <li>로그아웃</li>
+      </ul>
+    </div>
+    <div class="compare-col after">
+      <h4>After (~12개)</h4>
+      <ul>
+        <li class="keep">✅ 계정 / 프로필</li>
+        <li class="keep">✅ 리마인더 알림</li>
+        <li class="keep">✅ 오늘의 질문 알림</li>
+        <li class="keep">✅ Face ID 잠금</li>
+        <li class="keep">✅ 자동 AI 분석</li>
+        <li class="keep">✅ 인물 관리 (→ PeopleView)</li>
+        <li class="keep">✅ 버전</li>
+        <li class="keep">✅ 개인정보처리방침</li>
+        <li class="keep">✅ 이용약관</li>
+        <li class="keep">✅ 로그아웃</li>
+        <li><br></li>
+        <li style="color:var(--text2);font-style:italic">절반으로. 혼란 없이 필요한 것만.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="phase">
+  <div class="phase-num">Phase 3</div>
+  <div class="phase-title">Placeholder 제거 & 검색 정리</div>
+  <table>
+    <tr><th>화면</th><th>제거 항목</th><th>이유</th></tr>
+    <tr><td>RecordView (AI결과)</td><td>"변경 >" 버튼들, "+ 인물 추가", 리마인더 제안</td><td>모두 미구현 placeholder. 거짓 어포던스.</td></tr>
+    <tr><td>SearchView</td><td>마이크 버튼, 필터 버튼</td><td>미구현. 기록은 FAB으로, 필터는 v2.</td></tr>
+    <tr><td>ReminderEditView</td><td>위치 선택 섹션 전체</td><td>LocationPicker 522줄 — 니치 기능. v2.</td></tr>
+  </table>
+</div>
+
+<div class="phase">
+  <div class="phase-num">Phase 4</div>
+  <div class="phase-title">네비게이션 재구성 — Chat 탭 승격</div>
+  <div class="compare">
+    <div class="compare-col before">
+      <h4>Before</h4>
+      <ul>
+        <li>🏠 홈</li>
+        <li>🔍 검색</li>
+        <li>🎤 [기록 FAB]</li>
+        <li>👥 <strong>사람</strong></li>
+        <li>⚙️ 설정</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text2);margin-top:8px">Chat은 Search 툴바 뒤에 숨김<br>People은 핵심 루프와 무관한 독립 탭</p>
+    </div>
+    <div class="compare-col after">
+      <h4>After</h4>
+      <ul>
+        <li>🏠 홈</li>
+        <li>🔍 검색</li>
+        <li>🎤 [기록 FAB]</li>
+        <li>💬 <strong>채팅</strong></li>
+        <li>⚙️ 설정</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text2);margin-top:8px">AI 대화를 1급 시민으로 승격<br>People은 설정 + 메모리 태그에서 접근</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EXPECTED RESULT ===== -->
+<h2><span class="section-icon">📈</span>예상 결과</h2>
+
+<div class="metric-grid">
+  <div class="metric">
+    <div class="num" style="font-size:18px">28 → <span style="color:var(--green)">~20</span></div>
+    <div class="label">활성 화면 수</div>
+  </div>
+  <div class="metric">
+    <div class="num" style="font-size:18px">7 → <span style="color:var(--green)">3-4</span></div>
+    <div class="label">HomeView 섹션</div>
+  </div>
+  <div class="metric">
+    <div class="num" style="font-size:18px">28 → <span style="color:var(--green)">~12</span></div>
+    <div class="label">Settings 옵션</div>
+  </div>
+  <div class="metric">
+    <div class="num" style="font-size:18px">8+ → <span style="color:var(--green)">0</span></div>
+    <div class="label">Placeholder 버튼</div>
+  </div>
+  <div class="metric">
+    <div class="num" style="font-size:18px;color:var(--green)">~2,000줄</span></div>
+    <div class="label">제거/연기 코드</div>
+  </div>
+  <div class="metric">
+    <div class="num" style="font-size:18px">숨김 → <span style="color:var(--green)">탭</span></div>
+    <div class="label">Chat 발견성</div>
+  </div>
+</div>
+
+<!-- ===== KEEP ===== -->
+<h2><span class="section-icon">✅</span>유지 (변경 없음)</h2>
+<div class="card">
+  <ul style="padding-left:18px;font-size:14px;line-height:2">
+    <li><strong>탭바 + FAB 기록 버튼</strong> — 핵심 UX. 낮은 마찰.</li>
+    <li><strong>온보딩 4페이지</strong> — 집중적이고 명확.</li>
+    <li><strong>RecordView 5-상태 머신</strong> — 복잡하지만 각 상태가 합리적.</li>
+    <li><strong>메모리 카드 디자인</strong> — 태그 칩이 깔끔.</li>
+    <li><strong>검색 제안 질문</strong> — 발견성 우수.</li>
+    <li><strong>AI 답변 카드</strong> — 강한 시각적 아이덴티티.</li>
+    <li><strong>위젯 딥링크</strong> — 홈화면 빠른 기록.</li>
+    <li><strong>SaveSuccessView</strong> — 깔끔한 저장 확인 애니메이션.</li>
+  </ul>
+</div>
+
+<div style="text-align:center;padding:32px;color:var(--text2);font-size:12px">
+  Engram UI/UX Simplification Report · Generated 2026-04-08
+</div>
+
+</div>
+</body>
+</html>

@@ -93,7 +93,6 @@ actor NotificationService {
         do {
             try await notificationCenter.add(request)
         } catch {
-            print("Failed to schedule notification: \(error)")
         }
     }
 

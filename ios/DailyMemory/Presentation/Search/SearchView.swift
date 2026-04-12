@@ -38,7 +38,6 @@ class SearchViewModel: ObservableObject {
     private func indexMemoriesIfNeeded() async {
         let indexedCount = await semanticSearchUseCase.indexAllUnindexed()
         if indexedCount > 0 {
-            print("Indexed \(indexedCount) memories for semantic search")
         }
     }
 
@@ -304,10 +303,10 @@ struct Suggestion: Identifiable {
     let isHighlighted: Bool
 
     static let defaults = [
-        Suggestion(text: "When is Mike's wedding?", isHighlighted: true),
-        Suggestion(text: "What did I do with Mom last year?", isHighlighted: false),
-        Suggestion(text: "Do I owe anyone money?", isHighlighted: false),
-        Suggestion(text: "Summarize my work meetings this month", isHighlighted: true)
+        Suggestion(text: "Who did I meet this week?", isHighlighted: true),
+        Suggestion(text: "What happened last weekend?", isHighlighted: false),
+        Suggestion(text: "What promises have I made recently?", isHighlighted: false),
+        Suggestion(text: "Summarize my week so far", isHighlighted: true)
     ]
 }
 
@@ -368,9 +367,6 @@ struct InitialSearchContent: View {
                     onSearch: viewModel.search
                 )
 
-                // Filter Button
-                FilterButton()
-
                 // Suggestions
                 SuggestionsSection(
                     suggestions: viewModel.suggestions,
@@ -408,15 +404,6 @@ struct SearchBar: View {
                 .textFieldStyle(.plain)
                 .font(.body)
                 .onSubmit(onSearch)
-
-            Button(action: { /* Voice input */ }) {
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 16))
-                    .foregroundColor(Color(red: 0.42, green: 0.22, blue: 0.83))
-                    .padding(10)
-                    .background(Color(red: 0.52, green: 0.33, blue: 0.94).opacity(0.1))
-                    .clipShape(Circle())
-            }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
@@ -503,7 +490,7 @@ struct SuggestionCard: View {
                     Spacer()
                     Image(systemName: "arrow.right")
                         .font(.system(size: 14))
-                        .foregroundColor(suggestion.isHighlighted ? Color(red: 0.42, green: 0.22, blue: 0.83) : .secondary)
+                        .foregroundColor(suggestion.isHighlighted ? Color.dmPrimary : .secondary)
                 }
             }
             .padding(16)
@@ -511,7 +498,7 @@ struct SuggestionCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 suggestion.isHighlighted
-                    ? Color(red: 0.52, green: 0.33, blue: 0.94).opacity(0.1)
+                    ? Color.dmPrimary.opacity(0.1)
                     : Color(.systemGray6)
             )
             .cornerRadius(24)
@@ -619,7 +606,7 @@ struct SearchingContent: View {
             VStack(spacing: 24) {
                 ProgressView()
                     .scaleEffect(1.5)
-                    .tint(Color(red: 0.52, green: 0.33, blue: 0.94))
+                    .tint(Color.dmPrimary)
 
                 Text("Searching your memories...")
                     .font(.headline)
@@ -711,10 +698,10 @@ struct AIAnswerCard: View {
                         .font(.caption)
                         .fontWeight(.bold)
                 }
-                .foregroundColor(Color(red: 0.52, green: 0.33, blue: 0.94))
+                .foregroundColor(Color.dmPrimary)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(Color(red: 0.52, green: 0.33, blue: 0.94).opacity(0.1))
+                .background(Color.dmPrimary.opacity(0.1))
                 .cornerRadius(20)
 
                 Spacer()
@@ -771,13 +758,13 @@ struct AIAnswerCard: View {
         .overlay(
             HStack {
                 Rectangle()
-                    .fill(Color(red: 0.52, green: 0.33, blue: 0.94))
+                    .fill(Color.dmPrimary)
                     .frame(width: 4)
                 Spacer()
             }
             .cornerRadius(24)
         )
-        .shadow(color: Color(red: 0.52, green: 0.33, blue: 0.94).opacity(0.08), radius: 16, y: 8)
+        .shadow(color: Color.dmPrimary.opacity(0.08), radius: 16, y: 8)
     }
 }
 

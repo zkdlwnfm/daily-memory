@@ -1,6 +1,7 @@
 import CoreData
 import Foundation
 import Combine
+import WidgetKit
 
 /// Local data store for Memory entities using Core Data
 class MemoryStore {
@@ -16,6 +17,7 @@ class MemoryStore {
         let entity = MemoryMO(context: context)
         entity.update(from: memory)
         try context.save()
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     func read(id: String) throws -> Memory? {
@@ -34,6 +36,7 @@ class MemoryStore {
         if let entity = try context.fetch(request).first {
             entity.update(from: memory)
             try context.save()
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 
@@ -45,6 +48,7 @@ class MemoryStore {
         if let entity = try context.fetch(request).first {
             context.delete(entity)
             try context.save()
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 

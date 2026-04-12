@@ -26,7 +26,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate, UNUserNot
     // FCM token received - subscribe to user topic
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let token = fcmToken else { return }
-        print("[FCM] Token: \(token)")
         subscribeToUserTopic()
     }
 
@@ -35,9 +34,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate, UNUserNot
         let topic = "user_\(uid)"
         Messaging.messaging().subscribe(toTopic: topic) { error in
             if let error = error {
-                print("[FCM] Subscribe error: \(error)")
             } else {
-                print("[FCM] Subscribed to \(topic)")
             }
         }
     }
@@ -135,7 +132,9 @@ class DeepLinkHandler: ObservableObject {
             shouldShowRecordSheet = true
 
         default:
-            break
+            // 위젯 탭 등 호스트 없는 딥링크 → 바로 녹음
+            recordMode = .voice
+            shouldShowRecordSheet = true
         }
     }
 }

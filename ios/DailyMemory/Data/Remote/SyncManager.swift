@@ -353,7 +353,6 @@ final class SyncManager: ObservableObject {
             let data = try JSONEncoder().encode(pendingQueue)
             try data.write(to: queueFileURL)
         } catch {
-            print("Failed to save sync queue: \(error)")
         }
     }
 

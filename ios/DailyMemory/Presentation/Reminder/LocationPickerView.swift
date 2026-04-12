@@ -458,7 +458,6 @@ class LocationPickerViewModel: NSObject, ObservableObject {
                 )
             }
         } catch {
-            print("Search error: \(error)")
             searchResults = []
         }
     }
@@ -499,7 +498,6 @@ extension LocationPickerViewModel: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Location error: \(error)")
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -517,6 +515,5 @@ extension LocationPickerViewModel: CLLocationManagerDelegate {
 @available(iOS 17.0, *)
 #Preview {
     LocationPickerView { location in
-        print("Selected: \(location.name)")
     }
 }

@@ -60,3 +60,4 @@ api/.env
 api/secrets/
 api/node_modules/
 api/dist/
+.gstack/

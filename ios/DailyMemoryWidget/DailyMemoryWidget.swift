@@ -1,96 +1,135 @@
 import WidgetKit
 import SwiftUI
 
-/// Medium Widget (2x2 / systemMedium)
-///
-/// Full-featured widget showing:
-/// - Date and memory count header
-/// - Recent memory preview or reminders
-/// - Voice and Text recording buttons
+/// Medium Widget — 홈화면 메인 위젯
 struct DailyMemoryWidget: Widget {
     let kind: String = "DailyMemoryWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: DailyMemoryProvider()) { entry in
-            DailyMemoryWidgetView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+            MediumWidgetView(entry: entry)
+                .containerBackground(for: .widget) {
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color(hex: "1E293B"), location: 0),
+                            .init(color: Color(hex: "0F172A"), location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
         }
-        .configurationDisplayName("DailyMemory")
-        .description("Quick access to recording and recent memories")
+        .configurationDisplayName("Engram")
+        .description("Record memories and view reminders")
         .supportedFamilies([.systemMedium])
     }
 }
 
-struct DailyMemoryWidgetView: View {
+// MARK: - Medium Widget View
+
+struct MediumWidgetView: View {
     let entry: DailyMemoryEntry
 
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Background
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(WidgetColors.surface)
-
-                HStack(spacing: 12) {
-                    // Left Section - Date, Reminders/Memory
-                    VStack(alignment: .leading, spacing: 8) {
-                        // Header
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(formattedDate)
-                                .font(.system(size: 15, weight: .bold))
-                                .foregroundColor(WidgetColors.textPrimary)
-
-                            Text("\(entry.memoryCount) memories")
-                                .font(.system(size: 12))
-                                .foregroundColor(WidgetColors.textSecondary)
-                        }
-
-                        // Content Card
-                        if !entry.reminders.isEmpty {
-                            ReminderCard(reminders: entry.reminders)
-                        } else if let memory = entry.recentMemory {
-                            MemoryPreviewCard(memory: memory)
-                        } else {
-                            EmptyStateCard()
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    // Right Section - Action Buttons
-                    VStack(spacing: 8) {
-                        // Voice Button
-                        Link(destination: URL(string: "dailymemory://record?mode=voice")!) {
-                            VStack(spacing: 4) {
-                                Image(systemName: "mic.fill")
-                                    .font(.system(size: 20))
-                                Text("Voice")
+        HStack(spacing: 12) {
+                // MARK: Left — 정보 영역
+                VStack(alignment: .leading, spacing: 0) {
+                    // 브랜드 + 날짜
+                    HStack(alignment: .center, spacing: 6) {
+                        // 브랜드 아이콘
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color(hex: "3D5A50"))
+                            .frame(width: 22, height: 22)
+                            .overlay(
+                                Image(systemName: "brain.head.profile")
                                     .font(.system(size: 11, weight: .bold))
-                            }
+                                    .foregroundColor(.white)
+                            )
+
+                        Text("Engram")
+                            .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.white)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(WidgetColors.primary)
-                            .cornerRadius(16)
-                        }
 
-                        // Text Button
-                        Link(destination: URL(string: "dailymemory://record?mode=text")!) {
-                            VStack(spacing: 4) {
-                                Image(systemName: "square.and.pencil")
-                                    .font(.system(size: 20))
-                                Text("Text")
-                                    .font(.system(size: 11, weight: .bold))
+                        Spacer()
+
+                        // Streak
+                        if entry.streak > 0 {
+                            HStack(spacing: 2) {
+                                Image(systemName: "flame.fill")
+                                    .font(.system(size: 9))
+                                Text("\(entry.streak)d")
+                                    .font(.system(size: 10, weight: .bold))
                             }
-                            .foregroundColor(WidgetColors.textPrimary)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(WidgetColors.background)
-                            .cornerRadius(16)
+                            .foregroundColor(Color(hex: "FFB84D"))
                         }
                     }
-                    .frame(width: 80)
+                    .padding(.bottom, 8)
+
+                    // 컨텐츠 카드
+                    if !entry.reminders.isEmpty {
+                        MediumReminderCard(reminders: entry.reminders)
+                    } else if let memory = entry.recentMemories.first {
+                        MediumMemoryCard(memory: memory)
+                    } else {
+                        MediumEmptyCard()
+                    }
+
+                    Spacer(minLength: 2)
+
+                    // 하단 날짜 + 카운트
+                    HStack(spacing: 0) {
+                        Text(formattedDate)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(Color.white.opacity(0.35))
+
+                        Spacer()
+
+                        Text("\(entry.todayMemoryCount) memories today")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(Color(hex: "6B8F7E"))
+                    }
                 }
-                .padding(16)
+                .frame(maxWidth: .infinity)
+
+                // MARK: Right — 액션 버튼
+                VStack(spacing: 8) {
+                    Link(destination: URL(string: "dailymemory://record?mode=voice")!) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(Color(hex: "3D5A50"))
+
+                            VStack(spacing: 6) {
+                                Image(systemName: "mic.fill")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(.white)
+
+                                Text("Voice")
+                                    .font(.system(size: 9, weight: .bold))
+                                    .foregroundColor(.white.opacity(0.7))
+                            }
+                        }
+                    }
+
+                    Link(destination: URL(string: "dailymemory://record?mode=text")!) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(Color.white.opacity(0.08))
+
+                            VStack(spacing: 6) {
+                                Image(systemName: "square.and.pencil")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white.opacity(0.7))
+
+                                Text("Text")
+                                    .font(.system(size: 9, weight: .bold))
+                                    .foregroundColor(.white.opacity(0.45))
+                            }
+                        }
+                    }
+                }
+                .frame(width: 70)
             }
-        }
+        .padding(14)
     }
 
     private var formattedDate: String {
@@ -101,64 +140,113 @@ struct DailyMemoryWidgetView: View {
 }
 
 // MARK: - Reminder Card
-struct ReminderCard: View {
-    let reminders: [String]
+
+struct MediumReminderCard: View {
+    let reminders: [WidgetReminder]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 4) {
-                Image(systemName: "bell.fill")
-                    .font(.system(size: 11))
-                Text("Reminders")
-                    .font(.system(size: 11, weight: .bold))
+                Circle()
+                    .fill(Color(hex: "F59E0B"))
+                    .frame(width: 6, height: 6)
+                Text("REMINDERS")
+                    .font(.system(size: 9, weight: .heavy))
+                    .tracking(0.8)
+                    .foregroundColor(Color(hex: "F59E0B"))
             }
-            .foregroundColor(WidgetColors.warning)
 
-            ForEach(reminders.prefix(2), id: \.self) { reminder in
-                Text("• \(reminder)")
-                    .font(.system(size: 11))
-                    .foregroundColor(WidgetColors.textPrimary)
-                    .lineLimit(1)
+            ForEach(Array(reminders.prefix(2).enumerated()), id: \.offset) { _, reminder in
+                HStack(spacing: 8) {
+                    RoundedRectangle(cornerRadius: 1.5)
+                        .fill(Color(hex: "F59E0B").opacity(0.6))
+                        .frame(width: 2, height: 16)
+
+                    Text(reminder.title)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.white.opacity(0.85))
+                        .lineLimit(1)
+
+                    Spacer()
+
+                    Text(formatTime(reminder.scheduledAt))
+                        .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.4))
+                }
             }
         }
         .padding(10)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(WidgetColors.warningBackground.opacity(0.5))
-        .cornerRadius(12)
+        .background(Color.white.opacity(0.06))
+        .cornerRadius(10)
+    }
+
+    private func formatTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
     }
 }
 
-// MARK: - Memory Preview Card
-struct MemoryPreviewCard: View {
-    let memory: String
+// MARK: - Memory Card
+
+struct MediumMemoryCard: View {
+    let memory: WidgetMemory
 
     var body: some View {
-        Text(memory)
-            .font(.system(size: 12))
-            .foregroundColor(WidgetColors.textSecondary)
-            .lineLimit(3)
-            .padding(10)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .background(WidgetColors.background)
-            .cornerRadius(12)
-    }
-}
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 4) {
+                Circle()
+                    .fill(Color(hex: "6B8F7E"))
+                    .frame(width: 6, height: 6)
+                Text("LATEST")
+                    .font(.system(size: 9, weight: .heavy))
+                    .tracking(0.8)
+                    .foregroundColor(Color(hex: "6B8F7E"))
+            }
 
-// MARK: - Empty State Card
-struct EmptyStateCard: View {
-    var body: some View {
-        VStack(spacing: 4) {
-            Image(systemName: "memories")
-                .font(.system(size: 20))
-                .foregroundColor(WidgetColors.textSecondary)
-            Text("No memories yet")
-                .font(.system(size: 11))
-                .foregroundColor(WidgetColors.textSecondary)
+            Text(memory.content)
+                .font(.system(size: 12, weight: .regular))
+                .foregroundColor(.white.opacity(0.75))
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+
+            if let location = memory.location {
+                HStack(spacing: 3) {
+                    Image(systemName: "mappin")
+                        .font(.system(size: 8))
+                    Text(location)
+                        .font(.system(size: 9, weight: .medium))
+                }
+                .foregroundColor(.white.opacity(0.3))
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(WidgetColors.background)
-        .cornerRadius(12)
+        .padding(10)
+        .background(Color.white.opacity(0.06))
+        .cornerRadius(10)
     }
 }
 
-// Preview removed - requires iOS 17+
+// MARK: - Empty Card
+
+struct MediumEmptyCard: View {
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "brain.head.profile")
+                .font(.system(size: 18))
+                .foregroundColor(Color(hex: "3D5A50"))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("No memories yet")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.6))
+                Text("Tap to record your first memory")
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.3))
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .padding(10)
+        .background(Color.white.opacity(0.06))
+        .cornerRadius(10)
+    }
+}

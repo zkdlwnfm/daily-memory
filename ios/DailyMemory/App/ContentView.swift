@@ -15,8 +15,8 @@ struct ContentView: View {
                 SearchView()
                     .tag(Tab.search)
 
-                PersonListView()
-                    .tag(Tab.people)
+                ChatView()
+                    .tag(Tab.chat)
 
                 SettingsView()
                     .tag(Tab.settings)
@@ -56,14 +56,14 @@ struct ContentView: View {
 enum Tab: String, CaseIterable {
     case home = "Home"
     case search = "Search"
-    case people = "People"
+    case chat = "Chat"
     case settings = "Settings"
 
     var icon: String {
         switch self {
         case .home: return "house"
         case .search: return "magnifyingglass"
-        case .people: return "person.2"
+        case .chat: return "bubble.left.and.bubble.right"
         case .settings: return "gearshape"
         }
     }
@@ -72,7 +72,7 @@ enum Tab: String, CaseIterable {
         switch self {
         case .home: return "house.fill"
         case .search: return "magnifyingglass"
-        case .people: return "person.2.fill"
+        case .chat: return "bubble.left.and.bubble.right.fill"
         case .settings: return "gearshape.fill"
         }
     }
@@ -97,13 +97,13 @@ struct CustomTabBar: View {
                     // FAB in the middle
                     Spacer()
                     Button(action: { showRecordSheet = true }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 24, weight: .semibold))
+                        Image(systemName: "pencil.line")
+                            .font(.system(size: 22, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(width: 56, height: 56)
-                            .background(Color.accentColor)
+                            .background(Color.dmPrimary)
                             .clipShape(Circle())
-                            .shadow(color: Color.accentColor.opacity(0.3), radius: 8, y: 4)
+                            .shadow(color: Color.dmPrimary.opacity(0.3), radius: 8, y: 4)
                     }
                     .offset(y: -20)
                     Spacer()
@@ -133,7 +133,7 @@ struct TabBarButton: View {
                 Text(tab.rawValue)
                     .font(.caption2)
             }
-            .foregroundColor(isSelected ? .accentColor : .secondary)
+            .foregroundColor(isSelected ? .dmPrimary : .secondary)
         }
     }
 }

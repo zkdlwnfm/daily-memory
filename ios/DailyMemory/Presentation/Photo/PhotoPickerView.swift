@@ -275,6 +275,5 @@ struct CameraView: UIViewControllerRepresentable {
 
 #Preview {
     PhotoPickerView { photoIds in
-        print("Selected: \(photoIds)")
     }
 }

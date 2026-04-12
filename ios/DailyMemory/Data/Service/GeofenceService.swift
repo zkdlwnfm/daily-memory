@@ -70,20 +70,17 @@ final class GeofenceService: NSObject, ObservableObject {
     /// Start monitoring a location-based reminder
     func startMonitoring(reminder: Reminder) -> Bool {
         guard hasGeofenceAuthorization else {
-            print("GeofenceService: Not authorized for geofencing")
             return false
         }
 
         guard let latitude = reminder.latitude,
               let longitude = reminder.longitude,
               let triggerType = reminder.locationTriggerType else {
-            print("GeofenceService: Reminder has no location data")
             return false
         }
 
         // Check if we've hit the region limit
         if locationManager.monitoredRegions.count >= maxRegions {
-            print("GeofenceService: Maximum regions reached (\(maxRegions))")
             return false
         }
 
@@ -123,7 +120,6 @@ final class GeofenceService: NSObject, ObservableObject {
         isMonitoring = true
         updateMonitoredRegions()
 
-        print("GeofenceService: Started monitoring region \(identifier)")
         return true
     }
 
@@ -134,7 +130,6 @@ final class GeofenceService: NSObject, ObservableObject {
         if let region = locationManager.monitoredRegions.first(where: { $0.identifier == identifier }) {
             locationManager.stopMonitoring(for: region)
             updateMonitoredRegions()
-            print("GeofenceService: Stopped monitoring region \(identifier)")
         }
     }
 
@@ -229,7 +224,6 @@ final class GeofenceService: NSObject, ObservableObject {
                 }
             }
         } catch {
-            print("GeofenceService: Error handling geofence event: \(error)")
         }
     }
 
@@ -270,25 +264,20 @@ extension GeofenceService: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("GeofenceService: Location error: \(error.localizedDescription)")
     }
 
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        print("GeofenceService: Entered region \(region.identifier)")
         handleRegionEntry(region: region)
     }
 
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-        print("GeofenceService: Exited region \(region.identifier)")
         handleRegionExit(region: region)
     }
 
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
-        print("GeofenceService: Started monitoring \(region.identifier)")
         updateMonitoredRegions()
     }
 
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
-        print("GeofenceService: Monitoring failed for \(region?.identifier ?? "unknown"): \(error.localizedDescription)")
     }
 }

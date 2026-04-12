@@ -177,7 +177,6 @@ final class VectorSearchEngine {
                 let data = try JSONSerialization.data(withJSONObject: serializable)
                 try data.write(to: self.embeddingsFileURL)
             } catch {
-                print("Failed to save embeddings: \(error)")
             }
         }
     }
@@ -195,7 +194,6 @@ final class VectorSearchEngine {
                 doubles.map { Float($0) }
             }
         } catch {
-            print("Failed to load embeddings: \(error)")
         }
     }
 

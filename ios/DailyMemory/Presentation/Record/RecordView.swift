@@ -597,14 +597,6 @@ struct AIResultView: View {
                                         onRemove: { onPersonRemove(person) }
                                     )
                                 }
-                                Button("+ Add person") {}
-                                    .font(.subheadline)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
-                                    )
                             }
                         }
 
@@ -620,32 +612,22 @@ struct AIResultView: View {
 
                         // Location
                         AIResultRow(icon: "📍", label: "LOCATION") {
-                            HStack {
-                                Text(result.location ?? "Not detected")
-                                    .fontWeight(.medium)
-                                Spacer()
-                                Button("Change >") {}
-                                    .foregroundColor(.dmPrimary)
-                            }
+                            Text(result.location ?? "Not detected")
+                                .fontWeight(.medium)
                         }
 
                         Divider().padding(.horizontal, 16)
 
                         // Event
                         AIResultRow(icon: "🎉", label: "EVENT") {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(result.event ?? "Not detected")
-                                        .fontWeight(.medium)
-                                    if let date = result.eventDate {
-                                        Text(date)
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
+                            VStack(alignment: .leading) {
+                                Text(result.event ?? "Not detected")
+                                    .fontWeight(.medium)
+                                if let date = result.eventDate {
+                                    Text(date)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
                                 }
-                                Spacer()
-                                Button("Change >") {}
-                                    .foregroundColor(.dmPrimary)
                             }
                         }
 
@@ -653,19 +635,14 @@ struct AIResultView: View {
 
                         // Amount
                         AIResultRow(icon: "💳", label: "AMOUNT") {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(result.amount ?? "Not detected")
-                                        .fontWeight(.medium)
-                                    if let label = result.amountLabel {
-                                        Text(label)
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
+                            VStack(alignment: .leading) {
+                                Text(result.amount ?? "Not detected")
+                                    .fontWeight(.medium)
+                                if let label = result.amountLabel {
+                                    Text(label)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
                                 }
-                                Spacer()
-                                Button("Change >") {}
-                                    .foregroundColor(.dmPrimary)
                             }
                         }
 
@@ -702,37 +679,6 @@ struct AIResultView: View {
                             onAddMore: onAddPhoto
                         )
                     }
-                }
-
-                // Reminder Section
-                if let reminder = result.suggestedReminder {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text("🔔")
-                            Text("Set Reminder")
-                                .fontWeight(.bold)
-                            Button("Setup >") {}
-                                .foregroundColor(.dmPrimary)
-                            Spacer()
-                        }
-
-                        HStack {
-                            Text("💡")
-                            Text(reminder)
-                        }
-                        .font(.subheadline)
-
-                        Button("Yes, remind me 1 day before") {}
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 12)
-                            .background(Color.dmPrimary)
-                            .cornerRadius(20)
-                    }
-                    .padding(20)
-                    .background(Color.dmPrimary.opacity(0.1))
-                    .cornerRadius(16)
                 }
 
                 Spacer(minLength: 100)
@@ -1084,9 +1030,7 @@ class RecordViewModel: ObservableObject {
                 }
             }
 
-            print("[Background] AI analysis completed for memory \(memoryId)")
         } catch {
-            print("[Background] AI analysis failed: \(error)")
         }
     }
 

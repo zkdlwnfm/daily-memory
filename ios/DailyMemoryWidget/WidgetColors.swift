@@ -1,27 +1,5 @@
 import SwiftUI
 
-/// Shared color definitions for widgets
-/// Note: Widgets have limited access to main app resources, so we define colors here
-enum WidgetColors {
-    // Primary Brand Color
-    static let primary = Color(hex: "6366F1")
-    static let primaryDark = Color(hex: "4F46E5")
-    static let onPrimary = Color.white
-
-    // Surface Colors
-    static let surface = Color.white
-    static let background = Color(hex: "F1F5F9")
-
-    // Text Colors
-    static let textPrimary = Color(hex: "1E293B")
-    static let textSecondary = Color(hex: "64748B")
-
-    // Status Colors
-    static let warning = Color(hex: "F59E0B")
-    static let warningBackground = Color(hex: "FEF3C7")
-    static let success = Color(hex: "22C55E")
-}
-
 // MARK: - Hex Color Extension
 extension Color {
     init(hex: String) {

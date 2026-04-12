@@ -71,12 +71,9 @@ struct ChatView: View {
                 .background(Color(.systemBackground))
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Memory Chat")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Chat")
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
-                }
                 ToolbarItem(placement: .primaryAction) {
                     if !viewModel.messages.isEmpty {
                         Button("Clear") { viewModel.clearChat() }

@@ -21,6 +21,8 @@ public class MemoryMO: NSManagedObject {
     @NSManaged public var recordedAt: Date
     @NSManaged public var recordedLatitude: NSNumber?
     @NSManaged public var recordedLongitude: NSNumber?
+    @NSManaged public var mood: String?
+    @NSManaged public var moodScore: NSNumber?
     @NSManaged public var createdAt: Date
     @NSManaged public var updatedAt: Date
     @NSManaged public var syncStatusRaw: String
@@ -50,6 +52,8 @@ extension MemoryMO {
             importance: Int(importance),
             isLocked: isLocked,
             excludeFromAI: excludeFromAI,
+            mood: mood,
+            moodScore: moodScore?.intValue,
             embedding: embedding,
             recordedAt: recordedAt,
             recordedLatitude: recordedLatitude?.doubleValue,
@@ -77,6 +81,8 @@ extension MemoryMO {
         isLocked = memory.isLocked
         excludeFromAI = memory.excludeFromAI
         embeddingData = memory.embedding.flatMap { try? encoder.encode($0) }
+        mood = memory.mood
+        moodScore = memory.moodScore.map { NSNumber(value: $0) }
         recordedAt = memory.recordedAt
         recordedLatitude = memory.recordedLatitude.map { NSNumber(value: $0) }
         recordedLongitude = memory.recordedLongitude.map { NSNumber(value: $0) }

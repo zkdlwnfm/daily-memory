@@ -224,7 +224,7 @@ struct PersonDetailView: View {
         return VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "calendar")
-                    .foregroundColor(Color(red: 0.42, green: 0.22, blue: 0.83))
+                    .foregroundColor(Color.dmPrimary)
                 Text("Upcoming")
                     .font(.subheadline)
                     .fontWeight(.bold)
@@ -239,7 +239,7 @@ struct PersonDetailView: View {
                     Text(formatReminderDate(reminder.scheduledAt))
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(Color(red: 0.42, green: 0.22, blue: 0.83))
+                        .foregroundColor(Color.dmPrimary)
                 }
 
                 Text(reminder.body)
@@ -256,7 +256,7 @@ struct PersonDetailView: View {
                         .font(.caption)
                         .fontWeight(.bold)
                 }
-                .foregroundColor(Color(red: 0.42, green: 0.22, blue: 0.83))
+                .foregroundColor(Color.dmPrimary)
                 .frame(maxWidth: .infinity)
                 .padding(12)
                 .background(Color.white)

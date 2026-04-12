@@ -98,26 +98,6 @@ struct LoginView: View {
                         .frame(height: 50)
                         .cornerRadius(12)
 
-                        // Google Sign-In
-                        Button {
-                            Task { await viewModel.signInWithGoogle() }
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "globe")
-                                    .font(.title3)
-                                Text("Sign in with Google")
-                                    .fontWeight(.medium)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .foregroundColor(.primary)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
-                            )
-                            .cornerRadius(12)
-                        }
                     }
                     .padding(.horizontal)
 

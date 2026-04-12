@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -62,6 +62,7 @@
 		763461E12C1DC6E8DAA8D72B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 92B494BA76066A2C4A57736D /* GoogleSignInSwift */; };
 		7C8086587748FC57176AA151 /* AnalyzeMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7EA283CAC2283584E209EF6 /* AnalyzeMemoryUseCase.swift */; };
 		858764E78799986602DF1C57 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA7E7FEBE700E9874DB599B0 /* APIClient.swift */; };
+		8D86BA2C9B2A7FCAFE7C3982 /* SharedDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95C1EE9B9BA8C8A5C06434D /* SharedDataProvider.swift */; };
 		90132A51A4A27AD8F483B136 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D315825FCE454AAD88D7BA89 /* Reminder.swift */; };
 		9535F773448A447C0606411E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 385E167D0721D57DCA8B840C /* FirebaseAuth */; };
 		9595AF89D886283102177CBA /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491E52783BDF17D99BDCC556 /* DIContainer.swift */; };
@@ -78,6 +79,7 @@
 		A6A6CC42D6A80B4D2AAC906B /* SearchMemoriesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234BEE1B35C0A7A13182DEE3 /* SearchMemoriesUseCase.swift */; };
 		A8CE945AE5ACC9CA92C535E8 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2140BBDE6845E60EFC7C10F9 /* SyncManager.swift */; };
 		A95A6B637B7CB3D6A0BD66F4 /* MoodTrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00453B73C20C032AE562DE2A /* MoodTrendView.swift */; };
+		AC163C04ED5F30E42387F50A /* DailyMemory.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B833AB8759807525D0EC3D49 /* DailyMemory.xcdatamodeld */; };
 		AE912CBFB5CDABC8C09FE97F /* DailyMemoryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066EC1573FE38ADA53920ED7 /* DailyMemoryWidget.swift */; };
 		AF9F4314638D831337B4DA1C /* UpdatePersonUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81914AE1E172D0B04C92DDB5 /* UpdatePersonUseCase.swift */; };
 		B07F78F7FDF5A7FEB132B759 /* MemoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F7782DC40C24E4D8B84B43 /* MemoryStore.swift */; };
@@ -107,18 +109,33 @@
 		E72EBA7ED2EA6307A67FDD45 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = E2B742583F36D94126C5C62D /* FirebaseMessaging */; };
 		EB77DFF53A914DE0604CF062 /* ReminderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0EC6011CDAB0903E2C8CF1 /* ReminderStore.swift */; };
 		F289B7E4D93A1195B6C079CF /* GetUpcomingRemindersUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777138EDB5DB30E93E3A5CB6 /* GetUpcomingRemindersUseCase.swift */; };
+		FDA111DBFBB653CA7E4654CE /* DailyMemoryWidget.appex in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 7F6B8D6D0246CD67B9573427 /* DailyMemoryWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FEF80496F4176AEC06034A9D /* VectorSearchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEFD0C5D1E2DA22982AB681 /* VectorSearchEngine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		034BEFA2D034C662833CEC4A /* PBXContainerItemProxy */ = {
+		50540251953C4022594D3918 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2ABF35B0D4E36E4A2CCD6F93 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D3742AB19497875A2926B542;
-			remoteInfo = DailyMemory;
+			remoteGlobalIDString = FADB18C12EB23C211116E70D;
+			remoteInfo = DailyMemoryWidget;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5A3E0AB1A39798E720B32864 /* Embed Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				FDA111DBFBB653CA7E4654CE /* DailyMemoryWidget.appex in Embed Dependencies */,
+			);
+			name = "Embed Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		00131521D2CDB36BDB34ADD6 /* MemoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryRepository.swift; sourceTree = "<group>"; };
@@ -166,6 +183,7 @@
 		5DCA79E2D6E1121CB93314B6 /* HomeEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEmptyStateView.swift; sourceTree = "<group>"; };
 		64150BCF44729A17A350ACA2 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		684346C0E62E587DD828D4E3 /* GetRecentMemoriesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetRecentMemoriesUseCase.swift; sourceTree = "<group>"; };
+		732E11CE0BC01CED4630F5D9 /* DailyMemory.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyMemory.entitlements; sourceTree = "<group>"; };
 		736EB723E15B793EC03BD81A /* DailyMemory.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DailyMemory.xcdatamodel; sourceTree = "<group>"; };
 		777138EDB5DB30E93E3A5CB6 /* GetUpcomingRemindersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUpcomingRemindersUseCase.swift; sourceTree = "<group>"; };
 		7A280BFF97A4A0C272CA9BE8 /* GetTodayRemindersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTodayRemindersUseCase.swift; sourceTree = "<group>"; };
@@ -183,8 +201,10 @@
 		A61CF42C35727B011781DC2D /* PersonStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonStore.swift; sourceTree = "<group>"; };
 		A64BDFE38DFA875897C767E9 /* AdvancedFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedFilterView.swift; sourceTree = "<group>"; };
 		A763342EC0E6EC07C4D8189A /* GetPersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPersonUseCase.swift; sourceTree = "<group>"; };
+		A95C1EE9B9BA8C8A5C06434D /* SharedDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedDataProvider.swift; sourceTree = "<group>"; };
 		AA0C90CBDB1AAD855ABBFFFF /* PersonMemoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonMemoriesView.swift; sourceTree = "<group>"; };
 		ABF6DE3489090735AEDD7C5D /* SavePersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePersonUseCase.swift; sourceTree = "<group>"; };
+		AF0A09608BC7DF07EDE7A523 /* DailyMemoryWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DailyMemoryWidget.entitlements; sourceTree = "<group>"; };
 		AF9D6F939C9B555D8DB5AC4D /* HomeCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCards.swift; sourceTree = "<group>"; };
 		B33A784F31A7706957E9478C /* CoreDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataModels.swift; sourceTree = "<group>"; };
 		B5833914133983C466C67BB1 /* LockScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidget.swift; sourceTree = "<group>"; };
@@ -424,11 +444,13 @@
 		89125AE833E4DF1DA979582C /* DailyMemoryWidget */ = {
 			isa = PBXGroup;
 			children = (
+				AF0A09608BC7DF07EDE7A523 /* DailyMemoryWidget.entitlements */,
 				066EC1573FE38ADA53920ED7 /* DailyMemoryWidget.swift */,
 				4E8F043423008C623B41FFF3 /* DailyMemoryWidgetBundle.swift */,
 				2A98F11FF5408043E572F30E /* Info.plist */,
 				B5833914133983C466C67BB1 /* LockScreenWidget.swift */,
 				F13B6348E75752FFAA7CA844 /* QuickRecordWidget.swift */,
+				A95C1EE9B9BA8C8A5C06434D /* SharedDataProvider.swift */,
 				C8E7796438FEE8ED6B9D6870 /* WidgetColors.swift */,
 				CA3FAEC07436121DC47503D2 /* WidgetEntry.swift */,
 				078A4BB7D9013BC1901B646E /* WidgetProvider.swift */,
@@ -493,6 +515,7 @@
 		AE8DA2A8C15C28E2CA9EE7E6 /* DailyMemory */ = {
 			isa = PBXGroup;
 			children = (
+				732E11CE0BC01CED4630F5D9 /* DailyMemory.entitlements */,
 				2EEB84491D3F683BD9728748 /* GoogleService-Info.plist */,
 				A08545310BC57CBA05402C6A /* App */,
 				DA4242C7FB473DA94E661B10 /* Core */,
@@ -673,10 +696,12 @@
 				550807A3BA53F7F9A8BCB504 /* Sources */,
 				DFC0BBD1EAF7A9AC5D22B405 /* Resources */,
 				356F92B89EBF5E82F66AF1C6 /* Frameworks */,
+				5A3E0AB1A39798E720B32864 /* Embed Dependencies */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B8626748DBB96C3D8D74BB04 /* PBXTargetDependency */,
 			);
 			name = DailyMemory;
 			packageProductDependencies = (
@@ -701,7 +726,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				7F6CBAB8FB0CE34840FD5BCD /* PBXTargetDependency */,
 			);
 			name = DailyMemoryWidget;
 			packageProductDependencies = (
@@ -720,11 +744,11 @@
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					D3742AB19497875A2926B542 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = B3VVH82QVR;
 						ProvisioningStyle = Automatic;
 					};
 					FADB18C12EB23C211116E70D = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = B3VVH82QVR;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -742,7 +766,7 @@
 				2AF095E884E8A601D25CA479 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				07FAAECCC4BBEA155C3898DD /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
-			preferredProjectObjectVersion = 56;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 1AF49235B8B7A3615F0CD8C5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -770,10 +794,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC163C04ED5F30E42387F50A /* DailyMemory.xcdatamodeld in Sources */,
 				AE912CBFB5CDABC8C09FE97F /* DailyMemoryWidget.swift in Sources */,
 				A0D1F299DB75C377CAFDAD88 /* DailyMemoryWidgetBundle.swift in Sources */,
 				0D35F246D9521C5FF6091F57 /* LockScreenWidget.swift in Sources */,
 				52D4D8547DF0E53B520CE0A1 /* QuickRecordWidget.swift in Sources */,
+				8D86BA2C9B2A7FCAFE7C3982 /* SharedDataProvider.swift in Sources */,
 				6ED79402CD85F928A7C56CE0 /* WidgetColors.swift in Sources */,
 				DB4929EC4E8549CFFA9AF681 /* WidgetEntry.swift in Sources */,
 				490FDD2D158C3FDBB85E95DB /* WidgetProvider.swift in Sources */,
@@ -875,10 +901,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		7F6CBAB8FB0CE34840FD5BCD /* PBXTargetDependency */ = {
+		B8626748DBB96C3D8D74BB04 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D3742AB19497875A2926B542 /* DailyMemory */;
-			targetProxy = 034BEFA2D034C662833CEC4A /* PBXContainerItemProxy */;
+			target = FADB18C12EB23C211116E70D /* DailyMemoryWidget */;
+			targetProxy = 50540251953C4022594D3918 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -919,7 +945,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = B3VVH82QVR;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -945,6 +971,7 @@
 		230DCD47F59C5B6296592F0C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DailyMemoryWidget/DailyMemoryWidget.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DailyMemoryWidget/Info.plist;
@@ -966,6 +993,7 @@
 		4FD094276411A9AA951826B5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DailyMemoryWidget/DailyMemoryWidget.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DailyMemoryWidget/Info.plist;
@@ -988,6 +1016,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DailyMemory/DailyMemory.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1051,7 +1080,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = B3VVH82QVR;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1085,6 +1114,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = DailyMemory/DailyMemory.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;

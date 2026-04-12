@@ -22,7 +22,7 @@ settings:
   base:
     SWIFT_VERSION: "5.9"
     TARGETED_DEVICE_FAMILY: "1,2"
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: "B3VVH82QVR"
     CODE_SIGN_STYLE: Automatic
 
 targets:
@@ -42,6 +42,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.effortmoney.dailymemory
+        CODE_SIGN_ENTITLEMENTS: DailyMemory/DailyMemory.entitlements
         INFOPLIST_FILE: DailyMemory/Resources/Info.plist
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         MARKETING_VERSION: "1.0.0"
@@ -74,6 +75,11 @@ targets:
         product: GoogleSignIn
       - package: GoogleSignIn
         product: GoogleSignInSwift
+      - target: DailyMemoryWidget
+        embed: true
+        codeSign: true
+        copy:
+          destination: plugins
 
   DailyMemoryWidget:
     type: app-extension
@@ -81,18 +87,19 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: DailyMemoryWidget
+      - path: DailyMemory/Resources/DailyMemory.xcdatamodeld
+        buildPhase: sources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.effortmoney.dailymemory.widget
+        CODE_SIGN_ENTITLEMENTS: DailyMemoryWidget/DailyMemoryWidget.entitlements
         INFOPLIST_FILE: DailyMemoryWidget/Info.plist
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: 1
         GENERATE_INFOPLIST_FILE: true
         INFOPLIST_KEY_CFBundleDisplayName: DailyMemoryWidget
         INFOPLIST_KEY_NSHumanReadableCopyright: ""
-    dependencies:
-      - target: DailyMemory
-        embed: false
+    dependencies: []
 
 schemes:
   DailyMemory:

@@ -37,7 +37,6 @@ actor APIClient {
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         request.timeoutInterval = 30
 
-        print("[APIClient] POST \(path)")
 
         let (data, response) = try await session.data(for: request)
 
@@ -45,7 +44,6 @@ actor APIClient {
             throw APIError.invalidResponse
         }
 
-        print("[APIClient] Response: \(httpResponse.statusCode)")
 
         switch httpResponse.statusCode {
         case 200...299:
@@ -53,7 +51,6 @@ actor APIClient {
                 return try JSONDecoder().decode(T.self, from: data)
             } catch {
                 let raw = String(data: data, encoding: .utf8) ?? "nil"
-                print("[APIClient] Decode error: \(error)\nRaw: \(raw)")
                 throw error
             }
         case 401:
@@ -62,7 +59,6 @@ actor APIClient {
             throw APIError.rateLimited
         default:
             let message = String(data: data, encoding: .utf8) ?? "Unknown error"
-            print("[APIClient] Error \(httpResponse.statusCode): \(message)")
             throw APIError.serverError(httpResponse.statusCode, message)
         }
     }

@@ -133,9 +133,7 @@ final class AuthService: ObservableObject {
         let topic = "user_\(uid)"
         Messaging.messaging().subscribe(toTopic: topic) { error in
             if let error = error {
-                print("[FCM] Subscribe error: \(error)")
             } else {
-                print("[FCM] Subscribed to \(topic)")
             }
         }
     }

@@ -7,9 +7,6 @@ class SettingsViewModel: ObservableObject {
     @Published var displayName: String = ""
     @Published var isPremium: Bool = false
     @Published var isSignedIn: Bool = false
-    @Published var lastSyncTimeDisplay: String = "Never"
-    @Published var syncStateText: String = ""
-    @Published var pendingChangesCount: Int = 0
 
     // Notifications
     @Published var remindersEnabled: Bool = true {
@@ -19,30 +16,15 @@ class SettingsViewModel: ObservableObject {
         didSet { userPreferences.dailyPromptEnabled = dailyPromptEnabled }
     }
     @Published var dailyPromptTime: String = "9 PM"
-    @Published var quietHoursStart: String = "10 PM" {
-        didSet { userPreferences.quietHoursStart = quietHoursStart }
-    }
-    @Published var quietHoursEnd: String = "9 AM" {
-        didSet { userPreferences.quietHoursEnd = quietHoursEnd }
-    }
-    @Published var onThisDayEnabled: Bool = true {
-        didSet { userPreferences.onThisDayEnabled = onThisDayEnabled }
-    }
 
     // Privacy
     @Published var appLockEnabled: Bool = false {
         didSet { userPreferences.biometricEnabled = appLockEnabled }
     }
-    @Published var showLockedMemories: Bool = false {
-        didSet { userPreferences.showLockedMemories = showLockedMemories }
-    }
 
     // AI
     @Published var autoAnalyzeEnabled: Bool = true {
         didSet { userPreferences.autoAnalyzeEnabled = autoAnalyzeEnabled }
-    }
-    @Published var smartRemindersEnabled: Bool = true {
-        didSet { userPreferences.smartRemindersEnabled = smartRemindersEnabled }
     }
 
     // App Info
@@ -50,7 +32,6 @@ class SettingsViewModel: ObservableObject {
 
     private let userPreferences = UserPreferences.shared
     private let authService = AuthService.shared
-    private let syncManager = SyncManager.shared
 
     init() {
         loadFromPreferences()
@@ -60,14 +41,8 @@ class SettingsViewModel: ObservableObject {
     private func loadFromPreferences() {
         remindersEnabled = userPreferences.notificationsEnabled
         dailyPromptEnabled = userPreferences.dailyPromptEnabled
-        quietHoursStart = userPreferences.quietHoursStart
-        quietHoursEnd = userPreferences.quietHoursEnd
-        onThisDayEnabled = userPreferences.onThisDayEnabled
         appLockEnabled = userPreferences.biometricEnabled
-        showLockedMemories = userPreferences.showLockedMemories
         autoAnalyzeEnabled = userPreferences.autoAnalyzeEnabled
-        smartRemindersEnabled = userPreferences.smartRemindersEnabled
-        updateSyncTimeDisplay()
     }
 
     private func loadAuthState() {
@@ -81,24 +56,6 @@ class SettingsViewModel: ObservableObject {
             userEmail = "Not signed in"
             displayName = ""
         }
-        pendingChangesCount = syncManager.pendingChanges
-    }
-
-    private func updateSyncTimeDisplay() {
-        if let date = syncManager.lastSyncDate ?? userPreferences.lastSyncTime {
-            let formatter = RelativeDateTimeFormatter()
-            lastSyncTimeDisplay = formatter.localizedString(for: date, relativeTo: Date())
-        } else {
-            lastSyncTimeDisplay = "Never"
-        }
-    }
-
-    func syncNow() {
-        Task {
-            await syncManager.syncAll()
-            updateSyncTimeDisplay()
-            pendingChangesCount = syncManager.pendingChanges
-        }
     }
 
     func signOut() {
@@ -109,13 +66,11 @@ class SettingsViewModel: ObservableObject {
         loadAuthState()
     }
 
-    var lastSyncTime: String { lastSyncTimeDisplay }
 }
 
 // MARK: - Main View
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
-    @State private var showPremium = false
 
     var body: some View {
         NavigationStack {
@@ -163,91 +118,6 @@ struct SettingsView: View {
                         }
                     }
 
-                    // Premium Section
-                    if !viewModel.isPremium {
-                        Button { showPremium = true } label: {
-                            HStack(spacing: 14) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(LinearGradient(
-                                            colors: [.dmPrimary, .dmPrimaryLight],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ))
-                                        .frame(width: 48, height: 48)
-                                    Image(systemName: "sparkles")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.white)
-                                }
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text("Upgrade to Premium")
-                                        .font(.headline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.primary)
-                                    Text("More AI, faster sync, advanced insights")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(16)
-                            .background(Color(.systemBackground))
-                            .cornerRadius(28)
-                        }
-                    }
-
-                    // Data Section
-                    SettingsSection(title: "Data") {
-                        SettingsCard {
-                            SettingsRowWithIcon(
-                                icon: "cloud.fill",
-                                iconColor: .orange,
-                                title: "Storage & Cloud sync"
-                            )
-
-                            Divider().padding(.leading, 76)
-
-                            SettingsRowWithSubtitle(
-                                icon: "arrow.triangle.2.circlepath",
-                                iconColor: .dmPrimary,
-                                title: "Sync status",
-                                subtitle: viewModel.pendingChangesCount > 0
-                                    ? "\(viewModel.pendingChangesCount) pending - Last: \(viewModel.lastSyncTime)"
-                                    : "Last: \(viewModel.lastSyncTime)"
-                            ) {
-                                Button("Sync now") {
-                                    viewModel.syncNow()
-                                }
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .foregroundColor(.dmPrimary)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(Color(.systemGray6))
-                                .cornerRadius(20)
-                                .disabled(!viewModel.isSignedIn)
-                            }
-
-                            Divider().padding(.leading, 76)
-
-                            SettingsRowWithIcon(
-                                icon: "square.and.arrow.up",
-                                iconColor: .primary,
-                                title: "Export data"
-                            )
-
-                            Divider().padding(.leading, 76)
-
-                            SettingsRowWithIcon(
-                                icon: "square.and.arrow.down",
-                                iconColor: .primary,
-                                title: "Import data"
-                            )
-                        }
-                    }
-
                     // Notifications Section
                     SettingsSection(title: "Notifications") {
                         SettingsCard {
@@ -270,29 +140,6 @@ struct SettingsView: View {
                                 isOn: $viewModel.dailyPromptEnabled
                             )
 
-                            Divider().padding(.leading, 76)
-
-                            SettingsRowWithSubtitle(
-                                icon: "moon.fill",
-                                iconColor: .gray,
-                                title: "Quiet hours",
-                                subtitle: "\(viewModel.quietHoursEnd) - \(viewModel.quietHoursStart)"
-                            ) {
-                                Text("Set >")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.dmPrimary)
-                            }
-
-                            Divider().padding(.leading, 76)
-
-                            SettingsToggleRow(
-                                icon: "calendar",
-                                iconColor: .pink,
-                                iconBackground: Color.pink.opacity(0.1),
-                                title: "On this day",
-                                isOn: $viewModel.onThisDayEnabled
-                            )
                         }
                     }
 
@@ -306,16 +153,6 @@ struct SettingsView: View {
                                 title: "App lock (Face ID)",
                                 isOn: $viewModel.appLockEnabled
                             )
-
-                            Divider().padding(.leading, 76)
-
-                            SettingsToggleRow(
-                                icon: "eye.slash.fill",
-                                iconColor: .yellow,
-                                iconBackground: Color.yellow.opacity(0.1),
-                                title: "Show locked memories",
-                                isOn: $viewModel.showLockedMemories
-                            )
                         }
                     }
 
@@ -323,26 +160,16 @@ struct SettingsView: View {
                     SettingsSection(title: "AI Features") {
                         ZStack {
                             RoundedRectangle(cornerRadius: 32)
-                                .fill(Color(red: 0.52, green: 0.33, blue: 0.94).opacity(0.1))
+                                .fill(Color.dmPrimary.opacity(0.1))
                                 .padding(-4)
 
                             SettingsCard {
                                 SettingsToggleRow(
                                     icon: "sparkles",
-                                    iconColor: Color(red: 0.42, green: 0.22, blue: 0.83),
-                                    iconBackground: Color(red: 0.52, green: 0.33, blue: 0.94).opacity(0.2),
+                                    iconColor: Color.dmPrimary,
+                                    iconBackground: Color.dmPrimary.opacity(0.2),
                                     title: "Auto-analyze memories",
                                     isOn: $viewModel.autoAnalyzeEnabled
-                                )
-
-                                Divider().padding(.leading, 76)
-
-                                SettingsToggleRow(
-                                    icon: "lightbulb.fill",
-                                    iconColor: Color(red: 0.42, green: 0.22, blue: 0.83),
-                                    iconBackground: Color(red: 0.52, green: 0.33, blue: 0.94).opacity(0.2),
-                                    title: "Smart reminder suggestions",
-                                    isOn: $viewModel.smartRemindersEnabled
                                 )
                             }
                         }
@@ -360,36 +187,42 @@ struct SettingsView: View {
 
                             Divider().padding(.leading, 76)
 
-                            SettingsRowWithIcon(
+                            SettingsLinkRow(
                                 icon: "doc.text",
                                 iconColor: .secondary,
-                                title: "Privacy Policy"
+                                title: "Privacy Policy",
+                                url: "https://engram.pjhdev.co.kr/privacy.html"
                             )
 
                             Divider().padding(.leading, 76)
 
-                            SettingsRowWithIcon(
+                            SettingsLinkRow(
                                 icon: "doc.plaintext",
                                 iconColor: .secondary,
-                                title: "Terms of Service"
+                                title: "Terms of Service",
+                                url: "https://engram.pjhdev.co.kr/terms.html"
                             )
 
-                            Divider().padding(.leading, 76)
-
-                            SettingsRowWithIcon(
-                                icon: "bubble.left.and.bubble.right",
-                                iconColor: .secondary,
-                                title: "Contact Support"
-                            )
-
-                            Divider().padding(.leading, 76)
-
-                            SettingsRowWithIcon(
-                                icon: "star",
-                                iconColor: .secondary,
-                                title: "Rate the App"
-                            )
                         }
+                    }
+
+                    // People Management
+                    SettingsSection(title: "People") {
+                        NavigationLink(destination: PersonListView()) {
+                            SettingsCard {
+                                HStack(spacing: 16) {
+                                    IconBox(icon: "person.2.fill", color: .blue)
+                                    Text("Manage People")
+                                        .font(.body)
+                                        .fontWeight(.semibold)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(20)
+                            }
+                        }
+                        .buttonStyle(.plain)
                     }
 
                     // Sign Out
@@ -411,9 +244,6 @@ struct SettingsView: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
-            .sheet(isPresented: $showPremium) {
-                PremiumView()
-            }
         }
     }
 }
@@ -530,6 +360,35 @@ struct SettingsRowWithIcon: View {
                 Spacer()
 
                 Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+            }
+            .padding(20)
+        }
+    }
+}
+
+// MARK: - Settings Link Row
+struct SettingsLinkRow: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let url: String
+
+    var body: some View {
+        Button {
+            if let url = URL(string: url) {
+                UIApplication.shared.open(url)
+            }
+        } label: {
+            HStack(spacing: 16) {
+                IconBox(icon: icon, color: iconColor)
+                Text(title)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                Spacer()
+                Image(systemName: "arrow.up.right")
+                    .font(.caption)
                     .foregroundColor(.secondary)
             }
             .padding(20)

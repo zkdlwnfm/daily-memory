@@ -1,22 +1,17 @@
 import WidgetKit
 import SwiftUI
 
-/// Lock Screen Widget (iOS 16+)
-///
-/// Simple accessory widget for lock screen:
-/// - Circular: Microphone icon for quick record
-/// - Rectangular: "Record" with mic icon
-/// - Inline: "DailyMemory - Record"
+/// 잠금화면 위젯 — 기억 프리뷰 + streak
 @available(iOSApplicationExtension 16.0, *)
 struct LockScreenWidget: Widget {
     let kind: String = "LockScreenWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: QuickRecordProvider()) { entry in
-            LockScreenWidgetView()
+            LockScreenWidgetView(entry: entry)
         }
-        .configurationDisplayName("Quick Record")
-        .description("Record memories from your lock screen")
+        .configurationDisplayName("Engram Memories")
+        .description("View memories and streak from lock screen")
         .supportedFamilies([
             .accessoryCircular,
             .accessoryRectangular,
@@ -25,69 +20,124 @@ struct LockScreenWidget: Widget {
     }
 }
 
+// MARK: - Root
+
 @available(iOSApplicationExtension 16.0, *)
 struct LockScreenWidgetView: View {
+    let entry: DailyMemoryEntry
     @Environment(\.widgetFamily) var family
 
     var body: some View {
         switch family {
         case .accessoryCircular:
-            CircularView()
+            LockCircularView(entry: entry)
         case .accessoryRectangular:
-            RectangularView()
+            LockRectangularView(entry: entry)
         case .accessoryInline:
-            InlineView()
+            LockInlineView(entry: entry)
         default:
-            CircularView()
+            LockCircularView(entry: entry)
         }
     }
 }
 
-// MARK: - Circular View
+// MARK: - Circular: 오늘 기록 수 (게이지 링)
+
 @available(iOSApplicationExtension 16.0, *)
-struct CircularView: View {
+struct LockCircularView: View {
+    let entry: DailyMemoryEntry
+
     var body: some View {
         ZStack {
-            AccessoryWidgetBackground()
-
-            Image(systemName: "mic.fill")
-                .font(.system(size: 20, weight: .semibold))
-                .widgetAccentable()
+            // 목표 대비 게이지 (하루 5개 기준)
+            Gauge(value: Double(min(entry.todayMemoryCount, 5)), in: 0...5) {
+                Image(systemName: "brain.head.profile")
+            } currentValueLabel: {
+                Text("\(entry.todayMemoryCount)")
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+            }
+            .gaugeStyle(.accessoryCircular)
+            .widgetAccentable()
         }
         .widgetURL(URL(string: "dailymemory://record?mode=voice"))
     }
 }
 
-// MARK: - Rectangular View
-@available(iOSApplicationExtension 16.0, *)
-struct RectangularView: View {
-    var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "mic.fill")
-                .font(.system(size: 24, weight: .semibold))
-                .widgetAccentable()
+// MARK: - Rectangular: 최근 기억 + 통계
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("DailyMemory")
-                    .font(.system(size: 14, weight: .bold))
-                Text("Tap to record")
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
+@available(iOSApplicationExtension 16.0, *)
+struct LockRectangularView: View {
+    let entry: DailyMemoryEntry
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            // Header
+            HStack(spacing: 4) {
+                Image(systemName: "brain.head.profile")
+                    .font(.system(size: 9, weight: .bold))
+                    .widgetAccentable()
+
+                Text("Engram")
+                    .font(.system(size: 12, weight: .bold))
+
+                Spacer()
+
+                if entry.streak > 0 {
+                    HStack(spacing: 1) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 8))
+                        Text("\(entry.streak)")
+                            .font(.system(size: 10, weight: .bold))
+                    }
+                }
             }
 
-            Spacer()
+            // Memory preview
+            if let preview = entry.recentMemoryPreview {
+                Text(preview)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            } else {
+                Text("Tap to record a memory")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
+            }
+
+            // Stats
+            HStack(spacing: 4) {
+                Text("\(entry.todayMemoryCount) memories today")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(.secondary)
+
+                if entry.totalMemoryCount > 0 {
+                    Text("· \(entry.totalMemoryCount) total")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.tertiary)
+                }
+            }
         }
         .widgetURL(URL(string: "dailymemory://record?mode=voice"))
     }
 }
 
-// MARK: - Inline View
+// MARK: - Inline
+
 @available(iOSApplicationExtension 16.0, *)
-struct InlineView: View {
+struct LockInlineView: View {
+    let entry: DailyMemoryEntry
+
     var body: some View {
-        Label("DailyMemory - Record", systemImage: "mic.fill")
-            .widgetURL(URL(string: "dailymemory://record?mode=voice"))
+        if entry.streak > 0 {
+            Label(
+                "Engram · \(entry.todayMemoryCount) today · \(entry.streak)d streak",
+                systemImage: "brain.head.profile"
+            )
+        } else {
+            Label(
+                "Engram · \(entry.todayMemoryCount) memories today",
+                systemImage: "brain.head.profile"
+            )
+        }
     }
 }
-
-// Previews removed - requires iOS 17+

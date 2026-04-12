@@ -1,19 +1,19 @@
 import SwiftUI
 
 extension Color {
-    // MARK: - Primary Colors (Indigo)
-    static let dmPrimary = Color(hex: "6366F1")
-    static let dmPrimaryDark = Color(hex: "4F46E5")
-    static let dmPrimaryLight = Color(hex: "818CF8")
+    // MARK: - Primary Colors (Ink Sage)
+    static let dmPrimary = Color(hex: "3D5A50")
+    static let dmPrimaryDark = Color(hex: "2D4339")
+    static let dmPrimaryLight = Color(hex: "4E7264")
 
-    // MARK: - Secondary Colors (Teal)
-    static let dmSecondary = Color(hex: "14B8A6")
-    static let dmSecondaryDark = Color(hex: "0D9488")
-    static let dmSecondaryLight = Color(hex: "2DD4BF")
+    // MARK: - Secondary Colors
+    static let dmSecondary = Color(hex: "4E7264")
+    static let dmSecondaryDark = Color(hex: "3D5A50")
+    static let dmSecondaryLight = Color(hex: "6B8F7E")
 
     // MARK: - Accent Colors
-    static let dmAccent = Color(hex: "F59E0B")
-    static let dmAccentLight = Color(hex: "FBBF24")
+    static let dmAccent = Color(hex: "3D5A50")
+    static let dmAccentLight = Color(hex: "4E7264")
 
     // MARK: - Background Colors
     static let dmBackgroundLight = Color(hex: "F8FAFC")
@@ -33,17 +33,17 @@ extension Color {
     static let dmInfo = Color(hex: "3B82F6")
 
     // MARK: - Category Colors
-    static let dmCategoryEvent = Color(hex: "6366F1")
-    static let dmCategoryPromise = Color(hex: "8B5CF6")
-    static let dmCategoryMeeting = Color(hex: "14B8A6")
-    static let dmCategoryFinancial = Color(hex: "F59E0B")
+    static let dmCategoryEvent = Color(hex: "3D5A50")
+    static let dmCategoryPromise = Color(hex: "7C6B4F")
+    static let dmCategoryMeeting = Color(hex: "4E7264")
+    static let dmCategoryFinancial = Color(hex: "C4884D")
     static let dmCategoryGeneral = Color(hex: "64748B")
 
     // MARK: - Relationship Colors
-    static let dmRelationshipFamily = Color(hex: "EC4899")
-    static let dmRelationshipFriend = Color(hex: "3B82F6")
-    static let dmRelationshipColleague = Color(hex: "14B8A6")
-    static let dmRelationshipBusiness = Color(hex: "6366F1")
+    static let dmRelationshipFamily = Color(hex: "C4626A")
+    static let dmRelationshipFriend = Color(hex: "5A7FA5")
+    static let dmRelationshipColleague = Color(hex: "4E7264")
+    static let dmRelationshipBusiness = Color(hex: "3D5A50")
     static let dmRelationshipAcquaintance = Color(hex: "64748B")
 }
 
