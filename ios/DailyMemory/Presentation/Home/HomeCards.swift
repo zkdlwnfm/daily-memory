@@ -1,23 +1,65 @@
 import SwiftUI
 
-// MARK: - Streak Card
+// MARK: - Streak Ring View
 
 struct StreakCard: View {
     let days: Int
 
-    private var flameCount: Int {
-        min(days, 7)
+    private var weekProgress: Double {
+        min(Double(days % 7 == 0 && days > 0 ? 7 : days % 7), 7) / 7.0
+    }
+
+    private var milestoneIcon: String? {
+        if days >= 365 { return "crown.fill" }
+        if days >= 100 { return "star.fill" }
+        if days >= 30 { return "medal.fill" }
+        if days >= 7 { return "flame.fill" }
+        return nil
     }
 
     var body: some View {
-        HStack(spacing: 12) {
-            Text(days >= 7 ? "🔥" : "✨")
-                .font(.system(size: 32))
+        HStack(spacing: Spacing.md) {
+            // Ring
+            ZStack {
+                // Track
+                Circle()
+                    .stroke(Color.dmPrimary.opacity(0.1), lineWidth: 6)
+                    .frame(width: 56, height: 56)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(days)-day streak!")
-                    .font(.headline)
-                    .fontWeight(.bold)
+                // Progress
+                Circle()
+                    .trim(from: 0, to: weekProgress)
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.dmPrimary, Color.dmPrimaryLight],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                    )
+                    .frame(width: 56, height: 56)
+                    .rotationEffect(.degrees(-90))
+
+                // Center
+                VStack(spacing: 0) {
+                    Text("\(days)")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .foregroundColor(.dmPrimary)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: Spacing.xs) {
+                HStack(spacing: Spacing.xs) {
+                    Text("\(days)-day streak")
+                        .font(.headline)
+                        .fontWeight(.bold)
+
+                    if let icon = milestoneIcon {
+                        Image(systemName: icon)
+                            .font(.system(size: 12))
+                            .foregroundColor(.orange)
+                    }
+                }
 
                 Text(encouragement)
                     .font(.caption)
@@ -26,46 +68,46 @@ struct StreakCard: View {
 
             Spacer()
 
-            // Mini flame indicators
-            HStack(spacing: 2) {
+            // Weekly dots
+            HStack(spacing: 3) {
                 ForEach(0..<7, id: \.self) { i in
+                    let filled = i < (days >= 7 ? 7 : days % 7 + (days > 0 && days % 7 == 0 ? 0 : 0))
                     Circle()
-                        .fill(i < flameCount ? Color.orange : Color(.systemGray5))
-                        .frame(width: 8, height: 8)
+                        .fill(i < min(days, 7) ? Color.dmPrimary : Color(.systemGray5))
+                        .frame(width: 7, height: 7)
                 }
             }
         }
-        .padding(16)
-        .background(
-            LinearGradient(
-                colors: [Color.orange.opacity(0.08), Color.yellow.opacity(0.05)],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-        )
+        .padding(Spacing.md)
+        .background(Color.dmPrimary.opacity(0.04))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+            RoundedRectangle(cornerRadius: Radius.md)
+                .stroke(Color.dmPrimary.opacity(0.12), lineWidth: 1)
         )
-        .cornerRadius(16)
+        .cornerRadius(Radius.md)
     }
 
     private var encouragement: String {
         switch days {
         case 1: return "Great start! Keep it going."
-        case 2...3: return "Building a habit. Nice!"
+        case 2...3: return "Building a habit!"
         case 4...6: return "You're on a roll!"
         case 7...13: return "One week strong!"
         case 14...29: return "Incredible consistency!"
+        case 30...99: return "A whole month! Amazing!"
+        case 100...364: return "Triple digits!"
         default: return "You're unstoppable!"
         }
     }
 }
 
-// MARK: - Daily Prompt Card
+// MARK: - Daily Prompt Card (with Quick Entry CTA)
 
 struct DailyPromptCard: View {
     let onRecord: () -> Void
+    let onQuickEntry: () -> Void
+
+    private let moods = ["😊", "🙂", "😐", "😔", "😤"]
 
     private let prompts = [
         "What made you smile today?",
@@ -83,41 +125,61 @@ struct DailyPromptCard: View {
     }
 
     var body: some View {
-        Button(action: onRecord) {
-            HStack(spacing: 14) {
-                ZStack {
-                    Circle()
-                        .fill(Color.accentColor.opacity(0.12))
-                        .frame(width: 44, height: 44)
-
-                    Image(systemName: "pencil.line")
-                        .font(.system(size: 18))
-                        .foregroundColor(.accentColor)
-                }
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(todayPrompt)
+        VStack(spacing: 0) {
+            // Quick mood entry
+            Button(action: onQuickEntry) {
+                VStack(spacing: Spacing.sm) {
+                    Text("How are you feeling?")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
 
-                    Text("Tap to record your thought")
+                    HStack(spacing: Spacing.md) {
+                        ForEach(moods, id: \.self) { mood in
+                            Text(mood)
+                                .font(.system(size: 28))
+                        }
+                    }
+
+                    Text("Tap to quick record")
+                        .font(.caption)
+                        .foregroundColor(.dmPrimary)
+                        .fontWeight(.medium)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Spacing.md)
+                .padding(.horizontal, Spacing.md)
+            }
+            .buttonStyle(.plain)
+
+            Divider().padding(.horizontal, Spacing.md)
+
+            // Full record option
+            Button(action: onRecord) {
+                HStack(spacing: Spacing.sm) {
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(.dmPrimary)
+
+                    Text(todayPrompt)
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .lineLimit(1)
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary.opacity(0.5))
                 }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                .padding(.horizontal, Spacing.md)
+                .padding(.vertical, Spacing.sm + 2)
             }
-            .padding(16)
-            .background(Color(.systemBackground))
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
+        .background(Color(.systemBackground))
+        .cornerRadius(Radius.md)
+        .shadow(color: .black.opacity(0.06), radius: 12, y: 4)
     }
 }
 
@@ -128,11 +190,12 @@ struct DailyPromptCard: View {
         StreakCard(days: 1)
         StreakCard(days: 5)
         StreakCard(days: 14)
+        StreakCard(days: 100)
     }
     .padding()
 }
 
 #Preview("Daily Prompt") {
-    DailyPromptCard(onRecord: {})
+    DailyPromptCard(onRecord: {}, onQuickEntry: {})
         .padding()
 }

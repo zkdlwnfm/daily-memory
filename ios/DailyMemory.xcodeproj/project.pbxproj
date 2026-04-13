@@ -34,6 +34,7 @@
 		32D4C0CF6D69CA3FA522177A /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3ABB2BD8D87F86AEEC30574 /* FirestoreService.swift */; };
 		3456FE4A95DCFD9B4D5E1052 /* GenerateSmartRemindersUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD11CF87EBD979664E2ACAF /* GenerateSmartRemindersUseCase.swift */; };
 		350FEEE40925FA45D2765165 /* GetPersonUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763342EC0E6EC07C4D8189A /* GetPersonUseCase.swift */; };
+		3569E21F03B3B9615AF5DF84 /* Spacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09AF35C56C239F4FC5A49CD /* Spacing.swift */; };
 		35F14DE302F5AD335A445120 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2C71EFA9AC8DDB7D359F62 /* PersistenceController.swift */; };
 		37A4865067FB1200C6BA9A70 /* UpdateMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BB8C76A822A18A4D384645 /* UpdateMemoryUseCase.swift */; };
 		3B2C57EC880FEF5403817918 /* PhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DDDAC64BFD00C8E914D6C69 /* PhotoPickerView.swift */; };
@@ -239,6 +240,7 @@
 		9066B198056AA9AAB0755EBF /* SnoozeReminderUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnoozeReminderUseCase.swift; sourceTree = "<group>"; };
 		92A7DBD6C9C100BB26E92F70 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		9809F2A5690C46832768175A /* MemoryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryDetailView.swift; sourceTree = "<group>"; };
+		A09AF35C56C239F4FC5A49CD /* Spacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spacing.swift; sourceTree = "<group>"; };
 		A61CF42C35727B011781DC2D /* PersonStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonStore.swift; sourceTree = "<group>"; };
 		A64BDFE38DFA875897C767E9 /* AdvancedFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedFilterView.swift; sourceTree = "<group>"; };
 		A763342EC0E6EC07C4D8189A /* GetPersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPersonUseCase.swift; sourceTree = "<group>"; };
@@ -468,6 +470,7 @@
 			isa = PBXGroup;
 			children = (
 				92A7DBD6C9C100BB26E92F70 /* Colors.swift */,
+				A09AF35C56C239F4FC5A49CD /* Spacing.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -995,6 +998,7 @@
 				0605A2C999CF7DBE42955502 /* SemanticSearchUseCase.swift in Sources */,
 				6825EF526FDA6C767FD51CDC /* SettingsView.swift in Sources */,
 				5D04AD070DFB51B9FBED172C /* SnoozeReminderUseCase.swift in Sources */,
+				3569E21F03B3B9615AF5DF84 /* Spacing.swift in Sources */,
 				4DE30E0D3A65617A0056C93D /* SpeechRecognitionService.swift in Sources */,
 				9F5701754B47F7BA0521018A /* StateViews.swift in Sources */,
 				B6D4EA91C4FD57038DC81F03 /* StoreKitService.swift in Sources */,

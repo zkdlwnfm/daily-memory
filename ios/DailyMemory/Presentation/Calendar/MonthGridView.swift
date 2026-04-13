@@ -3,17 +3,12 @@ import SwiftUI
 struct MonthGridView: View {
     @ObservedObject var viewModel: CalendarViewModel
     private let calendar = Calendar.current
-    private let weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    private let weekdays = ["S", "M", "T", "W", "T", "F", "S"]
 
     var body: some View {
-        VStack(spacing: 12) {
-            // Month header
+        VStack(spacing: Spacing.md) {
             monthHeader
-
-            // Weekday labels
             weekdayHeader
-
-            // Date grid
             dateGrid
         }
     }
@@ -22,9 +17,11 @@ struct MonthGridView: View {
 
     private var monthHeader: some View {
         HStack {
-            Text(viewModel.monthTitle)
-                .font(.title2)
-                .fontWeight(.bold)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(viewModel.monthTitle)
+                    .font(.title2)
+                    .fontWeight(.bold)
+            }
 
             Spacer()
 
@@ -32,12 +29,16 @@ struct MonthGridView: View {
                 Button("Today") {
                     viewModel.goToToday()
                 }
-                .font(.subheadline)
-                .fontWeight(.semibold)
+                .font(.caption)
+                .fontWeight(.bold)
                 .foregroundColor(.dmPrimary)
+                .padding(.horizontal, Spacing.sm)
+                .padding(.vertical, Spacing.xs)
+                .background(Color.dmPrimary.opacity(0.1))
+                .cornerRadius(Radius.sm)
             }
 
-            HStack(spacing: 16) {
+            HStack(spacing: Spacing.md) {
                 Button { viewModel.navigateMonth(offset: -1) } label: {
                     Image(systemName: "chevron.left")
                         .font(.body.weight(.semibold))
@@ -51,74 +52,111 @@ struct MonthGridView: View {
                 }
             }
         }
-        .padding(.horizontal, 4)
     }
 
     // MARK: - Weekday Header
 
     private var weekdayHeader: some View {
         HStack(spacing: 0) {
-            ForEach(weekdays, id: \.self) { day in
-                Text(day)
-                    .font(.caption)
-                    .fontWeight(.semibold)
+            ForEach(weekdays.indices, id: \.self) { index in
+                Text(weekdays[index])
+                    .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity)
             }
         }
     }
 
-    // MARK: - Date Grid
+    // MARK: - Date Grid (Heatmap)
 
     private var dateGrid: some View {
         let days = daysInMonth()
-        let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 3), count: 7)
 
-        return LazyVGrid(columns: columns, spacing: 4) {
-            ForEach(days, id: \.self) { date in
-                if let date {
-                    dateCellView(date: date)
+        return LazyVGrid(columns: columns, spacing: 3) {
+            ForEach(days.indices, id: \.self) { index in
+                if let date = days[index] {
+                    heatmapCell(date: date)
                 } else {
-                    Color.clear.frame(height: 48)
+                    Color.clear.frame(height: 44)
                 }
             }
         }
     }
 
-    // MARK: - Date Cell
+    // MARK: - Heatmap Cell
 
-    private func dateCellView(date: Date) -> some View {
+    private func heatmapCell(date: Date) -> some View {
         let isToday = calendar.isDateInToday(date)
         let isSelected = viewModel.selectedDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false
-        let dots = viewModel.dotTypes(for: date)
+        let eventCount = viewModel.dotTypes(for: date).count
+        let isFuture = date > Date()
 
         return Button {
-            viewModel.selectDate(date)
+            withAnimation(.easeInOut(duration: 0.2)) {
+                viewModel.selectDate(date)
+            }
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } label: {
-            VStack(spacing: 3) {
-                Text("\(calendar.component(.day, from: date))")
-                    .font(.subheadline)
-                    .fontWeight(isToday ? .bold : .regular)
-                    .foregroundColor(isSelected ? .white : (isToday ? .dmPrimary : .primary))
-                    .frame(width: 32, height: 32)
-                    .background(
-                        Circle()
-                            .fill(isSelected ? Color.dmPrimary : (isToday ? Color.dmPrimary.opacity(0.1) : Color.clear))
-                    )
+            ZStack {
+                // Heatmap background
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(heatmapColor(count: eventCount, isFuture: isFuture))
 
-                // Colored dots
-                HStack(spacing: 3) {
-                    ForEach(Array(dots.prefix(3).enumerated()), id: \.offset) { _, type in
-                        Circle()
-                            .fill(colorForType(type))
-                            .frame(width: 5, height: 5)
+                // Today ring
+                if isToday && !isSelected {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.dmPrimary, lineWidth: 2)
+                }
+
+                // Selected state
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.dmPrimary)
+                }
+
+                VStack(spacing: 2) {
+                    Text("\(calendar.component(.day, from: date))")
+                        .font(.system(size: 14, weight: isToday ? .bold : .medium))
+                        .foregroundColor(cellTextColor(isSelected: isSelected, isToday: isToday, isFuture: isFuture, eventCount: eventCount))
+
+                    // Small event indicator dots
+                    if eventCount > 0 && !isSelected {
+                        HStack(spacing: 2) {
+                            ForEach(0..<min(eventCount, 3), id: \.self) { _ in
+                                Circle()
+                                    .fill(isToday ? Color.dmPrimary : Color.white.opacity(0.7))
+                                    .frame(width: 3, height: 3)
+                            }
+                        }
                     }
                 }
-                .frame(height: 5)
             }
-            .frame(height: 48)
+            .frame(height: 44)
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - Heatmap Colors
+
+    private func heatmapColor(count: Int, isFuture: Bool) -> Color {
+        if isFuture { return Color(.systemGray6).opacity(0.5) }
+
+        switch count {
+        case 0: return Color(.systemGray6).opacity(0.3)
+        case 1: return Color.dmPrimary.opacity(0.1)
+        case 2: return Color.dmPrimary.opacity(0.2)
+        case 3: return Color.dmPrimary.opacity(0.3)
+        default: return Color.dmPrimary.opacity(0.4)
+        }
+    }
+
+    private func cellTextColor(isSelected: Bool, isToday: Bool, isFuture: Bool, eventCount: Int) -> Color {
+        if isSelected { return .white }
+        if isFuture { return .secondary.opacity(0.4) }
+        if isToday { return .dmPrimary }
+        if eventCount >= 3 { return .white }
+        return .primary
     }
 
     // MARK: - Helpers
@@ -134,12 +172,10 @@ struct MonthGridView: View {
 
         var days: [Date?] = []
 
-        // Leading empty cells
         for _ in 1..<firstWeekday {
             days.append(nil)
         }
 
-        // Actual days
         for day in 0..<daysInMonth {
             if let date = calendar.date(byAdding: .day, value: day, to: firstDay) {
                 days.append(date)
@@ -147,14 +183,5 @@ struct MonthGridView: View {
         }
 
         return days
-    }
-
-    private func colorForType(_ type: CalendarEvent.CalendarEventType) -> Color {
-        switch type {
-        case .memory: return .blue
-        case .task: return .orange
-        case .reminder: return .green
-        case .system: return .gray
-        }
     }
 }

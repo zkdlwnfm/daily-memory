@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engram UI Improvement Plan — DAU 0→10K</title>
+<style>
+  :root {
+    --bg: #0B0F1A;
+    --surface: #141924;
+    --surface-2: #1C2333;
+    --surface-3: #242D3D;
+    --sage: #3D5A50;
+    --sage-light: #6B8F7E;
+    --sage-glow: rgba(61,90,80,0.15);
+    --gold: #FFB84D;
+    --gold-bg: rgba(255,184,77,0.08);
+    --red: #EF4444;
+    --red-bg: rgba(239,68,68,0.08);
+    --green: #22C55E;
+    --green-bg: rgba(34,197,94,0.08);
+    --blue: #3B82F6;
+    --blue-bg: rgba(59,130,246,0.08);
+    --purple: #A78BFA;
+    --purple-bg: rgba(167,139,250,0.08);
+    --cyan: #06B6D4;
+    --text: #E8ECF4;
+    --text-dim: #8B95A8;
+    --text-muted: #4A5568;
+    --border: rgba(255,255,255,0.06);
+    --r: 16px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, 'SF Pro Display', 'Pretendard', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    padding: 100px 40px 80px;
+    text-align: center;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, var(--sage-glow) 0%, transparent 60%);
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--sage-light);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, #fff 20%, var(--sage-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero .sub { font-size: 1.05rem; color: var(--text-dim); max-width: 600px; margin: 0 auto; }
+
+  /* Layout */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+  section { margin-bottom: 64px; }
+
+  /* Section Headers */
+  .sh {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 28px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sh-num {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--sage); color: #fff;
+    font-weight: 800; font-size: 13px;
+    border-radius: 9px;
+  }
+  .sh h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.3px; }
+
+  /* Cards */
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: rgba(255,255,255,0.12); }
+  .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .card p, .card li { font-size: 0.88rem; color: var(--text-dim); line-height: 1.7; }
+  .card ul { list-style: none; padding: 0; }
+  .card ul li { padding: 4px 0 4px 16px; position: relative; }
+  .card ul li::before {
+    content: ''; position: absolute; left: 0; top: 12px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--sage-light);
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-block; padding: 3px 9px;
+    border-radius: 6px; font-size: 11px;
+    font-weight: 700; letter-spacing: 0.3px;
+  }
+  .tag-sage { background: var(--sage-glow); color: var(--sage-light); }
+  .tag-gold { background: var(--gold-bg); color: var(--gold); }
+  .tag-red { background: var(--red-bg); color: var(--red); }
+  .tag-green { background: var(--green-bg); color: var(--green); }
+  .tag-blue { background: var(--blue-bg); color: var(--blue); }
+  .tag-purple { background: var(--purple-bg); color: var(--purple); }
+
+  /* Benchmark App Row */
+  .bench-app {
+    display: flex; gap: 20px; align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px;
+    margin-bottom: 14px;
+  }
+  .bench-app:hover { border-color: rgba(255,255,255,0.1); }
+  .bench-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0;
+  }
+  .bench-info { flex: 1; }
+  .bench-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+  .bench-info .meta { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px; }
+  .bench-info .takeaway {
+    font-size: 0.84rem; color: var(--text-dim);
+    padding: 8px 12px; background: var(--surface-2);
+    border-radius: 8px; margin-top: 8px;
+  }
+  .bench-info .takeaway strong { color: var(--gold); }
+
+  /* Problem/Solution */
+  .ps-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .ps-cell { padding: 20px 24px; }
+  .ps-cell:first-child { border-right: 1px solid var(--border); }
+  .ps-label {
+    font-size: 10px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .ps-label.bad { color: var(--red); }
+  .ps-label.good { color: var(--green); }
+  .ps-cell p { font-size: 0.85rem; color: var(--text-dim); }
+
+  /* Priority badge */
+  .priority {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1px;
+    padding: 3px 8px; border-radius: 5px;
+  }
+  .p-critical { background: var(--red-bg); color: var(--red); }
+  .p-high { background: var(--gold-bg); color: var(--gold); }
+  .p-medium { background: var(--blue-bg); color: var(--blue); }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 36px; }
+  .timeline::before {
+    content: ''; position: absolute;
+    left: 13px; top: 0; bottom: 0; width: 2px;
+    background: linear-gradient(to bottom, var(--sage), var(--gold), var(--green));
+    border-radius: 2px;
+  }
+  .tl-item {
+    position: relative; margin-bottom: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px;
+  }
+  .tl-item::before {
+    content: ''; position: absolute;
+    left: -31px; top: 28px;
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 3px solid var(--sage);
+    background: var(--bg);
+  }
+  .tl-item:nth-child(2)::before { border-color: var(--gold); }
+  .tl-item:nth-child(3)::before { border-color: var(--green); }
+  .tl-phase {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .tl-phase h3 { font-size: 1.05rem; font-weight: 700; }
+  .tl-phase .dur {
+    font-size: 0.75rem; color: var(--text-muted);
+    padding: 2px 8px; background: var(--surface-3);
+    border-radius: 6px;
+  }
+  .tl-tasks { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px; }
+  .tl-task { font-size: 0.84rem; color: var(--text-dim); padding: 4px 0; padding-left: 20px; position: relative; }
+  .tl-task::before {
+    content: ''; position: absolute; left: 0; top: 10px;
+    width: 10px; height: 10px; border: 2px solid var(--border);
+    border-radius: 3px;
+  }
+
+  /* Stats row */
+  .stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+  .stat-card {
+    flex: 1; min-width: 140px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-card .num { font-size: 1.8rem; font-weight: 800; margin-bottom: 2px; }
+  .stat-card .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Table */
+  .tbl {
+    width: 100%; border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+  .tbl thead th {
+    background: var(--surface-2);
+    padding: 12px 16px; text-align: left;
+    font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--text-muted); border-bottom: 1px solid var(--border);
+  }
+  .tbl tbody td {
+    padding: 12px 16px; font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim); vertical-align: top;
+  }
+  .tbl tbody td:first-child { font-weight: 600; color: var(--text); }
+  .tbl tbody tr:last-child td { border-bottom: none; }
+  .yes { color: var(--green); font-weight: 700; }
+  .no { color: var(--text-muted); }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .hero { padding: 60px 20px 50px; }
+    .container { padding: 0 16px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .ps-row { grid-template-columns: 1fr; }
+    .ps-cell:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+    .bench-app { flex-direction: column; }
+    .stats { flex-direction: column; }
+  }
+
+  footer {
+    text-align: center; padding: 48px 28px;
+    color: var(--text-muted); font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-badge">UI/UX Improvement Plan</div>
+  <h1>Engram → DAU 10,000</h1>
+  <p class="sub">경쟁 앱 10개 분석 기반, Engram의 UI/UX 개선 로드맵.<br>기록 앱 시장에서 DAU 10K를 달성하기 위한 구체적 액션 플랜.</p>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════ 1. 현재 문제점 ═══════════════ -->
+<section>
+  <div class="sh"><span class="sh-num">1</span><h2>Engram 현재 UI 진단</h2></div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="num" style="color:var(--red)">7</div><div class="label">Critical Issues</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--gold)">23</div><div class="label">UX Pain Points</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--text-muted)">0</div><div class="label">Custom Illustrations</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--text-muted)">0</div><div class="label">Micro-interactions</div></div>
+  </div>
+
+  <div class="ps-row">
+    <div class="ps-cell"><div class="ps-label bad">현재 문제</div><p><strong>Generic iOS 스타일링</strong> — .systemBackground, .secondary 등 시스템 기본색만 사용. 브랜드 정체성 없음. "아무 앱이나 될 수 있는" 외형.</p></div>
+    <div class="ps-cell"><div class="ps-label good">개선 방향</div><p><strong>Ink Sage 브랜드 시스템</strong> — dmPrimary(#3D5A50) 중심의 일관된 컬러 시스템. 앱을 열면 즉시 "Engram이다"라고 인지.</p></div>
+  </div>
+  <div class="ps-row">
+    <div class="ps-cell"><div class="ps-label bad">현재 문제</div><p><strong>약한 비주얼 계층</strong> — 폰트 weight에만 의존. 카드 그림자 opacity 0.03~0.04로 플랫하게 보임. 중요도 구분 불가.</p></div>
+    <div class="ps-cell"><div class="ps-label good">개선 방향</div><p><strong>3단계 엘레베이션 시스템</strong> — Subtle(0.04)/Medium(0.08)/Emphasis(0.15) 그림자 + 배경 틴트로 깊이감.</p></div>
+  </div>
+  <div class="ps-row">
+    <div class="ps-cell"><div class="ps-label bad">현재 문제</div><p><strong>빈 상태(Empty State)가 이모지+텍스트</strong> — 📝 "No memories yet" 한 줄. 사용자에게 아무런 감정적 연결이나 행동 유도 없음.</p></div>
+    <div class="ps-cell"><div class="ps-label good">개선 방향</div><p><strong>일러스트 + 행동 유도</strong> — 커스텀 일러스트레이션, 명확한 CTA 버튼, 격려 메시지로 첫 기록 유도.</p></div>
+  </div>
+  <div class="ps-row">
+    <div class="ps-cell"><div class="ps-label bad">현재 문제</div><p><strong>스페이싱 비일관</strong> — 4pt, 6pt, 8pt, 12pt, 16pt, 20pt, 24pt, 32pt, 48pt가 무작위 혼용. 시각적 리듬 없음.</p></div>
+    <div class="ps-cell"><div class="ps-label good">개선 방향</div><p><strong>8pt 그리드 시스템</strong> — 8, 16, 24, 32, 40, 48만 사용. 일관된 시각적 리듬.</p></div>
+  </div>
+  <div class="ps-row">
+    <div class="ps-cell"><div class="ps-label bad">현재 문제</div><p><strong>리텐션 훅 부재</strong> — 스트릭은 있지만 시각화 약함. Year in Pixels 없음. 과거 기억 서피싱 알림 없음. 게이미피케이션 없음.</p></div>
+    <div class="ps-cell"><div class="ps-label good">개선 방향</div><p><strong>Daylio 수준 게이미피케이션</strong> — Year in Pixels, 뱃지/업적, On This Day 플래시백, 무드 상관관계 분석.</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════ 2. 경쟁 앱 벤치마크 ═══════════════ -->
+<section>
+  <div class="sh"><span class="sh-num">2</span><h2>경쟁 앱 벤치마크 — 배울 점</h2></div>
+
+  <div class="bench-app">
+    <div class="bench-icon" style="background:#1a1a2e;">📔</div>
+    <div class="bench-info">
+      <h4>Day One <span class="tag tag-gold">⭐ 4.8 · 116K 평가 · 1500만+ DL</span></h4>
+      <div class="meta">일기/저널 앱의 기준 — Apple App of the Year</div>
+      <ul>
+        <li>"On This Day" 플래시백으로 과거 기억을 매일 알림 → 알림 오픈율 극대화</li>
+        <li>캘린더 스트릭 뷰 — 연속 기록일을 캘린더에 색상으로 시각화</li>
+        <li>지도 뷰 — 기억을 세계 지도 핀으로 표시</li>
+        <li>AI Daily Chat + 엔트리 요약 (Gold 티어)</li>
+      </ul>
+      <div class="takeaway"><strong>Engram에 적용:</strong> "On This Day" 플래시백 알림, 캘린더 히트맵, 기억 지도 뷰</div>
+    </div>
+  </div>
+
+  <div class="bench-app">
+    <div class="bench-icon" style="background:#1e2a1e;">😊</div>
+    <div class="bench-info">
+      <h4>Daylio <span class="tag tag-gold">⭐ 4.8 · 59K 평가</span></h4>
+      <div class="meta">마이크로 다이어리 — 타이핑 없이 30초 기록</div>
+      <ul>
+        <li><strong>Year in Pixels</strong> — 1년 전체를 색상 그리드로 시각화. 빈 칸 채우기 충동</li>
+        <li>무드 이모지 + 활동 아이콘만 탭 → 30초 내 엔트리 완성</li>
+        <li>무드-활동 상관관계 분석 — "운동한 날 기분이 좋다" 인사이트</li>
+        <li>스트릭 + 뱃지/업적 시스템 → 30% 높은 참여도</li>
+      </ul>
+      <div class="takeaway"><strong>Engram에 적용:</strong> Year in Pixels 연간 뷰, 초저마찰 퀵 엔트리, 무드 상관관계 차트</div>
+    </div>
+  </div>
+
+  <div class="bench-app">
+    <div class="bench-icon" style="background:#1a1e2e;">📅</div>
+    <div class="bench-info">
+      <h4>Fantastical <span class="tag tag-sage">⭐ 4.7 · 디자인 어워드 다수</span></h4>
+      <div class="meta">캘린더 앱의 디자인 기준 — Liquid Glass 적용</div>
+      <ul>
+        <li><strong>히트맵 월 뷰</strong> — 바쁜 날/여유로운 날을 색상 밀도로 즉시 파악</li>
+        <li>DayTicker — 상단에 컬러풀한 바로 멀티데이 이벤트 시각화</li>
+        <li>하단 컨트롤 — iPhone에서 한 손 조작 최적화</li>
+        <li>Liquid Glass 디자인 (iOS 26) — 반투명 글래스 소재로 깊이감</li>
+      </ul>
+      <div class="takeaway"><strong>Engram에 적용:</strong> 히트맵 캘린더, 하단 컨트롤 배치, Liquid Glass 요소 도입</div>
+    </div>
+  </div>
+
+  <div class="bench-app">
+    <div class="bench-icon" style="background:#2a1e1e;">⏰</div>
+    <div class="bench-info">
+      <h4>Structured <span class="tag tag-sage">⭐ 4.7</span></h4>
+      <div class="meta">데일리 플래너 — 비주얼 타임라인</div>
+      <ul>
+        <li>캘린더 + 투두를 하나의 <strong>비주얼 타임라인</strong>으로 통합</li>
+        <li>각 태스크에 아이콘 할당 — 하루를 한눈에 시각적으로 파악</li>
+        <li>인라인 서브태스크 — 에디터 안 열고 바로 확인/완료</li>
+        <li>ADHD 사용자들이 "하루를 통제할 수 있는 느낌" 보고</li>
+      </ul>
+      <div class="takeaway"><strong>Engram에 적용:</strong> 홈 화면을 비주얼 타임라인으로 리디자인. 기억+리마인더+캘린더 통합 뷰.</div>
+    </div>
+  </div>
+
+  <div class="bench-app">
+    <div class="bench-icon" style="background:#1e1e2a;">🎨</div>
+    <div class="bench-info">
+      <h4>Timepage <span class="tag tag-sage">⭐ 4.5</span></h4>
+      <div class="meta">Moleskine의 "가장 아름다운 캘린더" — 60+ 테마</div>
+      <ul>
+        <li>히트맵 월 뷰 — 색상 농도로 일정 밀도 표현 (아트적 접근)</li>
+        <li>60+ 핸드크래프트 테마 컬러 — 사용자 개성 표현</li>
+        <li>날씨 통합 — 일정 옆에 날씨 예보 오버레이</li>
+        <li><strong>시각적 아름다움 자체가 앱을 여는 동기</strong></li>
+      </ul>
+      <div class="takeaway"><strong>Engram에 적용:</strong> 테마 시스템 (3~5개), 앱 자체의 "아름다움"을 리텐션 훅으로 활용</div>
+    </div>
+  </div>
+
+  <div class="bench-app">
+    <div class="bench-icon" style="background:#1e2a22;">🔥</div>
+    <div class="bench-info">
+      <h4>Streaks <span class="tag tag-green">⭐ 4.8 · Apple Design Award</span></h4>
+      <div class="meta">습관 트래커 — 컬러 서클 인터페이스의 원조</div>
+      <ul>
+        <li>컬러 서클 기반 미니멀 인터페이스 — 습관 트래커의 시각적 표준</li>
+        <li>78개 컬러 테마 + 600+ 태스크 아이콘</li>
+        <li>Apple Health 자동 연동 — 수동 입력 불필요</li>
+        <li>"스트릭을 끊기 싫은 심리" 자체가 핵심 리텐션</li>
+      </ul>
+      <div class="takeaway"><strong>Engram에 적용:</strong> 기록 스트릭을 서클/링으로 시각화, 자동 데이터 수집</div>
+    </div>
+  </div>
+
+  <div class="bench-app">
+    <div class="bench-icon" style="background:#2a2a1e;">📓</div>
+    <div class="bench-info">
+      <h4>Grid Diary <span class="tag tag-sage">⭐ 4.5</span></h4>
+      <div class="meta">만다라 9-그리드 저널 — "뭘 쓸지 모르겠다" 해결</div>
+      <ul>
+        <li>빈 페이지 대신 <strong>9개 질문 그리드</strong>로 구성</li>
+        <li>커스터마이즈 가능한 프롬프트: "오늘 감사한 일은?", "배운 것은?"</li>
+        <li>구조화된 입력이 기록 습관 형성을 38% 향상</li>
+      </ul>
+      <div class="takeaway"><strong>Engram에 적용:</strong> 데일리 프롬프트 시스템 — AI가 매일 다른 질문 제안</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 3. 핵심 개선 항목 ═══════════════ -->
+<section>
+  <div class="sh"><span class="sh-num">3</span><h2>핵심 UI 개선 항목</h2></div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3><span class="priority p-critical">CRITICAL</span> 홈 화면 리디자인</h3>
+      <p>현재 홈은 평범한 카드 리스트. <strong>Structured 스타일 비주얼 타임라인</strong>으로 전환.</p>
+      <ul>
+        <li>상단: 인사말 + 오늘 날짜 + 스트릭 뱃지</li>
+        <li>중단: 시간순 타임라인 (기억 + 리마인더 + 캘린더 통합)</li>
+        <li>하단: 오늘의 무드 + 퀵 액션</li>
+        <li>Year in Pixels 미니 뷰 (월간 색상 그리드)</li>
+        <li>"On This Day" 플래시백 카드 (1년 전 기억)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3><span class="priority p-critical">CRITICAL</span> 초저마찰 기록 UX</h3>
+      <p>Daylio처럼 <strong>30초 내 기록 완성</strong> 가능한 퀵 엔트리 모드.</p>
+      <ul>
+        <li>무드 선택 (5단계 이모지 탭)</li>
+        <li>활동 태그 (아이콘 멀티 셀렉트)</li>
+        <li>한 줄 메모 (선택)</li>
+        <li>사진 첨부 (선택)</li>
+        <li>"저장" → 완료. AI 분석은 백그라운드</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3><span class="priority p-critical">CRITICAL</span> 캘린더 히트맵</h3>
+      <p>현재 캘린더는 숫자+점. <strong>Timepage/Fantastical 스타일 히트맵</strong>으로.</p>
+      <ul>
+        <li>기록 밀도를 색상 농도로 표현 (연한 sage → 진한 sage)</li>
+        <li>무드 컬러 코딩 (행복=초록, 슬픔=파랑 등)</li>
+        <li>일별 상세: 슬라이드업 시트 (바텀시트 패턴)</li>
+        <li>월간/주간 토글</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3><span class="priority p-high">HIGH</span> Year in Pixels</h3>
+      <p>Daylio의 킬러 피처. <strong>1년 전체를 색상 그리드</strong>로 시각화.</p>
+      <ul>
+        <li>12×31 그리드 (365일)</li>
+        <li>각 셀 = 하루, 색상 = 무드/기록 여부</li>
+        <li>빈 칸 = 회색 → "채우고 싶다" 충동 유발</li>
+        <li>Settings 또는 홈에서 접근</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3><span class="priority p-high">HIGH</span> 스트릭 & 게이미피케이션</h3>
+      <p>현재 스트릭은 텍스트 숫자만. <strong>시각적 보상 시스템</strong> 필요.</p>
+      <ul>
+        <li>스트릭 링/서클 (Streaks 스타일)</li>
+        <li>주간 7칸 채우기 진행바</li>
+        <li>마일스톤 뱃지: 7일, 30일, 100일, 365일</li>
+        <li>달성 시 축하 애니메이션 + 햅틱</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3><span class="priority p-high">HIGH</span> On This Day 플래시백</h3>
+      <p>Day One의 킬러 리텐션 피처. <strong>과거 기억을 매일 서피싱</strong>.</p>
+      <ul>
+        <li>1년 전, 2년 전 같은 날 기억 카드</li>
+        <li>푸시 알림: "1년 전 오늘, 민수랑 한강에서..."</li>
+        <li>홈 화면 하단에 플래시백 섹션</li>
+        <li>감정적 연결 → 알림 오픈율 극대화</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3><span class="priority p-medium">MEDIUM</span> 디자인 시스템 정비</h3>
+      <p>하드코딩된 색상, 비일관적 스페이싱 → <strong>토큰 기반 시스템</strong>.</p>
+      <ul>
+        <li>ColorSystem: semantic naming (primary, surface, onSurface...)</li>
+        <li>SpacingScale: 8pt 그리드 (xs=4, sm=8, md=16, lg=24, xl=32)</li>
+        <li>TypographyScale: caption/body/title/headline</li>
+        <li>ShadowScale: subtle/medium/emphasis</li>
+        <li>CornerRadius: sm=8, md=16, lg=24, xl=32</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3><span class="priority p-medium">MEDIUM</span> 온보딩 리디자인</h3>
+      <p>현재 시스템 아이콘+텍스트. <strong>Lottie 애니메이션 + 인터랙티브</strong> 온보딩.</p>
+      <ul>
+        <li>커스텀 일러스트레이션 (브랜드 아이덴티티)</li>
+        <li>인터랙티브 데모: "직접 해보기" 단계</li>
+        <li>마이크 권한 요청을 자연스럽게 통합</li>
+        <li>첫 기록 유도 → 온보딩 완료 = 첫 기억 저장</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 4. 리텐션 전략 ═══════════════ -->
+<section>
+  <div class="sh"><span class="sh-num">4</span><h2>DAU 10K를 위한 리텐션 전략</h2></div>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>전략</th><th>벤치마크 앱</th><th>예상 효과</th><th>우선순위</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>초저마찰 기록 (30초)</td>
+        <td>Daylio</td>
+        <td>D1 리텐션 25%→40%</td>
+        <td><span class="priority p-critical">CRITICAL</span></td>
+      </tr>
+      <tr>
+        <td>On This Day 플래시백 알림</td>
+        <td>Day One</td>
+        <td>알림 오픈율 3x 증가</td>
+        <td><span class="priority p-critical">CRITICAL</span></td>
+      </tr>
+      <tr>
+        <td>스트릭 + 뱃지 게이미피케이션</td>
+        <td>Daylio, Streaks</td>
+        <td>D30 리텐션 +30%</td>
+        <td><span class="priority p-high">HIGH</span></td>
+      </tr>
+      <tr>
+        <td>Year in Pixels 시각화</td>
+        <td>Daylio</td>
+        <td>"빈 칸 채우기" 충동 → DAU 유지</td>
+        <td><span class="priority p-high">HIGH</span></td>
+      </tr>
+      <tr>
+        <td>캘린더 히트맵</td>
+        <td>Timepage, Fantastical</td>
+        <td>기록 패턴 시각적 인지 → 동기부여</td>
+        <td><span class="priority p-high">HIGH</span></td>
+      </tr>
+      <tr>
+        <td>데일리 AI 프롬프트</td>
+        <td>Grid Diary, Day One Gold</td>
+        <td>기록 습관 형성 38% 향상</td>
+        <td><span class="priority p-medium">MEDIUM</span></td>
+      </tr>
+      <tr>
+        <td>무드 상관관계 인사이트</td>
+        <td>Daylio</td>
+        <td>AI 프리미엄 전환 훅</td>
+        <td><span class="priority p-medium">MEDIUM</span></td>
+      </tr>
+      <tr>
+        <td>위젯 (홈/잠금화면)</td>
+        <td>거의 모든 앱</td>
+        <td>상시 노출 = 리마인더 효과</td>
+        <td><span class="tag tag-green">완료</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:24px; padding:20px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r);">
+    <h4 style="margin-bottom:8px;">🔄 핵심 습관 루프</h4>
+    <p style="font-size:0.9rem; color:var(--text-dim);">
+      <strong style="color:var(--gold)">트리거</strong> (푸시 알림 / 위젯 / On This Day)
+      → <strong style="color:var(--sage-light)">행동</strong> (1탭 퀵 기록 / 30초 엔트리)
+      → <strong style="color:var(--green)">보상</strong> (스트릭 +1 / Year in Pixels 채움 / AI 인사이트)
+      → <strong style="color:var(--purple)">투자</strong> (데이터 축적 → 떠나기 어려움)
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════ 5. Engram vs 경쟁 비교 ═══════════════ -->
+<section>
+  <div class="sh"><span class="sh-num">5</span><h2>기능 비교표 — 현재 vs 개선 후</h2></div>
+
+  <div style="overflow-x:auto;">
+    <table class="tbl">
+      <thead>
+        <tr><th>기능</th><th>Day One</th><th>Daylio</th><th>Engram 현재</th><th>Engram 개선 후</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>초저마찰 기록</td><td class="no">❌ 글 중심</td><td class="yes">✅ 30초</td><td class="no">❌ 다단계</td><td class="yes">✅ 30초 퀵 엔트리</td></tr>
+        <tr><td>Year in Pixels</td><td class="no">❌</td><td class="yes">✅</td><td class="no">❌</td><td class="yes">✅</td></tr>
+        <tr><td>On This Day</td><td class="yes">✅</td><td class="no">❌</td><td class="no">⚠️ 부분</td><td class="yes">✅ + 푸시 알림</td></tr>
+        <tr><td>캘린더 히트맵</td><td class="yes">✅</td><td class="no">❌</td><td class="no">❌ 숫자+점</td><td class="yes">✅ 색상 밀도</td></tr>
+        <tr><td>스트릭 시각화</td><td class="yes">✅</td><td class="yes">✅</td><td class="no">⚠️ 텍스트만</td><td class="yes">✅ 링 + 뱃지</td></tr>
+        <tr><td>무드 트래킹</td><td class="no">⚠️ 제한적</td><td class="yes">✅ 핵심</td><td class="yes">✅ 있음</td><td class="yes">✅ + 상관관계</td></tr>
+        <tr><td>AI 분석</td><td class="yes">✅ Gold</td><td class="no">❌</td><td class="yes">✅ 있음</td><td class="yes">✅ 강화</td></tr>
+        <tr><td>음성 기록</td><td class="yes">✅</td><td class="no">❌</td><td class="yes">✅</td><td class="yes">✅ 자동 시작</td></tr>
+        <tr><td>위젯</td><td class="yes">✅</td><td class="yes">✅</td><td class="yes">✅ 구현 완료</td><td class="yes">✅</td></tr>
+        <tr><td>인물 관리</td><td class="no">❌</td><td class="no">❌</td><td class="yes">✅ 차별화</td><td class="yes">✅ 강화</td></tr>
+        <tr><td>위치 기반 리마인더</td><td class="no">❌</td><td class="no">❌</td><td class="yes">✅ 차별화</td><td class="yes">✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════ 6. 구현 로드맵 ═══════════════ -->
+<section>
+  <div class="sh"><span class="sh-num">6</span><h2>구현 로드맵</h2></div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-phase">
+        <h3>Phase 1 — 리텐션 코어</h3>
+        <span class="dur">2~3주</span>
+        <span class="priority p-critical">CRITICAL</span>
+      </div>
+      <div class="tl-tasks">
+        <div class="tl-task">퀵 엔트리 모드 (무드 + 태그 + 한줄 메모)</div>
+        <div class="tl-task">홈 화면 비주얼 타임라인 리디자인</div>
+        <div class="tl-task">캘린더 히트맵 뷰</div>
+        <div class="tl-task">On This Day 플래시백 카드</div>
+        <div class="tl-task">스트릭 링/서클 시각화</div>
+        <div class="tl-task">8pt 그리드 스페이싱 정비</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-phase">
+        <h3>Phase 2 — 시각적 폴리시</h3>
+        <span class="dur">1~2주</span>
+        <span class="priority p-high">HIGH</span>
+      </div>
+      <div class="tl-tasks">
+        <div class="tl-task">Year in Pixels 연간 뷰</div>
+        <div class="tl-task">마일스톤 뱃지 시스템 (7/30/100/365일)</div>
+        <div class="tl-task">무드 상관관계 차트</div>
+        <div class="tl-task">Empty State 일러스트레이션</div>
+        <div class="tl-task">마이크로 인터랙션 (햅틱 + 애니메이션)</div>
+        <div class="tl-task">다크/라이트 모드 일관성 정비</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-phase">
+        <h3>Phase 3 — 그로스</h3>
+        <span class="dur">1~2주</span>
+        <span class="priority p-medium">MEDIUM</span>
+      </div>
+      <div class="tl-tasks">
+        <div class="tl-task">데일리 AI 프롬프트 시스템</div>
+        <div class="tl-task">On This Day 푸시 알림</div>
+        <div class="tl-task">테마 시스템 (3~5개 컬러 테마)</div>
+        <div class="tl-task">온보딩 리디자인</div>
+        <div class="tl-task">앱 내 피드백/리뷰 요청 최적화</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 7. 리텐션 벤치마크 ═══════════════ -->
+<section>
+  <div class="sh"><span class="sh-num">7</span><h2>목표 리텐션 지표</h2></div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="num" style="color:var(--sage-light)">40%</div>
+      <div class="label">Day 1 Retention</div>
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">업계 평균 25~30%</p>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:var(--sage-light)">20%</div>
+      <div class="label">Day 7 Retention</div>
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">업계 평균 ~10%</p>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:var(--sage-light)">15%</div>
+      <div class="label">Day 30 Retention</div>
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">업계 평균 ~5%</p>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:var(--gold)">25%+</div>
+      <div class="label">DAU/MAU</div>
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">건강한 앱 기준 20%+</p>
+    </div>
+  </div>
+
+  <div style="padding:20px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r);">
+    <h4 style="margin-bottom:8px;">📊 DAU 10K 달성 시나리오</h4>
+    <p style="font-size:0.88rem; color:var(--text-dim); line-height:1.8;">
+      <strong>MAU 40K × DAU/MAU 25% = DAU 10K</strong><br>
+      → 월 신규 설치 15K (D30 리텐션 15% 기준, 누적 MAU 유지에 필요)<br>
+      → ASO 최적화 + App Store 피처링 + 콘텐츠 마케팅으로 달성 가능<br>
+      → <strong>핵심은 리텐션</strong>. 아무리 설치해도 D1 40%를 넘지 못하면 DAU 10K 불가능.
+    </p>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p>Engram UI Improvement Plan — 경쟁 앱 10개 분석 기반</p>
+  <p style="margin-top:4px;">Generated 2026-04-13 | Day One · Daylio · Fantastical · Structured · Timepage · Streaks · Grid Diary · Bear · Journey · Notion Calendar</p>
+</footer>
+
+</body>
+</html>

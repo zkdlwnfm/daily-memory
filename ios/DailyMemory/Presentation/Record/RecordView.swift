@@ -10,6 +10,8 @@ struct RecordView: View {
 
     /// 위젯에서 진입 시 자동 녹음 시작
     var autoStartRecording: Bool = false
+    /// 퀵 엔트리 모드로 시작
+    var quickEntryMode: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -18,6 +20,11 @@ struct RecordView: View {
                     .ignoresSafeArea()
 
                 switch viewModel.recordState {
+                case .quickEntry:
+                    QuickEntryView(viewModel: viewModel) {
+                        showSaveSuccess = true
+                    }
+
                 case .voiceIdle:
                     VoiceIdleView(
                         onStartRecording: { viewModel.startRecording() }
@@ -69,6 +76,9 @@ struct RecordView: View {
 
                 ToolbarItem(placement: .primaryAction) {
                     switch viewModel.recordState {
+                    case .quickEntry:
+                        EmptyView()
+
                     case .voiceIdle, .voiceRecording:
                         Button("Type instead") {
                             viewModel.toggleMode()
@@ -127,7 +137,9 @@ struct RecordView: View {
                 }
             }
             .onAppear {
-                if autoStartRecording && viewModel.recordState == .voiceIdle {
+                if quickEntryMode {
+                    viewModel.recordState = .quickEntry
+                } else if autoStartRecording && viewModel.recordState == .voiceIdle {
                     viewModel.startRecording()
                 }
             }
@@ -1008,6 +1020,39 @@ class RecordViewModel: ObservableObject {
     }
 
     /// Run AI analysis in background and update the saved memory
+    /// 퀵 엔트리 저장
+    func saveQuickEntryAsync(content: String, mood: String?, moodScore: Int?, tags: [String]) async {
+        isSaving = true
+        defer { isSaving = false }
+
+        let memory = Memory(
+            content: content,
+            photos: [],
+            extractedPersons: [],
+            extractedLocation: nil,
+            extractedDate: nil,
+            extractedAmount: nil,
+            extractedTags: tags,
+            personIds: [],
+            category: .general,
+            importance: 3,
+            mood: mood,
+            moodScore: moodScore,
+            recordedAt: Date()
+        )
+
+        do {
+            _ = try await saveMemoryUseCase.execute(memory)
+            let memoryId = memory.id
+            Task.detached { [weak self] in
+                guard let self else { return }
+                await self.backgroundAnalyze(memoryId: memoryId, content: content, photos: [])
+            }
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+
     private func backgroundAnalyze(memoryId: String, content: String, photos: [SelectedPhoto]) async {
         let analysisResult = await aiAnalysisService.analyzeText(content)
 
@@ -1192,6 +1237,7 @@ enum RecordState {
     case voiceIdle
     case voiceRecording
     case textMode
+    case quickEntry
     case aiProcessing
     case aiResult
 }
@@ -1239,6 +1285,196 @@ class AIAnalysisResultModel: ObservableObject {
         self.suggestedReminder = suggestedReminder
         self.photos = photos
         self.photoTags = photoTags
+    }
+}
+
+// MARK: - Quick Entry View
+
+struct QuickEntryView: View {
+    @ObservedObject var viewModel: RecordViewModel
+    let onSaved: () -> Void
+
+    @State private var selectedMood: String?
+    @State private var selectedActivities: Set<String> = []
+    @State private var quickNote: String = ""
+    @State private var isSaving = false
+
+    private let moods: [(emoji: String, label: String, value: String)] = [
+        ("😊", "Great", "happy"),
+        ("🙂", "Good", "calm"),
+        ("😐", "Okay", "neutral"),
+        ("😔", "Low", "sad"),
+        ("😤", "Stressed", "anxious")
+    ]
+
+    private let activities: [(icon: String, label: String)] = [
+        ("figure.run", "Exercise"),
+        ("briefcase.fill", "Work"),
+        ("person.2.fill", "Social"),
+        ("fork.knife", "Food"),
+        ("book.fill", "Reading"),
+        ("gamecontroller.fill", "Gaming"),
+        ("music.note", "Music"),
+        ("cart.fill", "Shopping"),
+        ("bed.double.fill", "Rest"),
+        ("airplane", "Travel"),
+        ("heart.fill", "Date"),
+        ("ellipsis", "Other")
+    ]
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: Spacing.lg) {
+                // Mood Section
+                VStack(spacing: Spacing.md) {
+                    Text("How are you feeling?")
+                        .font(.title2)
+                        .fontWeight(.bold)
+
+                    HStack(spacing: Spacing.md) {
+                        ForEach(moods, id: \.value) { mood in
+                            Button {
+                                withAnimation(.spring(response: 0.3)) {
+                                    selectedMood = mood.value
+                                }
+                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            } label: {
+                                VStack(spacing: Spacing.xs) {
+                                    Text(mood.emoji)
+                                        .font(.system(size: selectedMood == mood.value ? 40 : 32))
+                                        .scaleEffect(selectedMood == mood.value ? 1.15 : 1.0)
+
+                                    Text(mood.label)
+                                        .font(.caption2)
+                                        .fontWeight(selectedMood == mood.value ? .bold : .regular)
+                                        .foregroundColor(selectedMood == mood.value ? .dmPrimary : .secondary)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, Spacing.sm)
+                                .background(
+                                    RoundedRectangle(cornerRadius: Radius.md)
+                                        .fill(selectedMood == mood.value ? Color.dmPrimary.opacity(0.1) : Color.clear)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .padding(.top, Spacing.lg)
+
+                // Activities Section
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    Text("What have you been up to?")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Spacing.sm), count: 4), spacing: Spacing.sm) {
+                        ForEach(activities, id: \.label) { activity in
+                            let isSelected = selectedActivities.contains(activity.label)
+                            Button {
+                                withAnimation(.spring(response: 0.25)) {
+                                    if isSelected {
+                                        selectedActivities.remove(activity.label)
+                                    } else {
+                                        selectedActivities.insert(activity.label)
+                                    }
+                                }
+                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            } label: {
+                                VStack(spacing: Spacing.xs) {
+                                    Image(systemName: activity.icon)
+                                        .font(.system(size: 18))
+                                        .frame(height: 22)
+                                    Text(activity.label)
+                                        .font(.system(size: 10, weight: .medium))
+                                        .lineLimit(1)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, Spacing.sm + 2)
+                                .background(
+                                    RoundedRectangle(cornerRadius: Radius.sm)
+                                        .fill(isSelected ? Color.dmPrimary.opacity(0.12) : Color(.systemGray6))
+                                )
+                                .foregroundColor(isSelected ? .dmPrimary : .secondary)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: Radius.sm)
+                                        .stroke(isSelected ? Color.dmPrimary.opacity(0.3) : Color.clear, lineWidth: 1.5)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+
+                // Quick Note
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    Text("Quick note")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+
+                    TextField("What's on your mind? (optional)", text: $quickNote, axis: .vertical)
+                        .lineLimit(1...3)
+                        .padding(Spacing.md)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(Radius.md)
+                }
+
+                // Save Button
+                Button {
+                    Task {
+                        isSaving = true
+                        await saveQuickEntry()
+                        isSaving = false
+                        onSaved()
+                    }
+                } label: {
+                    HStack(spacing: Spacing.sm) {
+                        if isSaving {
+                            ProgressView()
+                                .tint(.white)
+                        }
+                        Text("Save")
+                            .fontWeight(.bold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Spacing.md)
+                    .background(selectedMood != nil ? Color.dmPrimary : Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(Radius.md)
+                }
+                .disabled(selectedMood == nil || isSaving)
+
+                Spacer(minLength: Spacing.xl)
+            }
+            .padding(.horizontal, Spacing.lg)
+        }
+    }
+
+    private func saveQuickEntry() async {
+        let moodEmoji = moods.first(where: { $0.value == selectedMood })?.emoji ?? ""
+        let activitiesText = selectedActivities.isEmpty ? "" : " | " + selectedActivities.joined(separator: ", ")
+        let noteText = quickNote.isEmpty ? "" : " | " + quickNote
+        let content = "\(moodEmoji)\(activitiesText)\(noteText)"
+
+        await viewModel.saveQuickEntryAsync(
+            content: content,
+            mood: selectedMood,
+            moodScore: moodToScore(selectedMood),
+            tags: Array(selectedActivities)
+        )
+    }
+
+    private func moodToScore(_ mood: String?) -> Int? {
+        switch mood {
+        case "happy": return 9
+        case "calm": return 7
+        case "neutral": return 5
+        case "sad": return 3
+        case "anxious": return 2
+        default: return nil
+        }
     }
 }
 

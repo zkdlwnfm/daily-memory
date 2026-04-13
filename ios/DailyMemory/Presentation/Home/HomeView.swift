@@ -3,84 +3,75 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @State private var showRecordSheet = false
+    @State private var showQuickEntrySheet = false
     var refreshTrigger: UUID = UUID()
 
     var body: some View {
         NavigationStack {
-            Group {
-                if viewModel.recentMemories.isEmpty && !viewModel.isLoading {
-                    HomeEmptyStateView(onStartRecording: { showRecordSheet = true })
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 0) {
-                            // Greeting Section
-                            greetingSection
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    greetingSection
 
-                            // Streak card
-                            if viewModel.streakDays > 0 {
-                                StreakCard(days: viewModel.streakDays)
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical, 8)
+                    if viewModel.streakDays > 0 {
+                        StreakCard(days: viewModel.streakDays)
+                            .padding(.horizontal, Spacing.lg)
+                            .padding(.vertical, Spacing.sm)
+                    }
+
+                    if viewModel.todayMemoryCount == 0 {
+                        DailyPromptCard(
+                            onRecord: { showRecordSheet = true },
+                            onQuickEntry: { showQuickEntrySheet = true }
+                        )
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.vertical, Spacing.sm)
+                    }
+
+                    if !viewModel.openTasks.isEmpty {
+                        PromisesCardView(
+                            tasks: viewModel.openTasks,
+                            onComplete: { viewModel.onTaskComplete($0) },
+                            onTapTask: { _ in }
+                        )
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.vertical, Spacing.sm)
+                    }
+
+                    if let reminder = viewModel.reminder {
+                        ReminderCard(
+                            reminder: reminder,
+                            onDone: { viewModel.onReminderDone(reminder.id) },
+                            onSnooze: { viewModel.onReminderSnooze(reminder.id) }
+                        )
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.vertical, Spacing.sm)
+                    }
+
+                    if !viewModel.moodData.isEmpty {
+                        MoodTrendView(moodData: viewModel.moodData)
+                            .padding(.horizontal, Spacing.lg)
+                            .padding(.vertical, Spacing.sm)
+                    }
+
+                    if !viewModel.recentMemories.isEmpty {
+                        recentMemoriesSection
+
+                        ForEach(viewModel.recentMemories) { memory in
+                            NavigationLink(destination: MemoryDetailView(memoryId: memory.id)) {
+                                MemoryCard(memory: memory)
                             }
-
-                            // Daily prompt (if no memory today)
-                            if viewModel.todayMemoryCount == 0 {
-                                DailyPromptCard(onRecord: { showRecordSheet = true })
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical, 8)
-                            }
-
-                            // Open Promises
-                            if !viewModel.openTasks.isEmpty {
-                                PromisesCardView(
-                                    tasks: viewModel.openTasks,
-                                    onComplete: { viewModel.onTaskComplete($0) },
-                                    onTapTask: { _ in } // TODO: navigate to memory
-                                )
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 8)
-                            }
-
-                            // Reminder Card
-                            if let reminder = viewModel.reminder {
-                                ReminderCard(
-                                    reminder: reminder,
-                                    onDone: { viewModel.onReminderDone(reminder.id) },
-                                    onSnooze: { viewModel.onReminderSnooze(reminder.id) }
-                                )
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 8)
-                            }
-
-                            // Mood Trend
-                            if !viewModel.moodData.isEmpty {
-                                MoodTrendView(moodData: viewModel.moodData)
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical, 8)
-                            }
-
-                            // Recent Memories Section
-                            recentMemoriesSection
-
-                            // Memory Cards
-                            ForEach(viewModel.recentMemories) { memory in
-                                NavigationLink(destination: MemoryDetailView(memoryId: memory.id)) {
-                                    MemoryCard(memory: memory)
-                                }
-                                .buttonStyle(.plain)
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 6)
-                            }
-
-                            // On This Day Section
-                            if let flashback = viewModel.flashback {
-                                onThisDaySection(flashback: flashback)
-                                    .padding(.top, 24)
-                            }
-
-                            Spacer(minLength: 100)
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, Spacing.lg)
+                            .padding(.vertical, Spacing.xs + 2)
                         }
                     }
+
+                    if let flashback = viewModel.flashback {
+                        onThisDaySection(flashback: flashback)
+                            .padding(.top, Spacing.lg)
+                    }
+
+                    Spacer(minLength: 100)
                 }
             }
             .background(Color(.systemGroupedBackground))
@@ -88,9 +79,7 @@ struct HomeView: View {
                 await viewModel.refresh()
             }
             .onChange(of: refreshTrigger) { _ in
-                Task {
-                    await viewModel.refresh()
-                }
+                Task { await viewModel.refresh() }
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -102,6 +91,9 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showRecordSheet) {
                 RecordView()
+            }
+            .sheet(isPresented: $showQuickEntrySheet) {
+                RecordView(quickEntryMode: true)
             }
             .onReceive(NotificationCenter.default.publisher(for: .memoryChanged)) { _ in
                 Task { await viewModel.refresh() }
