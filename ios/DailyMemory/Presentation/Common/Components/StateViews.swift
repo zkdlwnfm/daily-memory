@@ -5,11 +5,11 @@ struct LoadingView: View {
     var message: String?
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: Spacing.md) {
             ProgressView()
                 .scaleEffect(1.5)
 
-            if let message = message {
+            if let message {
                 Text(message)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -27,13 +27,23 @@ struct ErrorView: View {
     var onRetry: (() -> Void)?
 
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 56))
-                .foregroundColor(.red.opacity(0.7))
+        VStack(spacing: Spacing.md) {
+            ZStack {
+                Circle()
+                    .fill(Color.red.opacity(0.08))
+                    .frame(width: 88, height: 88)
+
+                Circle()
+                    .fill(Color.red.opacity(0.12))
+                    .frame(width: 68, height: 68)
+
+                Image(systemName: icon)
+                    .font(.system(size: 28))
+                    .foregroundColor(.red.opacity(0.7))
+            }
 
             Text(title)
-                .font(.title2)
+                .font(.title3)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
 
@@ -42,20 +52,20 @@ struct ErrorView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
-            if let onRetry = onRetry {
+            if let onRetry {
                 Button(action: onRetry) {
                     Text("Try Again")
                         .fontWeight(.semibold)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.vertical, Spacing.sm + 4)
                         .background(Color.dmPrimary)
                         .foregroundColor(.white)
-                        .cornerRadius(12)
+                        .cornerRadius(Radius.md)
                 }
-                .padding(.top, 8)
+                .padding(.top, Spacing.sm)
             }
         }
-        .padding(32)
+        .padding(Spacing.xl)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
@@ -74,7 +84,7 @@ struct NetworkErrorView: View {
     }
 }
 
-// MARK: - Empty State
+// MARK: - Empty State (Illustrated)
 struct EmptyStateView: View {
     let title: String
     let message: String
@@ -84,40 +94,58 @@ struct EmptyStateView: View {
     var onAction: (() -> Void)?
 
     var body: some View {
-        VStack(spacing: 16) {
-            if let emoji = emoji {
-                Text(emoji)
-                    .font(.system(size: 64))
-            } else if let icon = icon {
-                Image(systemName: icon)
-                    .font(.system(size: 56))
-                    .foregroundColor(.secondary.opacity(0.5))
+        VStack(spacing: Spacing.lg) {
+            // Illustrated icon with layered circles
+            ZStack {
+                Circle()
+                    .fill(Color.dmPrimary.opacity(0.05))
+                    .frame(width: 120, height: 120)
+
+                Circle()
+                    .fill(Color.dmPrimary.opacity(0.08))
+                    .frame(width: 88, height: 88)
+
+                if let emoji {
+                    Text(emoji)
+                        .font(.system(size: 40))
+                } else if let icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 32))
+                        .foregroundColor(.dmPrimary.opacity(0.6))
+                }
             }
 
-            Text(title)
-                .font(.title2)
-                .fontWeight(.bold)
-                .multilineTextAlignment(.center)
+            VStack(spacing: Spacing.sm) {
+                Text(title)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
 
-            Text(message)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
+                Text(message)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(2)
+            }
 
-            if let actionLabel = actionLabel, let onAction = onAction {
+            if let actionLabel, let onAction {
                 Button(action: onAction) {
-                    Text(actionLabel)
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(Color.dmPrimary)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
+                    HStack(spacing: Spacing.sm) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.subheadline)
+                        Text(actionLabel)
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.horizontal, Spacing.lg)
+                    .padding(.vertical, Spacing.sm + 4)
+                    .background(Color.dmPrimary)
+                    .foregroundColor(.white)
+                    .cornerRadius(Radius.lg)
                 }
-                .padding(.top, 8)
+                .padding(.top, Spacing.sm)
             }
         }
-        .padding(32)
+        .padding(Spacing.xl)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
@@ -130,7 +158,7 @@ struct SearchEmptyView: View {
     var body: some View {
         EmptyStateView(
             title: "No results found",
-            message: "No matches for \"\(query)\". Try a different search term.",
+            message: "No matches for \"\(query)\".\nTry a different search term.",
             icon: "magnifyingglass",
             actionLabel: onClearSearch != nil ? "Clear Search" : nil,
             onAction: onClearSearch
@@ -145,9 +173,9 @@ enum EmptyStates {
 
         var body: some View {
             EmptyStateView(
-                title: "No memories yet",
-                message: "Start recording your thoughts and moments. They'll appear here.",
-                emoji: "\u{1F4DD}",
+                title: "Start your journey",
+                message: "Record your first memory.\nEngram will organize your thoughts with AI.",
+                icon: "brain.head.profile",
                 actionLabel: onAddMemory != nil ? "Record Memory" : nil,
                 onAction: onAddMemory
             )
@@ -159,9 +187,9 @@ enum EmptyStates {
 
         var body: some View {
             EmptyStateView(
-                title: "No people yet",
-                message: "Record memories and AI will automatically find people, or add them manually.",
-                emoji: "\u{1F465}",
+                title: "People you mention",
+                message: "When you record memories, AI automatically discovers the people in your life.",
+                icon: "person.2.fill",
                 actionLabel: onAddPerson != nil ? "Add Person" : nil,
                 onAction: onAddPerson
             )
@@ -173,9 +201,9 @@ enum EmptyStates {
 
         var body: some View {
             EmptyStateView(
-                title: "No reminders",
-                message: "You're all caught up! Add reminders to stay on top of important things.",
-                emoji: "\u{1F514}",
+                title: "All caught up!",
+                message: "No reminders right now.\nAdd one to stay on top of important things.",
+                icon: "bell.badge.fill",
                 actionLabel: onAddReminder != nil ? "Add Reminder" : nil,
                 onAction: onAddReminder
             )
@@ -185,9 +213,9 @@ enum EmptyStates {
     struct TimelineEmpty: View {
         var body: some View {
             EmptyStateView(
-                title: "No timeline events",
-                message: "Memories with this person will appear here.",
-                emoji: "\u{1F4C5}"
+                title: "No memories yet",
+                message: "Memories with this person will appear here over time.",
+                icon: "clock.fill"
             )
         }
     }

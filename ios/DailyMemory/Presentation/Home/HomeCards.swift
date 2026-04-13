@@ -117,6 +117,13 @@ struct DailyPromptCard: View {
         "What are you grateful for today?",
         "What was the highlight of your day?",
         "Did anything surprise you today?",
+        "What's one thing you want to remember?",
+        "Who made your day better?",
+        "What was the hardest part of today?",
+        "What are you looking forward to tomorrow?",
+        "Describe today in one sentence.",
+        "What did you eat today?",
+        "Where did you go today?",
     ]
 
     private var todayPrompt: String {

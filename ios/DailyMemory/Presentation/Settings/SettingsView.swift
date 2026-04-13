@@ -156,6 +156,57 @@ struct SettingsView: View {
                         }
                     }
 
+                    // Theme Section
+                    SettingsSection(title: "Appearance") {
+                        SettingsCard {
+                            VStack(alignment: .leading, spacing: Spacing.sm) {
+                                HStack(spacing: Spacing.sm) {
+                                    IconBox(icon: "paintpalette.fill", color: .purple, background: .purple.opacity(0.1))
+                                    Text("Theme")
+                                        .font(.body)
+                                        .fontWeight(.semibold)
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.top, 20)
+
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: Spacing.sm) {
+                                        ForEach(AppTheme.allCases) { theme in
+                                            Button {
+                                                ThemeManager.shared.currentTheme = theme
+                                            } label: {
+                                                VStack(spacing: Spacing.xs) {
+                                                    HStack(spacing: 2) {
+                                                        ForEach(theme.preview.indices, id: \.self) { i in
+                                                            RoundedRectangle(cornerRadius: 3)
+                                                                .fill(theme.preview[i])
+                                                                .frame(width: 16, height: 28)
+                                                        }
+                                                    }
+                                                    .padding(6)
+                                                    .background(
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .stroke(
+                                                                ThemeManager.shared.currentTheme == theme ? theme.primary : Color.clear,
+                                                                lineWidth: 2
+                                                            )
+                                                    )
+
+                                                    Text(theme.rawValue)
+                                                        .font(.system(size: 9, weight: .medium))
+                                                        .foregroundColor(ThemeManager.shared.currentTheme == theme ? .primary : .secondary)
+                                                }
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    }
+                                    .padding(.horizontal, 20)
+                                    .padding(.bottom, 16)
+                                }
+                            }
+                        }
+                    }
+
                     // AI Features Section
                     SettingsSection(title: "AI Features") {
                         ZStack {
