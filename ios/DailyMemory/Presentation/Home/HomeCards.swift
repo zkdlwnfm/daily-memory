@@ -101,25 +101,20 @@ struct StreakCard: View {
     }
 }
 
-// MARK: - Daily Prompt Card (with Quick Entry CTA)
+// MARK: - Daily Prompt Card
 
 struct DailyPromptCard: View {
     let onRecord: () -> Void
-    let onQuickEntry: () -> Void
-
-    private let moods = ["😊", "🙂", "😐", "😔", "😤"]
 
     private let prompts = [
         "What made you smile today?",
         "Who did you talk to today?",
         "What's one thing you learned today?",
-        "How are you feeling right now?",
         "What are you grateful for today?",
         "What was the highlight of your day?",
         "Did anything surprise you today?",
         "What's one thing you want to remember?",
         "Who made your day better?",
-        "What was the hardest part of today?",
         "What are you looking forward to tomorrow?",
         "Describe today in one sentence.",
         "What did you eat today?",
@@ -132,61 +127,41 @@ struct DailyPromptCard: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Quick mood entry
-            Button(action: onQuickEntry) {
-                VStack(spacing: Spacing.sm) {
-                    Text("How are you feeling?")
+        Button(action: onRecord) {
+            HStack(spacing: Spacing.md) {
+                ZStack {
+                    Circle()
+                        .fill(Color.dmPrimary.opacity(0.12))
+                        .frame(width: 44, height: 44)
+
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(.dmPrimary)
+                }
+
+                VStack(alignment: .leading, spacing: Spacing.xs) {
+                    Text(todayPrompt)
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
 
-                    HStack(spacing: Spacing.md) {
-                        ForEach(moods, id: \.self) { mood in
-                            Text(mood)
-                                .font(.system(size: 28))
-                        }
-                    }
-
-                    Text("Tap to quick record")
+                    Text("Tap to record")
                         .font(.caption)
                         .foregroundColor(.dmPrimary)
-                        .fontWeight(.medium)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Spacing.md)
-                .padding(.horizontal, Spacing.md)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary.opacity(0.5))
             }
-            .buttonStyle(.plain)
-
-            Divider().padding(.horizontal, Spacing.md)
-
-            // Full record option
-            Button(action: onRecord) {
-                HStack(spacing: Spacing.sm) {
-                    Image(systemName: "mic.fill")
-                        .font(.system(size: 14))
-                        .foregroundColor(.dmPrimary)
-
-                    Text(todayPrompt)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 10))
-                        .foregroundColor(.secondary.opacity(0.5))
-                }
-                .padding(.horizontal, Spacing.md)
-                .padding(.vertical, Spacing.sm + 2)
-            }
-            .buttonStyle(.plain)
+            .padding(Spacing.md)
+            .background(Color(.systemBackground))
+            .cornerRadius(Radius.md)
+            .shadow(color: .black.opacity(0.06), radius: 12, y: 4)
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(Radius.md)
-        .shadow(color: .black.opacity(0.06), radius: 12, y: 4)
+        .buttonStyle(.plain)
     }
 }
 
@@ -203,6 +178,6 @@ struct DailyPromptCard: View {
 }
 
 #Preview("Daily Prompt") {
-    DailyPromptCard(onRecord: {}, onQuickEntry: {})
+    DailyPromptCard(onRecord: {})
         .padding()
 }

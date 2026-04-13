@@ -3,7 +3,6 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @State private var showRecordSheet = false
-    @State private var showQuickEntrySheet = false
     var refreshTrigger: UUID = UUID()
 
     var body: some View {
@@ -20,8 +19,7 @@ struct HomeView: View {
 
                     if viewModel.todayMemoryCount == 0 {
                         DailyPromptCard(
-                            onRecord: { showRecordSheet = true },
-                            onQuickEntry: { showQuickEntrySheet = true }
+                            onRecord: { showRecordSheet = true }
                         )
                         .padding(.horizontal, Spacing.lg)
                         .padding(.vertical, Spacing.sm)
@@ -70,12 +68,6 @@ struct HomeView: View {
                             .padding(.vertical, Spacing.sm)
                     }
 
-                    // Mood Correlation
-                    if !viewModel.moodCorrelations.isEmpty {
-                        MoodCorrelationView(memories: viewModel.moodCorrelations)
-                            .padding(.horizontal, Spacing.lg)
-                            .padding(.vertical, Spacing.sm)
-                    }
 
                     if !viewModel.recentMemories.isEmpty {
                         recentMemoriesSection
@@ -115,9 +107,6 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showRecordSheet) {
                 RecordView()
-            }
-            .sheet(isPresented: $showQuickEntrySheet) {
-                RecordView(quickEntryMode: true)
             }
             .onReceive(NotificationCenter.default.publisher(for: .memoryChanged)) { _ in
                 Task { await viewModel.refresh() }
@@ -346,7 +335,6 @@ class HomeViewModel: ObservableObject {
     @Published var flashback: FlashbackUi?
     @Published var openTasks: [MemoryTask] = []
     @Published var yearPixelData: [Date: PixelDay] = [:]
-    @Published var moodCorrelations: [MoodActivityData] = []
     @Published var error: String?
 
     // Use Cases
@@ -438,10 +426,8 @@ class HomeViewModel: ObservableObject {
             // Load flashback (1 year ago)
             flashback = await loadFlashback()
 
-            // Load Year in Pixels + mood correlations
-            let (pixels, correlations) = await loadYearData()
-            yearPixelData = pixels
-            moodCorrelations = correlations
+            // Load Year in Pixels
+            yearPixelData = await loadYearPixels()
 
             isLoading = false
         } catch {
@@ -494,7 +480,7 @@ class HomeViewModel: ObservableObject {
         return nil
     }
 
-    private func loadYearData() async -> ([Date: PixelDay], [MoodActivityData]) {
+    private func loadYearPixels() async -> [Date: PixelDay] {
         let calendar = Calendar.current
         let year = calendar.component(.year, from: Date())
         let startOfYear = calendar.date(from: DateComponents(year: year, month: 1, day: 1))!
@@ -503,25 +489,18 @@ class HomeViewModel: ObservableObject {
         do {
             let memories = try await searchMemoriesUseCase.byDateRange(from: startOfYear, to: now)
             var pixels: [Date: PixelDay] = [:]
-            var correlations: [MoodActivityData] = []
 
             for memory in memories {
-                // Year in Pixels
                 let dayStart = calendar.startOfDay(for: memory.recordedAt)
                 if let existing = pixels[dayStart] {
                     pixels[dayStart] = PixelDay(count: existing.count + 1, mood: existing.mood ?? memory.mood)
                 } else {
                     pixels[dayStart] = PixelDay(count: 1, mood: memory.mood)
                 }
-
-                // Mood correlations
-                if let score = memory.moodScore, !memory.extractedTags.isEmpty {
-                    correlations.append(MoodActivityData(moodScore: score, activities: memory.extractedTags))
-                }
             }
-            return (pixels, correlations)
+            return pixels
         } catch {
-            return ([:], [])
+            return [:]
         }
     }
 
