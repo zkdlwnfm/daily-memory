@@ -53,6 +53,23 @@ struct HomeView: View {
                             .padding(.vertical, Spacing.sm)
                     }
 
+                    // Year in Pixels
+                    if !viewModel.yearPixelData.isEmpty {
+                        YearInPixelsView(
+                            pixelData: viewModel.yearPixelData,
+                            year: Calendar.current.component(.year, from: Date())
+                        )
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.vertical, Spacing.sm)
+                    }
+
+                    // Milestone Badges
+                    if viewModel.streakDays > 0 {
+                        MilestoneBadgesView(currentStreak: viewModel.streakDays)
+                            .padding(.horizontal, Spacing.lg)
+                            .padding(.vertical, Spacing.sm)
+                    }
+
                     if !viewModel.recentMemories.isEmpty {
                         recentMemoriesSection
 
@@ -321,6 +338,7 @@ class HomeViewModel: ObservableObject {
     @Published var moodData: [MoodDataPoint] = []
     @Published var flashback: FlashbackUi?
     @Published var openTasks: [MemoryTask] = []
+    @Published var yearPixelData: [Date: PixelDay] = [:]
     @Published var error: String?
 
     // Use Cases
@@ -412,6 +430,9 @@ class HomeViewModel: ObservableObject {
             // Load flashback (1 year ago)
             flashback = await loadFlashback()
 
+            // Load Year in Pixels data
+            yearPixelData = await loadYearPixels()
+
             isLoading = false
         } catch {
             self.error = error.localizedDescription
@@ -461,6 +482,30 @@ class HomeViewModel: ObservableObject {
             // Ignore errors for flashback
         }
         return nil
+    }
+
+    private func loadYearPixels() async -> [Date: PixelDay] {
+        let calendar = Calendar.current
+        let year = calendar.component(.year, from: Date())
+        let startOfYear = calendar.date(from: DateComponents(year: year, month: 1, day: 1))!
+        let now = Date()
+
+        do {
+            let memories = try await searchMemoriesUseCase.byDateRange(from: startOfYear, to: now)
+            var pixels: [Date: PixelDay] = [:]
+
+            for memory in memories {
+                let dayStart = calendar.startOfDay(for: memory.recordedAt)
+                if let existing = pixels[dayStart] {
+                    pixels[dayStart] = PixelDay(count: existing.count + 1, mood: existing.mood ?? memory.mood)
+                } else {
+                    pixels[dayStart] = PixelDay(count: 1, mood: memory.mood)
+                }
+            }
+            return pixels
+        } catch {
+            return [:]
+        }
     }
 
     func refresh() async {

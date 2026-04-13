@@ -160,6 +160,46 @@ actor NotificationService {
         notificationCenter.setNotificationCategories([reminderCategory])
     }
 
+    // MARK: - On This Day Flashback
+
+    /// 매일 아침 9시에 "On This Day" 플래시백 알림 스케줄
+    func scheduleOnThisDayNotification(memoryPreview: String) async {
+        // 기존 알림 취소
+        cancelReminder("on-this-day-daily")
+
+        let content = UNMutableNotificationContent()
+        content.title = "On This Day"
+        content.body = memoryPreview
+        content.sound = .default
+        content.userInfo = ["type": "flashback"]
+
+        // 매일 아침 9시
+        var dateComponents = DateComponents()
+        dateComponents.hour = 9
+        dateComponents.minute = 0
+
+        let trigger = UNCalendarNotificationTrigger(
+            dateMatching: dateComponents,
+            repeats: true
+        )
+
+        let request = UNNotificationRequest(
+            identifier: "on-this-day-daily",
+            content: content,
+            trigger: trigger
+        )
+
+        do {
+            try await notificationCenter.add(request)
+        } catch {
+        }
+    }
+
+    /// On This Day 알림 취소
+    func cancelOnThisDayNotification() {
+        cancelReminder("on-this-day-daily")
+    }
+
     // MARK: - Pending Reminders
 
     /// Get all pending notification requests

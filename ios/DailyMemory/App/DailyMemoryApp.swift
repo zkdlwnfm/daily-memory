@@ -65,6 +65,28 @@ struct DailyMemoryApp: App {
                 .onOpenURL { url in
                     deepLinkHandler.handle(url: url)
                 }
+                .task {
+                    await scheduleOnThisDayIfAvailable()
+                }
+        }
+    }
+
+    private func scheduleOnThisDayIfAvailable() async {
+        let calendar = Calendar.current
+        guard let oneYearAgo = calendar.date(byAdding: .year, value: -1, to: Date()),
+              let startDate = calendar.date(byAdding: .day, value: -1, to: oneYearAgo),
+              let endDate = calendar.date(byAdding: .day, value: 1, to: oneYearAgo) else {
+            return
+        }
+
+        let useCase = DIContainer.shared.searchMemoriesUseCase
+        do {
+            let memories = try await useCase.byDateRange(from: startDate, to: endDate)
+            if let memory = memories.first {
+                let preview = "1 year ago: \(String(memory.content.prefix(80)))..."
+                await NotificationService.shared.scheduleOnThisDayNotification(memoryPreview: preview)
+            }
+        } catch {
         }
     }
 }
