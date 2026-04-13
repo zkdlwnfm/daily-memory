@@ -38,3 +38,23 @@ CREATE TABLE api_usage_logs (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX idx_api_usage_logs_user_date ON api_usage_logs(user_id, created_at);
+
+CREATE TABLE tasks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id VARCHAR(128) NOT NULL,
+    memory_id VARCHAR(128),
+    person_id VARCHAR(128),
+    title VARCHAR(500) NOT NULL,
+    description TEXT,
+    due_date TIMESTAMPTZ,
+    quadrant VARCHAR(4) NOT NULL DEFAULT 'Q2' CHECK (quadrant IN ('Q1','Q2','Q3','Q4')),
+    status VARCHAR(20) NOT NULL DEFAULT 'open' CHECK (status IN ('open','inProgress','completed','cancelled')),
+    is_ai_suggested BOOLEAN DEFAULT true,
+    ai_confidence FLOAT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX idx_tasks_user_status ON tasks(user_id, status);
+CREATE INDEX idx_tasks_due_date ON tasks(user_id, due_date);
+CREATE INDEX idx_tasks_person ON tasks(person_id);
+CREATE INDEX idx_tasks_memory ON tasks(memory_id);

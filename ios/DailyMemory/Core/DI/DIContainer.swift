@@ -104,6 +104,70 @@ final class DIContainer {
         SnoozeReminderUseCase(reminderRepository: reminderRepository)
     }()
 
+    // MARK: - Task Repository
+
+    private lazy var _taskRepository: TaskRepository = TaskRepositoryImpl()
+    var taskRepository: TaskRepository { _taskRepository }
+
+    // MARK: - Task Use Cases
+
+    lazy var saveTaskUseCase: SaveTaskUseCase = {
+        SaveTaskUseCase(taskRepository: taskRepository)
+    }()
+
+    lazy var updateTaskUseCase: UpdateTaskUseCase = {
+        UpdateTaskUseCase(taskRepository: taskRepository)
+    }()
+
+    lazy var deleteTaskUseCase: DeleteTaskUseCase = {
+        DeleteTaskUseCase(taskRepository: taskRepository)
+    }()
+
+    lazy var getOpenTasksUseCase: GetOpenTasksUseCase = {
+        GetOpenTasksUseCase(taskRepository: taskRepository)
+    }()
+
+    lazy var getTasksByPersonUseCase: GetTasksByPersonUseCase = {
+        GetTasksByPersonUseCase(taskRepository: taskRepository)
+    }()
+
+    lazy var getTasksByDateRangeUseCase: GetTasksByDateRangeUseCase = {
+        GetTasksByDateRangeUseCase(taskRepository: taskRepository)
+    }()
+
+    lazy var completeTaskUseCase: CompleteTaskUseCase = {
+        CompleteTaskUseCase(taskRepository: taskRepository)
+    }()
+
+    lazy var classifyTaskQuadrantUseCase: ClassifyTaskQuadrantUseCase = {
+        ClassifyTaskQuadrantUseCase()
+    }()
+
+    lazy var extractTasksFromMemoryUseCase: ExtractTasksFromMemoryUseCase = {
+        ExtractTasksFromMemoryUseCase(
+            classifyQuadrant: classifyTaskQuadrantUseCase,
+            personRepository: personRepository
+        )
+    }()
+
+    // MARK: - Calendar Use Cases
+
+    lazy var systemCalendarService: SystemCalendarService = {
+        SystemCalendarService()
+    }()
+
+    lazy var getCalendarEventsUseCase: GetCalendarEventsUseCase = {
+        GetCalendarEventsUseCase(
+            memoryRepository: memoryRepository,
+            taskRepository: taskRepository,
+            reminderRepository: reminderRepository
+        )
+    }()
+
+    lazy var syncSystemCalendarUseCase: SyncSystemCalendarUseCase = {
+        SyncSystemCalendarUseCase(calendarService: systemCalendarService)
+    }()
+
     // MARK: - AI Use Cases
 
     lazy var analyzeMemoryUseCase: AnalyzeMemoryUseCase = {

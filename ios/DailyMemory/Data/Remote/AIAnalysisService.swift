@@ -17,6 +17,16 @@ actor AIAnalysisService {
         do {
             let response: AnalysisResponse = try await apiClient.post("ai/analyze", body: ["text": text])
             let personsWithRel = response.persons.map { PersonWithRelationship(from: $0) }
+            let extractedTasks = (response.tasks ?? []).map { task in
+                ExtractedTask(
+                    title: task.title,
+                    description: task.description,
+                    dueDate: task.dueDate,
+                    urgency: task.urgency,
+                    importance: task.importance,
+                    relatedPerson: task.relatedPerson
+                )
+            }
             let result = AnalysisResult(
                 persons: response.persons.map { $0.name },
                 location: response.location,
@@ -27,7 +37,8 @@ actor AIAnalysisService {
                 mood: response.mood,
                 moodScore: response.moodScore,
                 summary: response.summary,
-                personsWithRelationship: personsWithRel
+                personsWithRelationship: personsWithRel,
+                extractedTasks: extractedTasks
             )
             return .success(result)
         } catch {
@@ -156,6 +167,24 @@ actor AIAnalysisService {
         // Generate summary
         let summary = String(text.prefix(100)) + (text.count > 100 ? "..." : "")
 
+        // Extract simulated tasks from promise-like content
+        var simulatedTasks: [ExtractedTask] = []
+        let promiseKeywords = ["need to", "have to", "should", "must", "will", "promise", "remind me", "don't forget"]
+        for keyword in promiseKeywords {
+            if lowerText.contains(keyword) {
+                let taskTitle = String(text.prefix(60)).trimmingCharacters(in: .whitespaces)
+                simulatedTasks.append(ExtractedTask(
+                    title: taskTitle,
+                    description: nil,
+                    dueDate: nil,
+                    urgency: 3,
+                    importance: 3,
+                    relatedPerson: persons.first
+                ))
+                break
+            }
+        }
+
         return AnalysisResult(
             persons: persons,
             location: location,
@@ -163,7 +192,8 @@ actor AIAnalysisService {
             amount: amount,
             tags: tags,
             category: category.rawValue,
-            summary: summary
+            summary: summary,
+            extractedTasks: simulatedTasks
         )
     }
 
@@ -210,9 +240,26 @@ struct AnalysisResult: Codable {
 
     // Non-codable: relationship info from AI
     var personsWithRelationship: [PersonWithRelationship] = []
+    // AI-extracted tasks/promises
+    var extractedTasks: [ExtractedTask] = []
 
     enum CodingKeys: String, CodingKey {
-        case persons, location, date, amount, tags, category, mood, moodScore, summary
+        case persons, location, date, amount, tags, category, mood, moodScore, summary, extractedTasks
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        persons = try container.decodeIfPresent([String].self, forKey: .persons) ?? []
+        location = try container.decodeIfPresent(String.self, forKey: .location)
+        date = try container.decodeIfPresent(String.self, forKey: .date)
+        amount = try container.decodeIfPresent(Double.self, forKey: .amount)
+        tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+        category = try container.decodeIfPresent(String.self, forKey: .category) ?? "GENERAL"
+        mood = try container.decodeIfPresent(String.self, forKey: .mood)
+        moodScore = try container.decodeIfPresent(Int.self, forKey: .moodScore)
+        summary = try container.decodeIfPresent(String.self, forKey: .summary) ?? ""
+        extractedTasks = try container.decodeIfPresent([ExtractedTask].self, forKey: .extractedTasks) ?? []
+        personsWithRelationship = []
     }
 
     init(
@@ -225,7 +272,8 @@ struct AnalysisResult: Codable {
         mood: String? = nil,
         moodScore: Int? = nil,
         summary: String = "",
-        personsWithRelationship: [PersonWithRelationship] = []
+        personsWithRelationship: [PersonWithRelationship] = [],
+        extractedTasks: [ExtractedTask] = []
     ) {
         self.persons = persons
         self.location = location
@@ -237,6 +285,7 @@ struct AnalysisResult: Codable {
         self.moodScore = moodScore
         self.summary = summary
         self.personsWithRelationship = personsWithRelationship
+        self.extractedTasks = extractedTasks
     }
 }
 

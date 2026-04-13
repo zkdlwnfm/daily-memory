@@ -16,11 +16,29 @@ struct HomeView: View {
                             // Greeting Section
                             greetingSection
 
+                            // Streak card
+                            if viewModel.streakDays > 0 {
+                                StreakCard(days: viewModel.streakDays)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 8)
+                            }
+
                             // Daily prompt (if no memory today)
                             if viewModel.todayMemoryCount == 0 {
                                 DailyPromptCard(onRecord: { showRecordSheet = true })
                                     .padding(.horizontal, 24)
                                     .padding(.vertical, 8)
+                            }
+
+                            // Open Promises
+                            if !viewModel.openTasks.isEmpty {
+                                PromisesCardView(
+                                    tasks: viewModel.openTasks,
+                                    onComplete: { viewModel.onTaskComplete($0) },
+                                    onTapTask: { _ in } // TODO: navigate to memory
+                                )
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 8)
                             }
 
                             // Reminder Card
@@ -32,6 +50,13 @@ struct HomeView: View {
                                 )
                                 .padding(.horizontal, 24)
                                 .padding(.vertical, 8)
+                            }
+
+                            // Mood Trend
+                            if !viewModel.moodData.isEmpty {
+                                MoodTrendView(moodData: viewModel.moodData)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 8)
                             }
 
                             // Recent Memories Section
@@ -47,6 +72,12 @@ struct HomeView: View {
                                 .padding(.vertical, 6)
                             }
 
+                            // On This Day Section
+                            if let flashback = viewModel.flashback {
+                                onThisDaySection(flashback: flashback)
+                                    .padding(.top, 24)
+                            }
+
                             Spacer(minLength: 100)
                         }
                     }
@@ -59,6 +90,14 @@ struct HomeView: View {
             .onChange(of: refreshTrigger) { _ in
                 Task {
                     await viewModel.refresh()
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: SettingsView()) {
+                        Image(systemName: "gearshape")
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             .sheet(isPresented: $showRecordSheet) {
@@ -107,6 +146,18 @@ struct HomeView: View {
         .padding(.vertical, 16)
     }
 
+    // MARK: - On This Day Section
+    private func onThisDaySection(flashback: FlashbackUi) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("📸 On this day, 1 year ago")
+                .font(.title2)
+                .fontWeight(.bold)
+                .padding(.horizontal, 24)
+
+            FlashbackCard(flashback: flashback)
+                .padding(.horizontal, 24)
+        }
+    }
 }
 
 // MARK: - Reminder Card
@@ -220,6 +271,48 @@ private struct HomeTagChip: View {
     }
 }
 
+// MARK: - Flashback Card
+struct FlashbackCard: View {
+    let flashback: FlashbackUi
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            // Image
+            AsyncImage(url: URL(string: flashback.imageUrl ?? "")) { image in
+                image
+                    .resizable()
+                    .aspectRatio(16/10, contentMode: .fill)
+            } placeholder: {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.2))
+            }
+            .frame(height: 180)
+            .clipped()
+
+            // Gradient overlay
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.7)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            // Text overlay
+            VStack(alignment: .leading, spacing: 4) {
+                Text(flashback.title)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+
+                Text(flashback.date)
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(20)
+        }
+        .cornerRadius(24)
+        .shadow(color: .black.opacity(0.1), radius: 10, y: 5)
+    }
+}
 
 // MARK: - View Model
 @MainActor
@@ -230,8 +323,12 @@ class HomeViewModel: ObservableObject {
     private let userPreferences = UserPreferences.shared
     @Published var todayMemoryCount = 0
     @Published var reminderCount = 0
+    @Published var streakDays = 0
     @Published var reminder: ReminderUi?
     @Published var recentMemories: [MemoryUi] = []
+    @Published var moodData: [MoodDataPoint] = []
+    @Published var flashback: FlashbackUi?
+    @Published var openTasks: [MemoryTask] = []
     @Published var error: String?
 
     // Use Cases
@@ -239,6 +336,10 @@ class HomeViewModel: ObservableObject {
     private let getTodayRemindersUseCase: GetTodayRemindersUseCase
     private let completeReminderUseCase: CompleteReminderUseCase
     private let snoozeReminderUseCase: SnoozeReminderUseCase
+    private let searchMemoriesUseCase: SearchMemoriesUseCase
+    private let getOpenTasksUseCase: GetOpenTasksUseCase
+    private let completeTaskUseCase: CompleteTaskUseCase
+
     var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
         switch hour {
@@ -253,12 +354,18 @@ class HomeViewModel: ObservableObject {
         getRecentMemoriesUseCase: GetRecentMemoriesUseCase = DIContainer.shared.getRecentMemoriesUseCase,
         getTodayRemindersUseCase: GetTodayRemindersUseCase = DIContainer.shared.getTodayRemindersUseCase,
         completeReminderUseCase: CompleteReminderUseCase = DIContainer.shared.completeReminderUseCase,
-        snoozeReminderUseCase: SnoozeReminderUseCase = DIContainer.shared.snoozeReminderUseCase
+        snoozeReminderUseCase: SnoozeReminderUseCase = DIContainer.shared.snoozeReminderUseCase,
+        searchMemoriesUseCase: SearchMemoriesUseCase = DIContainer.shared.searchMemoriesUseCase,
+        getOpenTasksUseCase: GetOpenTasksUseCase = DIContainer.shared.getOpenTasksUseCase,
+        completeTaskUseCase: CompleteTaskUseCase = DIContainer.shared.completeTaskUseCase
     ) {
         self.getRecentMemoriesUseCase = getRecentMemoriesUseCase
         self.getTodayRemindersUseCase = getTodayRemindersUseCase
         self.completeReminderUseCase = completeReminderUseCase
         self.snoozeReminderUseCase = snoozeReminderUseCase
+        self.searchMemoriesUseCase = searchMemoriesUseCase
+        self.getOpenTasksUseCase = getOpenTasksUseCase
+        self.completeTaskUseCase = completeTaskUseCase
         self.userName = userPreferences.userName
 
         Task {
@@ -297,11 +404,71 @@ class HomeViewModel: ObservableObject {
                 reminder = nil
             }
 
+            // Calculate streak
+            streakDays = calculateStreak(memories: memories)
+
+            // Build mood trend (last 7 with mood data)
+            moodData = memories
+                .filter { $0.moodScore != nil }
+                .prefix(7)
+                .reversed()
+                .map { MoodDataPoint(date: $0.recordedAt, score: $0.moodScore ?? 5, mood: $0.mood ?? "neutral") }
+
+            // Load open tasks (promises)
+            openTasks = (try? await getOpenTasksUseCase.execute()) ?? []
+
+            // Load flashback (1 year ago)
+            flashback = await loadFlashback()
+
             isLoading = false
         } catch {
             self.error = error.localizedDescription
             isLoading = false
         }
+    }
+
+    private func calculateStreak(memories: [Memory]) -> Int {
+        let calendar = Calendar.current
+        var streak = 0
+        var checkDate = calendar.startOfDay(for: Date())
+
+        // Check if today has a memory
+        let hasTodayMemory = memories.contains { calendar.isDate($0.recordedAt, inSameDayAs: checkDate) }
+        if hasTodayMemory {
+            streak = 1
+            checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
+        }
+
+        // Check consecutive past days
+        for _ in 0..<30 { // Max 30 days check
+            let hasMemory = memories.contains { calendar.isDate($0.recordedAt, inSameDayAs: checkDate) }
+            if hasMemory {
+                streak += 1
+                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
+            } else {
+                break
+            }
+        }
+        return streak
+    }
+
+    private func loadFlashback() async -> FlashbackUi? {
+        let calendar = Calendar.current
+        guard let oneYearAgo = calendar.date(byAdding: .year, value: -1, to: Date()),
+              let startDate = calendar.date(byAdding: .day, value: -3, to: oneYearAgo),
+              let endDate = calendar.date(byAdding: .day, value: 3, to: oneYearAgo) else {
+            return nil
+        }
+
+        do {
+            let memories = try await searchMemoriesUseCase.byDateRange(from: startDate, to: endDate)
+            if let memory = memories.first(where: { !$0.photos.isEmpty }) ?? memories.first {
+                return memory.toFlashbackUi()
+            }
+        } catch {
+            // Ignore errors for flashback
+        }
+        return nil
     }
 
     func refresh() async {
@@ -324,6 +491,17 @@ class HomeViewModel: ObservableObject {
             do {
                 try await snoozeReminderUseCase.execute(reminderId: id, snoozeMinutes: minutes)
                 reminder = nil
+            } catch {
+                self.error = error.localizedDescription
+            }
+        }
+    }
+
+    func onTaskComplete(_ taskId: String) {
+        Task {
+            do {
+                try await completeTaskUseCase.execute(taskId: taskId)
+                openTasks.removeAll { $0.id == taskId }
             } catch {
                 self.error = error.localizedDescription
             }
@@ -376,6 +554,17 @@ private extension Memory {
         )
     }
 
+    func toFlashbackUi() -> FlashbackUi {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM d, yyyy"
+
+        return FlashbackUi(
+            id: id,
+            title: String(content.prefix(50)) + (content.count > 50 ? "..." : ""),
+            date: formatter.string(from: recordedAt),
+            imageUrl: photos.first?.url
+        )
+    }
 }
 
 private extension Reminder {
@@ -447,6 +636,13 @@ struct TagUi: Identifiable {
     enum TagType {
         case person, location, financial, event, general
     }
+}
+
+struct FlashbackUi: Identifiable {
+    let id: String
+    let title: String
+    let date: String
+    let imageUrl: String?
 }
 
 #Preview {

@@ -21,6 +21,15 @@ export class PersonExtracted {
   relationship: string;
 }
 
+export class TaskExtractedDto {
+  title: string;
+  description?: string;
+  dueDate?: string;
+  urgency: number;
+  importance: number;
+  relatedPerson?: string;
+}
+
 export class AnalysisResultDto {
   persons: PersonExtracted[];
   location?: string;
@@ -31,6 +40,7 @@ export class AnalysisResultDto {
   mood: string;
   moodScore: number;
   summary: string;
+  tasks?: TaskExtractedDto[];
 }
 
 export class ImageAnalysisResultDto {

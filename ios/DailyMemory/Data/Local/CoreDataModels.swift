@@ -202,3 +202,57 @@ extension ReminderMO {
         syncStatusRaw = reminder.syncStatus.rawValue
     }
 }
+
+// MARK: - TaskMO (Managed Object)
+@objc(TaskMO)
+public class TaskMO: NSManagedObject {
+    @NSManaged public var id: String
+    @NSManaged public var memoryId: String
+    @NSManaged public var personId: String?
+    @NSManaged public var title: String
+    @NSManaged public var taskDescription: String?
+    @NSManaged public var dueDate: Date?
+    @NSManaged public var quadrantRaw: String
+    @NSManaged public var statusRaw: String
+    @NSManaged public var isAISuggested: Bool
+    @NSManaged public var aiConfidence: Float
+    @NSManaged public var createdAt: Date
+    @NSManaged public var updatedAt: Date
+    @NSManaged public var syncStatusRaw: String
+}
+
+extension TaskMO {
+    func toDomainModel() -> MemoryTask {
+        MemoryTask(
+            id: id,
+            memoryId: memoryId,
+            personId: personId,
+            title: title,
+            description: taskDescription,
+            dueDate: dueDate,
+            quadrant: EisenhowerQuadrant(rawValue: quadrantRaw) ?? .q2_importantNotUrgent,
+            status: TaskStatus(rawValue: statusRaw) ?? .open,
+            isAISuggested: isAISuggested,
+            aiConfidence: aiConfidence,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            syncStatus: SyncStatus(rawValue: syncStatusRaw) ?? .pending
+        )
+    }
+
+    func update(from task: MemoryTask) {
+        id = task.id
+        memoryId = task.memoryId
+        personId = task.personId
+        title = task.title
+        taskDescription = task.description
+        dueDate = task.dueDate
+        quadrantRaw = task.quadrant.rawValue
+        statusRaw = task.status.rawValue
+        isAISuggested = task.isAISuggested
+        aiConfidence = task.aiConfidence
+        createdAt = task.createdAt
+        updatedAt = task.updatedAt
+        syncStatusRaw = task.syncStatus.rawValue
+    }
+}

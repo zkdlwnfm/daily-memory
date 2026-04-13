@@ -6,7 +6,6 @@ options:
   xcodeVersion: "15.4"
   generateEmptyDirectories: true
   minimumXcodeGenVersion: "2.35.0"
-projectFormatVersion: "1.0"
 fileGroups:
   - DailyMemory
 
@@ -59,6 +58,8 @@ targets:
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Engram needs access to your photos to attach them to memories"
         INFOPLIST_KEY_NSCameraUsageDescription: "Engram can capture photos to add to your memories"
         INFOPLIST_KEY_NSUserNotificationsUsageDescription: "Engram sends reminders for your important memories"
+        INFOPLIST_KEY_NSCalendarsUsageDescription: "Engram shows your calendar events alongside memories and tasks."
+        INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription: "Engram can create events from tasks with due dates."
         INFOPLIST_KEY_UIBackgroundModes: "remote-notification"
     dependencies:
       - package: FirebaseAuth

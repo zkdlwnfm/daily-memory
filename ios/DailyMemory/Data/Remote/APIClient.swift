@@ -101,6 +101,15 @@ struct PersonExtracted: Decodable {
     let relationship: String
 }
 
+struct TaskExtracted: Decodable {
+    let title: String
+    let description: String?
+    let dueDate: String?
+    let urgency: Int
+    let importance: Int
+    let relatedPerson: String?
+}
+
 struct AnalysisResponse: Decodable {
     let persons: [PersonExtracted]
     let location: String?
@@ -111,6 +120,7 @@ struct AnalysisResponse: Decodable {
     let mood: String?
     let moodScore: Int?
     let summary: String
+    let tasks: [TaskExtracted]?    // AI-extracted tasks (optional for backward compat)
 }
 
 struct ImageAnalysisResponse: Decodable {
