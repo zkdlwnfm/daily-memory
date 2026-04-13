@@ -26,12 +26,12 @@ struct ContentView: View {
             CustomTabBar(selectedTab: $selectedTab, showRecordSheet: $showRecordSheet)
         }
         .sheet(isPresented: $showRecordSheet) {
-            RecordView()
+            RecordView(autoStartRecording: deepLinkHandler.autoStartRecording)
         }
         .onChange(of: showRecordSheet) { isShowing in
-            // Refresh home view when record sheet closes
             if !isShowing {
                 homeRefreshTrigger = UUID()
+                deepLinkHandler.autoStartRecording = false
             }
         }
         // Refresh home when switching back to home tab

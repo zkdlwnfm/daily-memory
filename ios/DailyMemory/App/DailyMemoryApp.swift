@@ -111,6 +111,7 @@ struct RootView: View {
 class DeepLinkHandler: ObservableObject {
     @Published var shouldShowRecordSheet = false
     @Published var recordMode: RecordMode = .voice
+    @Published var autoStartRecording = false
 
     enum RecordMode {
         case voice
@@ -122,18 +123,19 @@ class DeepLinkHandler: ObservableObject {
 
         switch url.host {
         case "record":
-            // Parse mode from query parameters
             if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                let modeParam = components.queryItems?.first(where: { $0.name == "mode" })?.value {
                 recordMode = modeParam == "text" ? .text : .voice
             } else {
                 recordMode = .voice
             }
+            // 위젯에서 진입 시 자동 녹음 시작
+            autoStartRecording = (recordMode == .voice)
             shouldShowRecordSheet = true
 
         default:
-            // 위젯 탭 등 호스트 없는 딥링크 → 바로 녹음
             recordMode = .voice
+            autoStartRecording = true
             shouldShowRecordSheet = true
         }
     }

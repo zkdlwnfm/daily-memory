@@ -8,6 +8,9 @@ struct RecordView: View {
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var showSaveSuccess = false
 
+    /// 위젯에서 진입 시 자동 녹음 시작
+    var autoStartRecording: Bool = false
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -121,6 +124,11 @@ struct RecordView: View {
             .onChange(of: showSaveSuccess) { showing in
                 if !showing {
                     dismiss()
+                }
+            }
+            .onAppear {
+                if autoStartRecording && viewModel.recordState == .voiceIdle {
+                    viewModel.startRecording()
                 }
             }
         }
