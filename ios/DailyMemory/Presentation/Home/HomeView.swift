@@ -30,6 +30,17 @@ struct HomeView: View {
                                     .padding(.vertical, 8)
                             }
 
+                            // Open Promises
+                            if !viewModel.openTasks.isEmpty {
+                                PromisesCardView(
+                                    tasks: viewModel.openTasks,
+                                    onComplete: { viewModel.onTaskComplete($0) },
+                                    onTapTask: { _ in } // TODO: navigate to memory
+                                )
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 8)
+                            }
+
                             // Reminder Card
                             if let reminder = viewModel.reminder {
                                 ReminderCard(
@@ -79,6 +90,14 @@ struct HomeView: View {
             .onChange(of: refreshTrigger) { _ in
                 Task {
                     await viewModel.refresh()
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: SettingsView()) {
+                        Image(systemName: "gearshape")
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             .sheet(isPresented: $showRecordSheet) {
@@ -309,6 +328,7 @@ class HomeViewModel: ObservableObject {
     @Published var recentMemories: [MemoryUi] = []
     @Published var moodData: [MoodDataPoint] = []
     @Published var flashback: FlashbackUi?
+    @Published var openTasks: [MemoryTask] = []
     @Published var error: String?
 
     // Use Cases
@@ -317,6 +337,8 @@ class HomeViewModel: ObservableObject {
     private let completeReminderUseCase: CompleteReminderUseCase
     private let snoozeReminderUseCase: SnoozeReminderUseCase
     private let searchMemoriesUseCase: SearchMemoriesUseCase
+    private let getOpenTasksUseCase: GetOpenTasksUseCase
+    private let completeTaskUseCase: CompleteTaskUseCase
 
     var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -333,13 +355,17 @@ class HomeViewModel: ObservableObject {
         getTodayRemindersUseCase: GetTodayRemindersUseCase = DIContainer.shared.getTodayRemindersUseCase,
         completeReminderUseCase: CompleteReminderUseCase = DIContainer.shared.completeReminderUseCase,
         snoozeReminderUseCase: SnoozeReminderUseCase = DIContainer.shared.snoozeReminderUseCase,
-        searchMemoriesUseCase: SearchMemoriesUseCase = DIContainer.shared.searchMemoriesUseCase
+        searchMemoriesUseCase: SearchMemoriesUseCase = DIContainer.shared.searchMemoriesUseCase,
+        getOpenTasksUseCase: GetOpenTasksUseCase = DIContainer.shared.getOpenTasksUseCase,
+        completeTaskUseCase: CompleteTaskUseCase = DIContainer.shared.completeTaskUseCase
     ) {
         self.getRecentMemoriesUseCase = getRecentMemoriesUseCase
         self.getTodayRemindersUseCase = getTodayRemindersUseCase
         self.completeReminderUseCase = completeReminderUseCase
         self.snoozeReminderUseCase = snoozeReminderUseCase
         self.searchMemoriesUseCase = searchMemoriesUseCase
+        self.getOpenTasksUseCase = getOpenTasksUseCase
+        self.completeTaskUseCase = completeTaskUseCase
         self.userName = userPreferences.userName
 
         Task {
@@ -387,6 +413,9 @@ class HomeViewModel: ObservableObject {
                 .prefix(7)
                 .reversed()
                 .map { MoodDataPoint(date: $0.recordedAt, score: $0.moodScore ?? 5, mood: $0.mood ?? "neutral") }
+
+            // Load open tasks (promises)
+            openTasks = (try? await getOpenTasksUseCase.execute()) ?? []
 
             // Load flashback (1 year ago)
             flashback = await loadFlashback()
@@ -462,6 +491,17 @@ class HomeViewModel: ObservableObject {
             do {
                 try await snoozeReminderUseCase.execute(reminderId: id, snoozeMinutes: minutes)
                 reminder = nil
+            } catch {
+                self.error = error.localizedDescription
+            }
+        }
+    }
+
+    func onTaskComplete(_ taskId: String) {
+        Task {
+            do {
+                try await completeTaskUseCase.execute(taskId: taskId)
+                openTasks.removeAll { $0.id == taskId }
             } catch {
                 self.error = error.localizedDescription
             }

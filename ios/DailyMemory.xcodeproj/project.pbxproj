@@ -18,14 +18,17 @@
 		0A02FB50711DCE8426CED0A0 /* GetMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062A8A1DCD7DF60922039985 /* GetMemoryUseCase.swift */; };
 		0D35F246D9521C5FF6091F57 /* LockScreenWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5833914133983C466C67BB1 /* LockScreenWidget.swift */; };
 		0EC688FFC96B53FF65E463BC /* AllMemoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BEAF3F50F78F2AF76C2F4A7 /* AllMemoriesView.swift */; };
+		15749B3A7C201664EFEAD781 /* TaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8A778A7DC4BCCC65DAFE78 /* TaskRepository.swift */; };
 		15E440E75CB08A5175778614 /* PersonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56319C0CD5CB0B3D8CC50BDB /* PersonListView.swift */; };
 		16C459A0393ADBBF11F3526D /* GetAllPersonsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1126CF4F64B2E5AC107F2B1 /* GetAllPersonsUseCase.swift */; };
 		18BD0E6026503C2175AEDB26 /* ReminderRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0518F0C0C2671FDC76CE5123 /* ReminderRepositoryImpl.swift */; };
 		198CB3A5DA9C1F5D2961F838 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05393E7BD20294AD8D7F60EC /* NotificationService.swift */; };
 		1A03BDAF61D966654710814B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4874177ECA9F7FA328DBFD9 /* OnboardingView.swift */; };
 		1C969002B6EF337AB225EA6E /* CloudStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF48AAF621985A789EBA2A7 /* CloudStorageService.swift */; };
+		1DB8A1317E3F619CE7FCBB4B /* ClassifyTaskQuadrantUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4AC7C2396D038614DAC200E /* ClassifyTaskQuadrantUseCase.swift */; };
 		22C98E45CBE5FE8D90F1DE52 /* SaveReminderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E172BEB7C9EDABD93289421 /* SaveReminderUseCase.swift */; };
 		2787B9ABA20F696F38BAB0D3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0B5090360914B831CB35A /* Constants.swift */; };
+		2C5ADD70A70B60BE5634D3C4 /* CalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3277E9C1684B8C7F7F3DC62E /* CalendarEvent.swift */; };
 		2F277FC7F28CCE495381A6D2 /* DailyMemoryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA793AD2C1C7643C1701C28 /* DailyMemoryApp.swift */; };
 		3160A8A8DA25F3A223B31B5B /* PhotoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C78E8E94CDD7ED5892A7592 /* PhotoService.swift */; };
 		32D4C0CF6D69CA3FA522177A /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3ABB2BD8D87F86AEEC30574 /* FirestoreService.swift */; };
@@ -35,33 +38,47 @@
 		37A4865067FB1200C6BA9A70 /* UpdateMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BB8C76A822A18A4D384645 /* UpdateMemoryUseCase.swift */; };
 		3B2C57EC880FEF5403817918 /* PhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DDDAC64BFD00C8E914D6C69 /* PhotoPickerView.swift */; };
 		3C0BCA8DFCAC20E2C18F31C2 /* DeletePersonUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA20F0258D924C585B00E1D /* DeletePersonUseCase.swift */; };
+		3CFE5E43BB640EF77BB9C6FE /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57527ED068BA12E069096BEE /* CalendarView.swift */; };
 		3EBA02238A2C06D9D8CDA665 /* PersonEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01397027AEEFD64583E72B16 /* PersonEditView.swift */; };
+		3F2FB18CB0907E5A8EE6C5C3 /* GetCalendarEventsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C245EB8B6CA800EEA23C55 /* GetCalendarEventsUseCase.swift */; };
 		3FE6ECE08411B0DA8205F281 /* AIAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B94EB348C94BB17C0CF2B31 /* AIAnalysisService.swift */; };
+		3FEDD593E0FB9711CCD8C18A /* GetOpenTasksUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C455F9618F3CA442461788 /* GetOpenTasksUseCase.swift */; };
 		40DBBCDF9F3F1BA9997243E3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4618375DDF43CC2E5ADC8ACD /* HomeView.swift */; };
+		423C58F6EDA80F68E268CF48 /* SystemCalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7346A8E192EFB82996DECE /* SystemCalendarService.swift */; };
 		490FDD2D158C3FDBB85E95DB /* WidgetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078A4BB7D9013BC1901B646E /* WidgetProvider.swift */; };
+		4B4235CD10C0A209DD0757F6 /* SyncSystemCalendarUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454FFFF2C7F6C0440A43CB59 /* SyncSystemCalendarUseCase.swift */; };
 		4CD1B42FF833090CC37AAD8E /* PersonStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61CF42C35727B011781DC2D /* PersonStore.swift */; };
 		4DE30E0D3A65617A0056C93D /* SpeechRecognitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4AA261CB59DB46A72FA0A72 /* SpeechRecognitionService.swift */; };
 		4F33EDB57830FF76A152DD0E /* AnalyzeImageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460AC509EA2720B44FDCE423 /* AnalyzeImageUseCase.swift */; };
+		503DE9DE62916450BA321A5F /* TaskStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85180F71375AA326E3E81B88 /* TaskStore.swift */; };
+		50A8B6DFAEA5D9AE789813DC /* PromisesCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4875B8B8482836F11EEC6995 /* PromisesCardView.swift */; };
 		51B8D1AE4EBEEB2773AA2D0A /* SaveMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF2C0F31CCAC4E188A51AF3D /* SaveMemoryUseCase.swift */; };
 		52D4D8547DF0E53B520CE0A1 /* QuickRecordWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13B6348E75752FFAA7CA844 /* QuickRecordWidget.swift */; };
 		546451A65D2D39D5FA21981C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = FBFFB665121250630C8DE726 /* GoogleSignIn */; };
 		560257ECA9D12C0CD3AA7EF1 /* EmbeddingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B904302C737870B6241D4757 /* EmbeddingService.swift */; };
 		5724014BC51FBE86F9E99DC0 /* PersonRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CE23D5B1436D643C67524C /* PersonRepository.swift */; };
+		574DB5217D46A1343ECDC21D /* CalendarEventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8312EFD66E8B67C322E07EC8 /* CalendarEventRow.swift */; };
 		5A73F8BCEAF1E2AA4AEC3AB0 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFADC64CC75785EBF3BAFE4 /* LoginView.swift */; };
 		5B8B3CB62714F4C4B4E7E047 /* PremiumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E1B07908B5CDDA6369C539 /* PremiumView.swift */; };
 		5BCEC865FBACD736B5EE37D8 /* MemoryEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D68D5B77C714DF59E765966 /* MemoryEditView.swift */; };
 		5D04AD070DFB51B9FBED172C /* SnoozeReminderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9066B198056AA9AAB0755EBF /* SnoozeReminderUseCase.swift */; };
 		5F723B600D8977993F38E6EF /* RecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAA0479B5F47C180805E839 /* RecordView.swift */; };
+		6348E7577D77C7E00D86A2FC /* ExtractTasksFromMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2722F554C7427173FDAFADC2 /* ExtractTasksFromMemoryUseCase.swift */; };
 		63590AA061D1EC1D9BDC37A2 /* PersonRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5C2A98AEF6F4A552D5017E /* PersonRepositoryImpl.swift */; };
 		6825EF526FDA6C767FD51CDC /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543F43500B1A3456904880E4 /* SettingsView.swift */; };
 		69659CE067DBE6AB71D0674C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F09BC6492BF3AE31E2CA6F0 /* Assets.xcassets */; };
+		6ADB03715E0CE29B55095B63 /* MonthGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B14E1041680C4E35292EA88 /* MonthGridView.swift */; };
 		6B125A840F0840263E2B2066 /* SavePersonUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF6DE3489090735AEDD7C5D /* SavePersonUseCase.swift */; };
 		6ED79402CD85F928A7C56CE0 /* WidgetColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E7796438FEE8ED6B9D6870 /* WidgetColors.swift */; };
 		7206CF65EC565F00786BA994 /* MemoryRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F4823BB5FFEB831790C4DC /* MemoryRepositoryImpl.swift */; };
+		7566A96346A2E37B83DF1FA9 /* UpdateTaskUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E8139F52A84F8C7DC0653B /* UpdateTaskUseCase.swift */; };
 		75C484D5AAD48F56ECECB0E0 /* HomeEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DCA79E2D6E1121CB93314B6 /* HomeEmptyStateView.swift */; };
 		763461E12C1DC6E8DAA8D72B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 92B494BA76066A2C4A57736D /* GoogleSignInSwift */; };
+		7BD853F9858C5D25CC25F4B3 /* CompleteTaskUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CB1272EE54A07EF0BCEC03 /* CompleteTaskUseCase.swift */; };
 		7C8086587748FC57176AA151 /* AnalyzeMemoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7EA283CAC2283584E209EF6 /* AnalyzeMemoryUseCase.swift */; };
+		83CF1BA7DCD533B643B18A8A /* GetTasksByDateRangeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555288EEF166B9AECC2DA7A /* GetTasksByDateRangeUseCase.swift */; };
 		858764E78799986602DF1C57 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA7E7FEBE700E9874DB599B0 /* APIClient.swift */; };
+		8FEF543E57A710976A82754D /* TaskRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3523C43EC5E85695861555 /* TaskRepositoryImpl.swift */; };
 		90132A51A4A27AD8F483B136 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D315825FCE454AAD88D7BA89 /* Reminder.swift */; };
 		9535F773448A447C0606411E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 385E167D0721D57DCA8B840C /* FirebaseAuth */; };
 		9595AF89D886283102177CBA /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491E52783BDF17D99BDCC556 /* DIContainer.swift */; };
@@ -76,21 +93,26 @@
 		A0D1F299DB75C377CAFDAD88 /* DailyMemoryWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F043423008C623B41FFF3 /* DailyMemoryWidgetBundle.swift */; };
 		A33B08012A2E7537C858C574 /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321B9A2C4CCFA0A21B12BA08 /* Memory.swift */; };
 		A6A6CC42D6A80B4D2AAC906B /* SearchMemoriesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234BEE1B35C0A7A13182DEE3 /* SearchMemoriesUseCase.swift */; };
+		A76EE4B13EE5606F3C4813BE /* DayDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D59C435ED18735C3B9AC5 /* DayDetailView.swift */; };
 		A8CE945AE5ACC9CA92C535E8 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2140BBDE6845E60EFC7C10F9 /* SyncManager.swift */; };
 		A95A6B637B7CB3D6A0BD66F4 /* MoodTrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00453B73C20C032AE562DE2A /* MoodTrendView.swift */; };
 		AE912CBFB5CDABC8C09FE97F /* DailyMemoryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066EC1573FE38ADA53920ED7 /* DailyMemoryWidget.swift */; };
 		AF9F4314638D831337B4DA1C /* UpdatePersonUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81914AE1E172D0B04C92DDB5 /* UpdatePersonUseCase.swift */; };
 		B07F78F7FDF5A7FEB132B759 /* MemoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F7782DC40C24E4D8B84B43 /* MemoryStore.swift */; };
 		B2DAB5E56EDE883BA0DC7CFE /* SaveSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC62DF24A809159B187F288 /* SaveSuccessView.swift */; };
+		B4F9BB0C36EA6DACD925A97E /* GetTasksByPersonUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEE98B8A23924305B7EDC86 /* GetTasksByPersonUseCase.swift */; };
 		B6D4EA91C4FD57038DC81F03 /* StoreKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C85FFB7B3E01456E1534AD7 /* StoreKitService.swift */; };
 		B75E1229DD3458E133366DBA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2EEB84491D3F683BD9728748 /* GoogleService-Info.plist */; };
 		B908AB85D1216F053412F2F8 /* MemoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9809F2A5690C46832768175A /* MemoryDetailView.swift */; };
 		B92BD1481CED6F1678235D60 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04F44FEFD3753DFCDF20A00 /* ContentView.swift */; };
 		BD6153FC54FBB816D5413538 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64150BCF44729A17A350ACA2 /* Date+Extensions.swift */; };
 		BE90A52D3A1F2C0B67B00875 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1359BBDF9C4702889FE619 /* Person.swift */; };
+		C31283FE402D6E5DBFECA1AB /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B584293553B476E3974D29B /* CalendarViewModel.swift */; };
+		C336CFC2E059C704EDCD72D8 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695AB971136502C753E641BC /* Task.swift */; };
 		C6B47BD2CB71D5F7C1E9AEEE /* ExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF47ADAA7121D0AA0D132E83 /* ExportService.swift */; };
 		CA0B0C0F778602C4F8629B01 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A1DE10EA0FBDEFFDB08245 /* AuthService.swift */; };
 		CA1805EB4AD05CAC2CEE2C2E /* CompleteReminderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2664A5D8BB7664DE91E50FA /* CompleteReminderUseCase.swift */; };
+		D15C582A839730356B64B52E /* DeleteTaskUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B99F9CCB98CFBA0399CA7A /* DeleteTaskUseCase.swift */; };
 		D1D078804772A197F4B455CF /* LocationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D4907ECC8549927E9A72854 /* LocationPickerView.swift */; };
 		D49FCA6A4F47EEC42321DDFC /* ImageAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A0EAC41FB3D095854BFF06 /* ImageAnalysisService.swift */; };
 		DA351B8BBD64CE8A4A0499D5 /* DeleteReminderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E66913394F149A2EFC2620 /* DeleteReminderUseCase.swift */; };
@@ -105,6 +127,7 @@
 		E52BA513BE4AE501CF46045C /* GetRecentMemoriesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 684346C0E62E587DD828D4E3 /* GetRecentMemoriesUseCase.swift */; };
 		E5E610B79CB1B5F9AABD3C09 /* ReminderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F8322DBC319060EA9AE58C /* ReminderRepository.swift */; };
 		E72EBA7ED2EA6307A67FDD45 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = E2B742583F36D94126C5C62D /* FirebaseMessaging */; };
+		E84D80DAA610CAF491046C5E /* SaveTaskUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124DEE8E93C19EB7AF428778 /* SaveTaskUseCase.swift */; };
 		EB77DFF53A914DE0604CF062 /* ReminderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0EC6011CDAB0903E2C8CF1 /* ReminderStore.swift */; };
 		F289B7E4D93A1195B6C079CF /* GetUpcomingRemindersUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777138EDB5DB30E93E3A5CB6 /* GetUpcomingRemindersUseCase.swift */; };
 		FEF80496F4176AEC06034A9D /* VectorSearchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEFD0C5D1E2DA22982AB681 /* VectorSearchEngine.swift */; };
@@ -125,7 +148,9 @@
 		00453B73C20C032AE562DE2A /* MoodTrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodTrendView.swift; sourceTree = "<group>"; };
 		00E1B07908B5CDDA6369C539 /* PremiumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumView.swift; sourceTree = "<group>"; };
 		01397027AEEFD64583E72B16 /* PersonEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonEditView.swift; sourceTree = "<group>"; };
+		01C455F9618F3CA442461788 /* GetOpenTasksUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetOpenTasksUseCase.swift; sourceTree = "<group>"; };
 		0518F0C0C2671FDC76CE5123 /* ReminderRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderRepositoryImpl.swift; sourceTree = "<group>"; };
+		052D59C435ED18735C3B9AC5 /* DayDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDetailView.swift; sourceTree = "<group>"; };
 		05393E7BD20294AD8D7F60EC /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		062A8A1DCD7DF60922039985 /* GetMemoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMemoryUseCase.swift; sourceTree = "<group>"; };
 		066EC1573FE38ADA53920ED7 /* DailyMemoryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyMemoryWidget.swift; sourceTree = "<group>"; };
@@ -136,43 +161,59 @@
 		0B94EB348C94BB17C0CF2B31 /* AIAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAnalysisService.swift; sourceTree = "<group>"; };
 		10A7187DDEE64C82510516ED /* DeleteMemoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteMemoryUseCase.swift; sourceTree = "<group>"; };
 		10B09E583E80CAFD6FB0B00B /* ReminderEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderEditView.swift; sourceTree = "<group>"; };
+		124DEE8E93C19EB7AF428778 /* SaveTaskUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveTaskUseCase.swift; sourceTree = "<group>"; };
 		15BB8C76A822A18A4D384645 /* UpdateMemoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateMemoryUseCase.swift; sourceTree = "<group>"; };
 		1DDDAC64BFD00C8E914D6C69 /* PhotoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerView.swift; sourceTree = "<group>"; };
 		1FD11CF87EBD979664E2ACAF /* GenerateSmartRemindersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateSmartRemindersUseCase.swift; sourceTree = "<group>"; };
 		2140BBDE6845E60EFC7C10F9 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		234BEE1B35C0A7A13182DEE3 /* SearchMemoriesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMemoriesUseCase.swift; sourceTree = "<group>"; };
+		2722F554C7427173FDAFADC2 /* ExtractTasksFromMemoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractTasksFromMemoryUseCase.swift; sourceTree = "<group>"; };
 		27F8322DBC319060EA9AE58C /* ReminderRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderRepository.swift; sourceTree = "<group>"; };
+		28CB1272EE54A07EF0BCEC03 /* CompleteTaskUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskUseCase.swift; sourceTree = "<group>"; };
 		2A98F11FF5408043E572F30E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2EEB84491D3F683BD9728748 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2F7346A8E192EFB82996DECE /* SystemCalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemCalendarService.swift; sourceTree = "<group>"; };
 		2FA793AD2C1C7643C1701C28 /* DailyMemoryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyMemoryApp.swift; sourceTree = "<group>"; };
+		30E8139F52A84F8C7DC0653B /* UpdateTaskUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTaskUseCase.swift; sourceTree = "<group>"; };
 		321B9A2C4CCFA0A21B12BA08 /* Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memory.swift; sourceTree = "<group>"; };
+		3277E9C1684B8C7F7F3DC62E /* CalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEvent.swift; sourceTree = "<group>"; };
 		35AE5F14D223A9F12DC9A20E /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		3AF48AAF621985A789EBA2A7 /* CloudStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudStorageService.swift; sourceTree = "<group>"; };
+		3B584293553B476E3974D29B /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		3C85FFB7B3E01456E1534AD7 /* StoreKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitService.swift; sourceTree = "<group>"; };
 		3E172BEB7C9EDABD93289421 /* SaveReminderUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveReminderUseCase.swift; sourceTree = "<group>"; };
 		40F7782DC40C24E4D8B84B43 /* MemoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryStore.swift; sourceTree = "<group>"; };
 		43F4823BB5FFEB831790C4DC /* MemoryRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryRepositoryImpl.swift; sourceTree = "<group>"; };
 		4524B33215506D4ED088A252 /* UserPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferences.swift; sourceTree = "<group>"; };
+		454FFFF2C7F6C0440A43CB59 /* SyncSystemCalendarUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncSystemCalendarUseCase.swift; sourceTree = "<group>"; };
+		4555288EEF166B9AECC2DA7A /* GetTasksByDateRangeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTasksByDateRangeUseCase.swift; sourceTree = "<group>"; };
 		460AC509EA2720B44FDCE423 /* AnalyzeImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeImageUseCase.swift; sourceTree = "<group>"; };
 		4618375DDF43CC2E5ADC8ACD /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		4875B8B8482836F11EEC6995 /* PromisesCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesCardView.swift; sourceTree = "<group>"; };
 		491E52783BDF17D99BDCC556 /* DIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
 		4C78E8E94CDD7ED5892A7592 /* PhotoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoService.swift; sourceTree = "<group>"; };
 		4CFADC64CC75785EBF3BAFE4 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		4E8F043423008C623B41FFF3 /* DailyMemoryWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyMemoryWidgetBundle.swift; sourceTree = "<group>"; };
+		4FEE98B8A23924305B7EDC86 /* GetTasksByPersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTasksByPersonUseCase.swift; sourceTree = "<group>"; };
 		51A303222BDED75DA0249CA8 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		543F43500B1A3456904880E4 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		56319C0CD5CB0B3D8CC50BDB /* PersonListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonListView.swift; sourceTree = "<group>"; };
+		57527ED068BA12E069096BEE /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		59A0B5090360914B831CB35A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		5DCA79E2D6E1121CB93314B6 /* HomeEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEmptyStateView.swift; sourceTree = "<group>"; };
 		64150BCF44729A17A350ACA2 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		684346C0E62E587DD828D4E3 /* GetRecentMemoriesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetRecentMemoriesUseCase.swift; sourceTree = "<group>"; };
+		695AB971136502C753E641BC /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		736EB723E15B793EC03BD81A /* DailyMemory.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DailyMemory.xcdatamodel; sourceTree = "<group>"; };
 		777138EDB5DB30E93E3A5CB6 /* GetUpcomingRemindersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUpcomingRemindersUseCase.swift; sourceTree = "<group>"; };
 		7A280BFF97A4A0C272CA9BE8 /* GetTodayRemindersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTodayRemindersUseCase.swift; sourceTree = "<group>"; };
+		7B14E1041680C4E35292EA88 /* MonthGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthGridView.swift; sourceTree = "<group>"; };
 		7D68D5B77C714DF59E765966 /* MemoryEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryEditView.swift; sourceTree = "<group>"; };
 		7F09BC6492BF3AE31E2CA6F0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7F6B8D6D0246CD67B9573427 /* DailyMemoryWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = DailyMemoryWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		81914AE1E172D0B04C92DDB5 /* UpdatePersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePersonUseCase.swift; sourceTree = "<group>"; };
+		8312EFD66E8B67C322E07EC8 /* CalendarEventRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventRow.swift; sourceTree = "<group>"; };
+		85180F71375AA326E3E81B88 /* TaskStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStore.swift; sourceTree = "<group>"; };
 		8BEAF3F50F78F2AF76C2F4A7 /* AllMemoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllMemoriesView.swift; sourceTree = "<group>"; };
 		8C57B2763EC852036CED4A4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D353E9D3181CC440804673C /* PersonDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonDetailView.swift; sourceTree = "<group>"; };
@@ -183,6 +224,7 @@
 		A61CF42C35727B011781DC2D /* PersonStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonStore.swift; sourceTree = "<group>"; };
 		A64BDFE38DFA875897C767E9 /* AdvancedFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedFilterView.swift; sourceTree = "<group>"; };
 		A763342EC0E6EC07C4D8189A /* GetPersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPersonUseCase.swift; sourceTree = "<group>"; };
+		A9B99F9CCB98CFBA0399CA7A /* DeleteTaskUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteTaskUseCase.swift; sourceTree = "<group>"; };
 		AA0C90CBDB1AAD855ABBFFFF /* PersonMemoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonMemoriesView.swift; sourceTree = "<group>"; };
 		ABF6DE3489090735AEDD7C5D /* SavePersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePersonUseCase.swift; sourceTree = "<group>"; };
 		AF9D6F939C9B555D8DB5AC4D /* HomeCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCards.swift; sourceTree = "<group>"; };
@@ -197,6 +239,7 @@
 		C2CE23D5B1436D643C67524C /* PersonRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonRepository.swift; sourceTree = "<group>"; };
 		C381B77439665CC8AE1FAD09 /* GeofenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofenceService.swift; sourceTree = "<group>"; };
 		C4874177ECA9F7FA328DBFD9 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		C7C245EB8B6CA800EEA23C55 /* GetCalendarEventsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetCalendarEventsUseCase.swift; sourceTree = "<group>"; };
 		C8E7796438FEE8ED6B9D6870 /* WidgetColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetColors.swift; sourceTree = "<group>"; };
 		CA3FAEC07436121DC47503D2 /* WidgetEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetEntry.swift; sourceTree = "<group>"; };
 		CE2C71EFA9AC8DDB7D359F62 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
@@ -209,11 +252,14 @@
 		E0E66913394F149A2EFC2620 /* DeleteReminderUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteReminderUseCase.swift; sourceTree = "<group>"; };
 		E4AA261CB59DB46A72FA0A72 /* SpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionService.swift; sourceTree = "<group>"; };
 		E7EA283CAC2283584E209EF6 /* AnalyzeMemoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeMemoryUseCase.swift; sourceTree = "<group>"; };
+		ED3523C43EC5E85695861555 /* TaskRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepositoryImpl.swift; sourceTree = "<group>"; };
 		EE5C2A98AEF6F4A552D5017E /* PersonRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonRepositoryImpl.swift; sourceTree = "<group>"; };
 		F04F44FEFD3753DFCDF20A00 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F13B6348E75752FFAA7CA844 /* QuickRecordWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickRecordWidget.swift; sourceTree = "<group>"; };
 		F3ABB2BD8D87F86AEEC30574 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
+		F4AC7C2396D038614DAC200E /* ClassifyTaskQuadrantUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassifyTaskQuadrantUseCase.swift; sourceTree = "<group>"; };
 		FAA20F0258D924C585B00E1D /* DeletePersonUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePersonUseCase.swift; sourceTree = "<group>"; };
+		FC8A778A7DC4BCCC65DAFE78 /* TaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepository.swift; sourceTree = "<group>"; };
 		FD1359BBDF9C4702889FE619 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		FDC62DF24A809159B187F288 /* SaveSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveSuccessView.swift; sourceTree = "<group>"; };
 		FF2C0F31CCAC4E188A51AF3D /* SaveMemoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveMemoryUseCase.swift; sourceTree = "<group>"; };
@@ -276,9 +322,11 @@
 		156D0401D8B8CB0E084EA99A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				3277E9C1684B8C7F7F3DC62E /* CalendarEvent.swift */,
 				321B9A2C4CCFA0A21B12BA08 /* Memory.swift */,
 				FD1359BBDF9C4702889FE619 /* Person.swift */,
 				D315825FCE454AAD88D7BA89 /* Reminder.swift */,
+				695AB971136502C753E641BC /* Task.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -306,6 +354,7 @@
 				43F4823BB5FFEB831790C4DC /* MemoryRepositoryImpl.swift */,
 				EE5C2A98AEF6F4A552D5017E /* PersonRepositoryImpl.swift */,
 				0518F0C0C2671FDC76CE5123 /* ReminderRepositoryImpl.swift */,
+				ED3523C43EC5E85695861555 /* TaskRepositoryImpl.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -331,11 +380,13 @@
 			isa = PBXGroup;
 			children = (
 				53DC688C806DD5BC5A9F200C /* AI */,
+				A0CE6BF099029A90848F73A9 /* Calendar */,
 				EAB611844D25A30E896657FA /* Memory */,
 				7CD49D918E48D4107233A856 /* Person */,
 				E6AE062793863505506977CE /* Photo */,
 				00CE000C5A95B3533941BEBE /* Reminder */,
 				7F6F0309CD8A37FB3C4D0824 /* Search */,
+				F538B43A63895B4CD69DBD41 /* Task */,
 			);
 			path = UseCase;
 			sourceTree = "<group>";
@@ -436,6 +487,18 @@
 			path = DailyMemoryWidget;
 			sourceTree = "<group>";
 		};
+		8E71A35CC7B027E27BC30C51 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				8312EFD66E8B67C322E07EC8 /* CalendarEventRow.swift */,
+				57527ED068BA12E069096BEE /* CalendarView.swift */,
+				3B584293553B476E3974D29B /* CalendarViewModel.swift */,
+				052D59C435ED18735C3B9AC5 /* DayDetailView.swift */,
+				7B14E1041680C4E35292EA88 /* MonthGridView.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
 		8F51D29633BCE81560CFC91E /* Local */ = {
 			isa = PBXGroup;
 			children = (
@@ -443,6 +506,7 @@
 				40F7782DC40C24E4D8B84B43 /* MemoryStore.swift */,
 				A61CF42C35727B011781DC2D /* PersonStore.swift */,
 				CF0EC6011CDAB0903E2C8CF1 /* ReminderStore.swift */,
+				85180F71375AA326E3E81B88 /* TaskStore.swift */,
 				4524B33215506D4ED088A252 /* UserPreferences.swift */,
 				BEEFD0C5D1E2DA22982AB681 /* VectorSearchEngine.swift */,
 			);
@@ -469,6 +533,15 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		A0CE6BF099029A90848F73A9 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				C7C245EB8B6CA800EEA23C55 /* GetCalendarEventsUseCase.swift */,
+				454FFFF2C7F6C0440A43CB59 /* SyncSystemCalendarUseCase.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
 		A222460A0CD292A37F3D1649 /* Service */ = {
 			isa = PBXGroup;
 			children = (
@@ -478,6 +551,7 @@
 				4C78E8E94CDD7ED5892A7592 /* PhotoService.swift */,
 				E4AA261CB59DB46A72FA0A72 /* SpeechRecognitionService.swift */,
 				3C85FFB7B3E01456E1534AD7 /* StoreKitService.swift */,
+				2F7346A8E192EFB82996DECE /* SystemCalendarService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -575,6 +649,7 @@
 				00131521D2CDB36BDB34ADD6 /* MemoryRepository.swift */,
 				C2CE23D5B1436D643C67524C /* PersonRepository.swift */,
 				27F8322DBC319060EA9AE58C /* ReminderRepository.swift */,
+				FC8A778A7DC4BCCC65DAFE78 /* TaskRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -602,6 +677,7 @@
 				5DCA79E2D6E1121CB93314B6 /* HomeEmptyStateView.swift */,
 				4618375DDF43CC2E5ADC8ACD /* HomeView.swift */,
 				00453B73C20C032AE562DE2A /* MoodTrendView.swift */,
+				4875B8B8482836F11EEC6995 /* PromisesCardView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -632,6 +708,7 @@
 			isa = PBXGroup;
 			children = (
 				5765C9906104B36B68DF0F75 /* Auth */,
+				8E71A35CC7B027E27BC30C51 /* Calendar */,
 				A8C44A0C7768F76FD42E4EC1 /* Chat */,
 				CE8AA4E3F54E1939AABCAFE0 /* Common */,
 				E9D622B1AB199EE5BDBFABC0 /* Home */,
@@ -646,6 +723,22 @@
 				B14C59C4DC193D96E48D5F05 /* Settings */,
 			);
 			path = Presentation;
+			sourceTree = "<group>";
+		};
+		F538B43A63895B4CD69DBD41 /* Task */ = {
+			isa = PBXGroup;
+			children = (
+				F4AC7C2396D038614DAC200E /* ClassifyTaskQuadrantUseCase.swift */,
+				28CB1272EE54A07EF0BCEC03 /* CompleteTaskUseCase.swift */,
+				A9B99F9CCB98CFBA0399CA7A /* DeleteTaskUseCase.swift */,
+				2722F554C7427173FDAFADC2 /* ExtractTasksFromMemoryUseCase.swift */,
+				01C455F9618F3CA442461788 /* GetOpenTasksUseCase.swift */,
+				4555288EEF166B9AECC2DA7A /* GetTasksByDateRangeUseCase.swift */,
+				4FEE98B8A23924305B7EDC86 /* GetTasksByPersonUseCase.swift */,
+				124DEE8E93C19EB7AF428778 /* SaveTaskUseCase.swift */,
+				30E8139F52A84F8C7DC0653B /* UpdateTaskUseCase.swift */,
+			);
+			path = Task;
 			sourceTree = "<group>";
 		};
 		FFC7103F969F5AB801CE6985 /* Remote */ = {
@@ -742,7 +835,7 @@
 				2AF095E884E8A601D25CA479 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				07FAAECCC4BBEA155C3898DD /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
-			preferredProjectObjectVersion = 56;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 1AF49235B8B7A3615F0CD8C5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -791,10 +884,16 @@
 				4F33EDB57830FF76A152DD0E /* AnalyzeImageUseCase.swift in Sources */,
 				7C8086587748FC57176AA151 /* AnalyzeMemoryUseCase.swift in Sources */,
 				CA0B0C0F778602C4F8629B01 /* AuthService.swift in Sources */,
+				2C5ADD70A70B60BE5634D3C4 /* CalendarEvent.swift in Sources */,
+				574DB5217D46A1343ECDC21D /* CalendarEventRow.swift in Sources */,
+				3CFE5E43BB640EF77BB9C6FE /* CalendarView.swift in Sources */,
+				C31283FE402D6E5DBFECA1AB /* CalendarViewModel.swift in Sources */,
 				9961129426BF0DADE98A195A /* ChatView.swift in Sources */,
+				1DB8A1317E3F619CE7FCBB4B /* ClassifyTaskQuadrantUseCase.swift in Sources */,
 				1C969002B6EF337AB225EA6E /* CloudStorageService.swift in Sources */,
 				0425806CCCDCB0B700F4E9C1 /* Colors.swift in Sources */,
 				CA1805EB4AD05CAC2CEE2C2E /* CompleteReminderUseCase.swift in Sources */,
+				7BD853F9858C5D25CC25F4B3 /* CompleteTaskUseCase.swift in Sources */,
 				2787B9ABA20F696F38BAB0D3 /* Constants.swift in Sources */,
 				B92BD1481CED6F1678235D60 /* ContentView.swift in Sources */,
 				DB30585B72978530E8F54CA1 /* CoreDataModels.swift in Sources */,
@@ -802,18 +901,25 @@
 				DE337D714275E39FAF7665AB /* DailyMemory.xcdatamodeld in Sources */,
 				2F277FC7F28CCE495381A6D2 /* DailyMemoryApp.swift in Sources */,
 				BD6153FC54FBB816D5413538 /* Date+Extensions.swift in Sources */,
+				A76EE4B13EE5606F3C4813BE /* DayDetailView.swift in Sources */,
 				DDF23292165199A635753A03 /* DeleteMemoryUseCase.swift in Sources */,
 				3C0BCA8DFCAC20E2C18F31C2 /* DeletePersonUseCase.swift in Sources */,
 				DA351B8BBD64CE8A4A0499D5 /* DeleteReminderUseCase.swift in Sources */,
+				D15C582A839730356B64B52E /* DeleteTaskUseCase.swift in Sources */,
 				560257ECA9D12C0CD3AA7EF1 /* EmbeddingService.swift in Sources */,
 				C6B47BD2CB71D5F7C1E9AEEE /* ExportService.swift in Sources */,
+				6348E7577D77C7E00D86A2FC /* ExtractTasksFromMemoryUseCase.swift in Sources */,
 				32D4C0CF6D69CA3FA522177A /* FirestoreService.swift in Sources */,
 				3456FE4A95DCFD9B4D5E1052 /* GenerateSmartRemindersUseCase.swift in Sources */,
 				E34BF089DB64318A156D04FC /* GeofenceService.swift in Sources */,
 				16C459A0393ADBBF11F3526D /* GetAllPersonsUseCase.swift in Sources */,
+				3F2FB18CB0907E5A8EE6C5C3 /* GetCalendarEventsUseCase.swift in Sources */,
 				0A02FB50711DCE8426CED0A0 /* GetMemoryUseCase.swift in Sources */,
+				3FEDD593E0FB9711CCD8C18A /* GetOpenTasksUseCase.swift in Sources */,
 				350FEEE40925FA45D2765165 /* GetPersonUseCase.swift in Sources */,
 				E52BA513BE4AE501CF46045C /* GetRecentMemoriesUseCase.swift in Sources */,
+				83CF1BA7DCD533B643B18A8A /* GetTasksByDateRangeUseCase.swift in Sources */,
+				B4F9BB0C36EA6DACD925A97E /* GetTasksByPersonUseCase.swift in Sources */,
 				A0157D31D38F6B309B9D2CB7 /* GetTodayRemindersUseCase.swift in Sources */,
 				F289B7E4D93A1195B6C079CF /* GetUpcomingRemindersUseCase.swift in Sources */,
 				07DCD998BE4EABCBA7A26266 /* HomeCards.swift in Sources */,
@@ -829,6 +935,7 @@
 				9A760EFF57ABF0D20894E440 /* MemoryRepository.swift in Sources */,
 				7206CF65EC565F00786BA994 /* MemoryRepositoryImpl.swift in Sources */,
 				B07F78F7FDF5A7FEB132B759 /* MemoryStore.swift in Sources */,
+				6ADB03715E0CE29B55095B63 /* MonthGridView.swift in Sources */,
 				A95A6B637B7CB3D6A0BD66F4 /* MoodTrendView.swift in Sources */,
 				198CB3A5DA9C1F5D2961F838 /* NotificationService.swift in Sources */,
 				1A03BDAF61D966654710814B /* OnboardingView.swift in Sources */,
@@ -845,6 +952,7 @@
 				3B2C57EC880FEF5403817918 /* PhotoPickerView.swift in Sources */,
 				3160A8A8DA25F3A223B31B5B /* PhotoService.swift in Sources */,
 				5B8B3CB62714F4C4B4E7E047 /* PremiumView.swift in Sources */,
+				50A8B6DFAEA5D9AE789813DC /* PromisesCardView.swift in Sources */,
 				5F723B600D8977993F38E6EF /* RecordView.swift in Sources */,
 				90132A51A4A27AD8F483B136 /* Reminder.swift in Sources */,
 				E1342CDFE88B3A8E6FA56720 /* ReminderEditView.swift in Sources */,
@@ -855,6 +963,7 @@
 				6B125A840F0840263E2B2066 /* SavePersonUseCase.swift in Sources */,
 				22C98E45CBE5FE8D90F1DE52 /* SaveReminderUseCase.swift in Sources */,
 				B2DAB5E56EDE883BA0DC7CFE /* SaveSuccessView.swift in Sources */,
+				E84D80DAA610CAF491046C5E /* SaveTaskUseCase.swift in Sources */,
 				A6A6CC42D6A80B4D2AAC906B /* SearchMemoriesUseCase.swift in Sources */,
 				99A56BE54CA1610B817747EF /* SearchView.swift in Sources */,
 				0605A2C999CF7DBE42955502 /* SemanticSearchUseCase.swift in Sources */,
@@ -864,9 +973,16 @@
 				9F5701754B47F7BA0521018A /* StateViews.swift in Sources */,
 				B6D4EA91C4FD57038DC81F03 /* StoreKitService.swift in Sources */,
 				A8CE945AE5ACC9CA92C535E8 /* SyncManager.swift in Sources */,
+				4B4235CD10C0A209DD0757F6 /* SyncSystemCalendarUseCase.swift in Sources */,
+				423C58F6EDA80F68E268CF48 /* SystemCalendarService.swift in Sources */,
+				C336CFC2E059C704EDCD72D8 /* Task.swift in Sources */,
+				15749B3A7C201664EFEAD781 /* TaskRepository.swift in Sources */,
+				8FEF543E57A710976A82754D /* TaskRepositoryImpl.swift in Sources */,
+				503DE9DE62916450BA321A5F /* TaskStore.swift in Sources */,
 				37A4865067FB1200C6BA9A70 /* UpdateMemoryUseCase.swift in Sources */,
 				AF9F4314638D831337B4DA1C /* UpdatePersonUseCase.swift in Sources */,
 				0741BFF8CF093E4E593844DE /* UpdateReminderUseCase.swift in Sources */,
+				7566A96346A2E37B83DF1FA9 /* UpdateTaskUseCase.swift in Sources */,
 				0472017F9825AB8030B93101 /* UserPreferences.swift in Sources */,
 				FEF80496F4176AEC06034A9D /* VectorSearchEngine.swift in Sources */,
 			);
@@ -993,6 +1109,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DailyMemory/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Engram;
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Engram can create events from tasks with due dates.";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Engram shows your calendar events alongside memories and tasks.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Engram can capture photos to add to your memories";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Engram needs microphone access for voice recording";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Engram needs access to your photos to attach them to memories";
@@ -1090,6 +1208,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DailyMemory/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Engram;
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Engram can create events from tasks with due dates.";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Engram shows your calendar events alongside memories and tasks.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Engram can capture photos to add to your memories";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Engram needs microphone access for voice recording";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Engram needs access to your photos to attach them to memories";

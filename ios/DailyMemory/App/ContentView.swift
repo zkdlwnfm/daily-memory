@@ -12,14 +12,14 @@ struct ContentView: View {
                 HomeView(refreshTrigger: homeRefreshTrigger)
                     .tag(Tab.home)
 
-                SearchView()
-                    .tag(Tab.search)
+                CalendarView()
+                    .tag(Tab.calendar)
 
                 PersonListView()
                     .tag(Tab.people)
 
-                SettingsView()
-                    .tag(Tab.settings)
+                SearchView()
+                    .tag(Tab.search)
             }
 
             // Custom Tab Bar
@@ -29,22 +29,18 @@ struct ContentView: View {
             RecordView()
         }
         .onChange(of: showRecordSheet) { isShowing in
-            // Refresh home view when record sheet closes
             if !isShowing {
                 homeRefreshTrigger = UUID()
             }
         }
-        // Refresh home when switching back to home tab
         .onChange(of: selectedTab) { tab in
             if tab == .home {
                 homeRefreshTrigger = UUID()
             }
         }
-        // Handle deep links from widgets
         .onChange(of: deepLinkHandler.shouldShowRecordSheet) { newValue in
             if newValue {
                 showRecordSheet = true
-                // Reset the flag
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     deepLinkHandler.shouldShowRecordSheet = false
                 }
@@ -55,25 +51,25 @@ struct ContentView: View {
 
 enum Tab: String, CaseIterable {
     case home = "Home"
-    case search = "Search"
+    case calendar = "Calendar"
     case people = "People"
-    case settings = "Settings"
+    case search = "Search"
 
     var icon: String {
         switch self {
         case .home: return "house"
-        case .search: return "magnifyingglass"
+        case .calendar: return "calendar"
         case .people: return "person.2"
-        case .settings: return "gearshape"
+        case .search: return "magnifyingglass"
         }
     }
 
     var selectedIcon: String {
         switch self {
         case .home: return "house.fill"
-        case .search: return "magnifyingglass"
+        case .calendar: return "calendar"
         case .people: return "person.2.fill"
-        case .settings: return "gearshape.fill"
+        case .search: return "magnifyingglass"
         }
     }
 }
@@ -93,8 +89,8 @@ struct CustomTabBar: View {
                 )
                 Spacer()
 
-                if tab == .search {
-                    // FAB in the middle
+                if tab == .calendar {
+                    // FAB between Calendar and People
                     Spacer()
                     Button(action: { showRecordSheet = true }) {
                         Image(systemName: "plus")

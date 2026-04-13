@@ -68,4 +68,24 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="TaskMO" representedClassName="TaskMO" syncable="YES">
+        <attribute name="aiConfidence" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="isAISuggested" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="memoryId" attributeType="String"/>
+        <attribute name="personId" optional="YES" attributeType="String"/>
+        <attribute name="quadrantRaw" attributeType="String" defaultValueString="Q2"/>
+        <attribute name="statusRaw" attributeType="String" defaultValueString="OPEN"/>
+        <attribute name="syncStatusRaw" attributeType="String" defaultValueString="PENDING"/>
+        <attribute name="taskDescription" optional="YES" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
 </model>

@@ -22,6 +22,7 @@ export class AiService {
 
   async analyzeText(text: string, userId: string): Promise<AnalysisResultDto> {
     const start = Date.now();
+    const today = new Date().toISOString().split('T')[0];
     const prompt = `Analyze the following personal memory/diary entry and extract structured information.
 Return a JSON object with these fields:
 - persons: array of objects with "name" and "relationship" (one of "FAMILY", "FRIEND", "COLLEAGUE", "BUSINESS", "ACQUAINTANCE", "OTHER"). Infer relationship from context clues (e.g. "my son" = FAMILY, "my colleague" = COLLEAGUE, "met someone" = ACQUAINTANCE). Default to "OTHER" if unclear.
@@ -33,6 +34,14 @@ Return a JSON object with these fields:
 - mood: one of "happy", "sad", "excited", "anxious", "grateful", "angry", "calm", "nostalgic", "neutral". Infer from tone and content.
 - moodScore: integer 1-10 (1=very negative, 5=neutral, 10=very positive)
 - summary: one-line summary
+- tasks: array of actionable tasks/promises found in the text. Each task object has:
+  - title: short actionable description
+  - description: longer context (or null)
+  - dueDate: ISO date string if a deadline is mentioned, convert relative dates using today=${today} (e.g. "next Wednesday", "by Friday") to absolute dates. null if no date.
+  - urgency: integer 1-5 (5=most urgent)
+  - importance: integer 1-5 (5=most important)
+  - relatedPerson: name of the person this task relates to (or null)
+  If no actionable tasks or promises are found, return an empty array.
 
 Text: "${text}"
 

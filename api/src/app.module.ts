@@ -8,9 +8,11 @@ import { SearchModule } from './search/search.module';
 import { RateLimitModule } from './rate-limit/rate-limit.module';
 import { HealthModule } from './health/health.module';
 import { AdminModule } from './admin/admin.module';
+import { TaskModule } from './task/task.module';
 import { MemoryEmbedding } from './search/entities/memory-embedding.entity';
 import { UserProfile } from './auth/entities/user-profile.entity';
 import { ApiUsageLog } from './common/entities/api-usage-log.entity';
+import { TaskEntity } from './task/entities/task.entity';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { ApiUsageLog } from './common/entities/api-usage-log.entity';
         username: config.get('DB_USERNAME', 'app_user'),
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_DATABASE', 'dailymemory'),
-        entities: [MemoryEmbedding, UserProfile, ApiUsageLog],
+        entities: [MemoryEmbedding, UserProfile, ApiUsageLog, TaskEntity],
         synchronize: false,
       }),
     }),
@@ -36,6 +38,7 @@ import { ApiUsageLog } from './common/entities/api-usage-log.entity';
     RateLimitModule,
     HealthModule,
     AdminModule,
+    TaskModule,
   ],
 })
 export class AppModule {}
